@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p{
+            color: red;
+            font-size: 100px;
+        }
+        .text{
+            color: green;
+        }
+        #text{
+            color: purple;
+        }
+        .box p{
+            color: orange;
+        }
+        #box #text{
+            color: silver;
+        }
+        .text{
+            color: yellow!important;
+        }
+        #box {
+            width: 1500px;
+            height: 400px;
+            background-color:gray;
+            margin: 10px;
+            padding: 10px;
+            letter-spacing: 25px;
+            /*圆角矩形50%*/
+            border-radius: 50%;
+        }
+        /*优先级id>class>标签*/
+    </style>
+    <link rel="stylesheet" href="css.css">
+</head>
+<body>
+    <h2>层叠与继承</h2>
+    <div id="box" class="box">
+        <p id="text"class="text">104高浩哲</p>
+        <p>层叠与继承</p>
+    </div>
+</body>
+</html>

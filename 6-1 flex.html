@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 新增：最外层父容器，让四个wrap横向排列 */
+        .container{
+            display: flex;
+            gap: 20px;       /* 四个框之间的间隔 */
+            padding:10px;
+            flex-wrap: wrap; /* 屏幕小自动换行，防止挤扁 */
+        }
+
+        /* 公共：父盒子，外框，统一大小 */
+        .wrap{
+            width: 400px;
+            height: 300px;
+            border:1px solid #333;
+            /* margin:20px; 删掉，改用外层container的gap */
+            flex-shrink: 0; /* 不让wrap被压缩变小，保持400px宽 */
+        }
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .flex li {
+            width: 49%;
+            list-style: none;
+            line-height: 100px;
+            text-align: center;
+            border: 1px solid #000;
+            flex-grow: 1;
+            display: flex;
+        }
+        .flex li:nth-child(1) {
+            align-items: center;
+            /*水平居中*/
+            justify-content: center;
+        }
+        .box {
+            width: 50%;
+            height: 50%;
+            background-color: red;
+        }
+        /* =========效果1 你原来的代码：单个盒子居中========= */
+        .demo1{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* =========效果2：垂直排列两个盒子 flex-direction:column ========= */
+        .demo2{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap:10px; /*盒子之间间距*/
+        }
+        .demo2 .box{
+            width:60%;
+            height:80px;
+        }
+        /* =========效果3：四个盒子 两行两列 wrap换行 ========= */
+        .demo3{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center; /*多行用align‑content*/
+            gap:10px;
+        }
+        .demo3 .box{
+            width:45%;
+            height:100px;
+        }
+        /* =========效果4：上1个通栏，下两个并排 ========= */
+        .demo4{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            gap:10px;
+        }
+        .demo4 .box-top{
+            width:92%;
+            height:80px;
+            background:red;
+        }
+        .demo4 .box-bottom{
+            width:44%;
+            height:100px;
+            background:red;
+        }
+    </style>
+</head>
+<body>
+    <h2>高浩哲 104</h2>
+    <!-- 新增外层container，把4个wrap全部包进去 -->
+    <div class="container">
+        <!-- 效果1 你写好的，单个盒子居中 -->
+        <div class="wrap demo1">
+            <div class="box"></div>
+        </div>
+        <!-- 效果2：上下两个盒子 -->
+        <div class="wrap demo2">
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+        <!-- 效果3：四个盒子2*2 -->
+        <div class="wrap demo3">
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+        <!-- 效果4：上方通栏，下方两个 -->
+        <div class="wrap demo4">
+            <div class="box-top"></div>
+            <div class="box-bottom"></div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</body>
+</html>

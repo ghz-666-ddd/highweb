@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>104 高浩哲</title>
+    <style>
+        p{
+            color: brown;
+            font-size:50px;
+        }
+        /* 标签选择器 */
+        #box{
+            width: 600px; 
+            height: 500px;
+            background-color: #ccc;
+        }
+        /* id选择器，以#开头 */
+        .n1{
+            color: blue;
+        }
+        /* 扩展2 h2黑底白字 */
+        h2 {
+            background-color: black;
+            color: white;
+        }
+        /* 扩展3 选择器文字白色 */
+        .white-text{
+            color:#fff;
+        }
+        /* 扩展1 名字每个字单独颜色 */
+        .char1{
+            color:blue;
+        }
+        .char2{
+            color:red;
+        }
+        .char3{
+            color:green;
+        }
+        /* 新增：宽300高300盒子 */
+        .box-new{
+            width: 300px;
+            height: 300px;
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <h2>层叠样式表 css </h2>
+    <div id="box">
+        <p>css<span class="white-text">选择器</span></p>
+        <!-- 扩展1：名字每个字不同颜色，在同一行 -->
+        <p>
+            <span class="char1">高</span>
+            <span class="char2">浩</span>
+            <span class="char3">哲</span>
+        </p>
+        <p>css属性</p>
+    </div>    
+
+    <!-- 新增300*300盒子 -->
+    <div class="box-new"></div>
+
+ <!-- 扩展1：名字的每个字不同颜色，在同一行 -->
+<!-- 扩展2：h2黑底白字 -->
+<!-- 扩展3：选择器三字字是白色 -->
+</body>
+</html>
