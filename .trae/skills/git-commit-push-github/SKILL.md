@@ -6,7 +6,7 @@ description: 将本仓库提交并推送到 GitHub 远程仓库 https://github.c
 # GitHub 提交推送流程（本仓库）
 
 本仓库是「高级网页设计」课程练习的 git 仓库，GitHub 远程为
-`https://github.com/ghz-666-ddd/highweb.git`（分支 `master`，平台已配置好公钥）。
+`https://github.com/ghz-666-ddd/highweb.git`（分支 `master`，平台已配置好 SSH 公钥）。
 
 Gitee 远程 `origin`（`https://gitee.com/gaohaozhe/ghz.git`）保持不变，GitHub 使用独立的
 远程名 `github`，避免覆盖既有配置。
@@ -42,11 +42,11 @@ git remote add github https://github.com/ghz-666-ddd/highweb.git
 ## 推送
 
 ```powershell
-git push github master
+git push -u github master
 ```
 
-- 首次推送若是新仓库，可用 `git push -u github master` 建立跟踪；若 GitHub 上已有内容，
-  先 `git fetch github` 查看，失败时不要强行 force push。
+- 首次推送可用 `-u` 建立对 `github/master` 的跟踪，之后直接 `git push github` 即可。
+- 若 GitHub 上已有内容，先 `git fetch github` 查看，失败时不要强行 force push。
 - 推送失败先看报错：
   - HTTPS 认证失败（要求输入账号/令牌）→ 公钥已配置时改用 SSH 地址：
     `git remote set-url github git@github.com:ghz-666-ddd/highweb.git` 后重试。
