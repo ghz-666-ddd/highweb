@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-29，功能：100 个盒子按“数 7”规则显示，符合规则的留空盒子 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15-1 数 7 游戏 · 高浩哲</title>
+    <style>
+        :root {
+            --ghz_bg-1: #f4f7ff;
+            --ghz_bg-2: #eef8ff;
+            --ghz_primary: #2f6fed;
+            --ghz_primary-deep: #1747b9;
+            --ghz_accent: #ffb703;
+            --ghz_text: #1d2a39;
+            --ghz_muted: #5f6f82;
+            --ghz_box: #ffffff;
+            --ghz_box-empty: #eaf0fd;
+            --ghz_shadow: 0 10px 28px rgba(31, 72, 149, 0.10);
+            --ghz_border: rgba(47, 111, 237, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_text);
+            background:
+                radial-gradient(circle at top left, rgba(90, 146, 255, 0.18), transparent 26%),
+                radial-gradient(circle at bottom right, rgba(255, 183, 3, 0.15), transparent 28%),
+                linear-gradient(135deg, var(--ghz_bg-1), var(--ghz_bg-2));
+            min-height: 100vh;
+        }
+
+        .ghz_container {
+            width: min(1080px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 40px 0 56px;
+        }
+
+        .ghz_hero {
+            background: linear-gradient(135deg, rgba(47, 111, 237, 0.94), rgba(86, 156, 255, 0.92));
+            color: #fff;
+            border-radius: 24px;
+            padding: 30px 34px;
+            box-shadow: 0 18px 45px rgba(32, 67, 140, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ghz_hero::before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            top: -80px;
+            right: -40px;
+        }
+
+        .ghz_hero h1 {
+            margin: 0;
+            font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ghz_hero p {
+            margin: 12px 0 0;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .ghz_rule {
+            margin-top: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ghz_rule span {
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            font-size: 0.85rem;
+        }
+
+        .ghz_panel {
+            margin-top: 26px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--ghz_border);
+            border-radius: 22px;
+            padding: 26px 22px;
+            box-shadow: var(--ghz_shadow);
+        }
+
+        .ghz_legend {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_legend b {
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            vertical-align: -2px;
+            margin-right: 6px;
+            border: 1px solid var(--ghz_border);
+        }
+
+        .ghz_dot--number {
+            background: var(--ghz_box);
+        }
+
+        .ghz_dot--empty {
+            background: var(--ghz_box-empty);
+        }
+
+        #ghz_grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+
+        .ghz_box {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--ghz_box);
+            border: 1px solid var(--ghz_border);
+            box-shadow: 0 4px 12px rgba(31, 72, 149, 0.07);
+            font-size: clamp(0.8rem, 1.6vw, 1.15rem);
+            font-weight: 700;
+            color: var(--ghz_primary-deep);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .ghz_box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(32, 67, 140, 0.16);
+        }
+
+        .ghz_box--empty {
+            background: var(--ghz_box-empty);
+            border-style: dashed;
+            border-color: rgba(47, 111, 237, 0.28);
+            box-shadow: none;
+            color: transparent;
+            user-select: none;
+            cursor: help;
+        }
+
+        /* 鼠标悬停在空盒子上时，显示它与 7 的关系 */
+        .ghz_hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            width: 100%;
+            padding: 0 2px;
+            font-size: 0.62rem;
+            font-weight: 600;
+            line-height: 1.35;
+            color: var(--ghz_primary-deep);
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            pointer-events: none;
+        }
+
+        .ghz_box--empty:hover {
+            background: #fff;
+            border-style: solid;
+            border-color: rgba(47, 111, 237, 0.45);
+        }
+
+        .ghz_box--empty:hover .ghz_hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ghz_footer {
+            margin-top: 26px;
+            text-align: center;
+            color: var(--ghz_muted);
+            font-size: 0.92rem;
+            line-height: 1.9;
+        }
+
+        .ghz_footer strong {
+            color: var(--ghz_primary-deep);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 640px) {
+            .ghz_container {
+                width: calc(100% - 20px);
+                padding-top: 20px;
+            }
+
+            .ghz_hero {
+                padding: 24px 20px;
+                border-radius: 18px;
+            }
+
+            .ghz_panel {
+                padding: 18px 14px;
+            }
+
+            #ghz_grid {
+                gap: 6px;
+            }
+
+            .ghz_box {
+                border-radius: 9px;
+                font-size: 0.78rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_container">
+        <header class="ghz_hero">
+            <h1>数 7 游戏 · 高浩哲</h1>
+            <p>1 到 100 共 100 个盒子：凡是与 7 有关的数字，盒子留空；其余数字显示在盒子内部。</p>
+            <div class="ghz_rule">
+                <span>7 的倍数</span>
+                <span>个位是 7</span>
+                <span>数字中含 7</span>
+            </div>
+        </header>
+
+        <main class="ghz_panel">
+            <div class="ghz_legend">
+                <span><i class="ghz_dot ghz_dot--number"></i>盒子内有数字（正常数）</span>
+                <span><i class="ghz_dot ghz_dot--empty"></i>空盒子（符合数 7 规则，鼠标悬停可看原因）</span>
+                <span>共 <b id="ghz_total">100</b> 个盒子，其中空盒子 <b id="ghz_empty">0</b> 个</span>
+            </div>
+            <div id="ghz_grid"></div>
+        </main>
+
+        <footer class="ghz_footer">
+            <p><strong>高浩哲</strong> · 《高级网页设计》练习：15-1 数 7 规则盒子</p>
+            <p>规则说明：数字是 7 的倍数、个位是 7，或数字中包含 7，都判定为符合规则并输出空盒子。</p>
+        </footer>
+    </div>
+
+    <script>
+        var ghz_grid = document.getElementById('ghz_grid');
+        var ghz_emptyCount = document.getElementById('ghz_empty');
+        var ghz_empty = 0;
+
+        // 判断数字是否符合“数 7”规则，并返回它跟 7 的关系
+        function ghz_sevenReasons(num) {
+            var ghz_list = [];
+            if (num % 7 === 0) {
+                ghz_list.push('7的倍数');
+            }
+            if (num % 10 === 7) {
+                ghz_list.push('个位是7');
+            }
+            if (String(num).indexOf('7') !== -1) {
+                ghz_list.push('含7');
+            }
+            return ghz_list;
+        }
+
+        for (var ghz_i = 1; ghz_i <= 100; ghz_i++) {
+            var ghz_box = document.createElement('div');
+            ghz_box.className = 'ghz_box';
+
+            var ghz_reasons = ghz_sevenReasons(ghz_i);
+
+            if (ghz_reasons.length > 0) {
+                ghz_box.classList.add('ghz_box--empty');
+                ghz_empty++;
+
+                // 空盒子平时不显示内容，悬停时显示它与 7 的关系
+                var ghz_hint = document.createElement('span');
+                ghz_hint.className = 'ghz_hint';
+                for (var ghz_r = 0; ghz_r < ghz_reasons.length; ghz_r++) {
+                    var ghz_line = document.createElement('span');
+                    ghz_line.textContent = ghz_reasons[ghz_r];
+                    ghz_hint.appendChild(ghz_line);
+                }
+                ghz_box.appendChild(ghz_hint);
+            } else {
+                ghz_box.textContent = ghz_i;
+            }
+
+            ghz_grid.appendChild(ghz_box);
+        }
+
+        ghz_emptyCount.textContent = ghz_empty;
+    </script>
+</body>
+</html>
