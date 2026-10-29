@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-29，功能：JavaScript 数组主要方法可视化演示 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-1 JavaScript 数组主要方法</title>
+    <style>
+        :root {
+            --ghz_bg-1: #f4f7ff;
+            --ghz_bg-2: #eef8ff;
+            --ghz_card: rgba(255, 255, 255, 0.9);
+            --ghz_primary: #2f6fed;
+            --ghz_primary-deep: #1747b9;
+            --ghz_accent: #ffb703;
+            --ghz_pink: #e6398a;
+            --ghz_green: #16a34a;
+            --ghz_purple: #7c3aed;
+            --ghz_text: #1d2a39;
+            --ghz_muted: #5f6f82;
+            --ghz_shadow: 0 16px 40px rgba(32, 67, 140, 0.14);
+            --ghz_border: rgba(47, 111, 237, 0.14);
+            --ghz_dark: #1b2634;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_text);
+            background:
+                radial-gradient(circle at top left, rgba(90, 146, 255, 0.2), transparent 26%),
+                radial-gradient(circle at top right, rgba(230, 57, 138, 0.12), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(255, 183, 3, 0.16), transparent 30%),
+                linear-gradient(135deg, var(--ghz_bg-1), var(--ghz_bg-2));
+            min-height: 100vh;
+            padding: 40px 0 60px;
+        }
+
+        .ghz_container {
+            width: min(1200px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .ghz_header {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1747b9 0%, #2f6fed 55%, #5a92ff 100%);
+            color: #fff;
+            border-radius: 26px;
+            padding: 36px 38px 34px;
+            box-shadow: var(--ghz_shadow);
+            margin-bottom: 28px;
+        }
+
+        .ghz_header::before,
+        .ghz_header::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .ghz_header::before {
+            width: 240px;
+            height: 240px;
+            top: -110px;
+            right: -50px;
+        }
+
+        .ghz_header::after {
+            width: 170px;
+            height: 170px;
+            left: -50px;
+            bottom: -90px;
+        }
+
+        .ghz_header h1 {
+            position: relative;
+            z-index: 1;
+            margin: 0 0 10px;
+            font-size: clamp(22px, 2.4vw, 32px);
+            letter-spacing: 2px;
+        }
+
+        .ghz_header p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 900px;
+        }
+
+        .ghz_header code {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 1px 7px;
+            border-radius: 6px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+        }
+
+        .ghz_chips-line {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .ghz_chips-line span {
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ---------- 通用卡片 ---------- */
+        .ghz_panel {
+            background: var(--ghz_card);
+            border: 1px solid var(--ghz_border);
+            border-radius: 22px;
+            box-shadow: var(--ghz_shadow);
+            padding: 26px 28px 28px;
+            margin-bottom: 26px;
+        }
+
+        .ghz_panel-title {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .ghz_panel-title h2 {
+            margin: 0;
+            font-size: 21px;
+            color: var(--ghz_primary-deep);
+            letter-spacing: 1px;
+        }
+
+        .ghz_panel-title em {
+            font-style: normal;
+            font-size: 13px;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_panel-desc {
+            margin: 0 0 18px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--ghz_muted);
+        }
+
+        /* ---------- 实验室 ---------- */
+        .ghz_board {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            min-height: 108px;
+            padding: 20px;
+            border-radius: 18px;
+            border: 2px dashed rgba(47, 111, 237, 0.28);
+            background:
+                linear-gradient(135deg, rgba(47, 111, 237, 0.06), rgba(255, 183, 3, 0.07));
+        }
+
+        .ghz_chip {
+            position: relative;
+            min-width: 68px;
+            padding: 24px 16px 12px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--ghz_primary-deep);
+            background: #fff;
+            border: 1px solid rgba(47, 111, 237, 0.2);
+            border-radius: 14px;
+            box-shadow: 0 8px 18px rgba(32, 67, 140, 0.1);
+            animation: ghz_in 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+            max-width: 190px;
+            overflow-wrap: anywhere;
+        }
+
+        .ghz_chip-index {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            right: 0;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #93a6bd;
+        }
+
+        .ghz_empty {
+            color: #9aa9ba;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        @keyframes ghz_in {
+            from { opacity: 0; transform: translateY(12px) scale(0.86); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .ghz_board-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 14px 0 18px;
+            font-size: 13px;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_board-meta b {
+            color: var(--ghz_primary-deep);
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 15px;
+        }
+
+        .ghz_toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ghz_input {
+            width: 96px;
+            padding: 10px 12px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--ghz_text);
+            background: #fff;
+            border: 1px solid var(--ghz_border);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .ghz_input:focus {
+            border-color: var(--ghz_primary);
+            box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.15);
+        }
+
+        .ghz_btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            color: #fff;
+            background: linear-gradient(135deg, var(--ghz_primary), var(--ghz_primary-deep));
+            box-shadow: 0 8px 16px rgba(23, 71, 185, 0.26);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        .ghz_btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(23, 71, 185, 0.32);
+        }
+
+        .ghz_btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .ghz_btn-ghost {
+            color: var(--ghz_primary-deep);
+            background: #fff;
+            border: 1px solid var(--ghz_border);
+            box-shadow: 0 6px 14px rgba(32, 67, 140, 0.08);
+        }
+
+        .ghz_btn-warm {
+            background: linear-gradient(135deg, #ffb703, #f48c06);
+            box-shadow: 0 8px 16px rgba(244, 140, 6, 0.28);
+        }
+
+        .ghz_console {
+            margin-top: 20px;
+            background: var(--ghz_dark);
+            border-radius: 16px;
+            padding: 14px 16px;
+            min-height: 118px;
+            max-height: 260px;
+            overflow-y: auto;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #d7e6f7;
+        }
+
+        .ghz_console-placeholder {
+            color: #6f8299;
+            font-style: italic;
+        }
+
+        .ghz_log-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            animation: ghz_fade 0.3s ease both;
+        }
+
+        .ghz_log-item:last-child {
+            border-bottom: none;
+        }
+
+        .ghz_log-code {
+            color: #9be37a;
+        }
+
+        .ghz_log-code::before {
+            content: "› ";
+            color: #5a7391;
+        }
+
+        .ghz_log-res {
+            color: #8fb4dd;
+            padding-left: 12px;
+        }
+
+        @keyframes ghz_fade {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- 方法卡片 ---------- */
+        .ghz_bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 0 0 20px;
+        }
+
+        .ghz_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 22px;
+        }
+
+        .ghz_card {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: var(--ghz_card);
+            border: 1px solid var(--ghz_border);
+            border-radius: 20px;
+            padding: 22px 22px 20px;
+            box-shadow: var(--ghz_shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ghz_card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 46px rgba(32, 67, 140, 0.18);
+        }
+
+        .ghz_card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--ghz_primary), #6fa3ff);
+        }
+
+        .ghz_card[data-tone="pink"]::before   { background: linear-gradient(90deg, var(--ghz_pink), #ff7ba8); }
+        .ghz_card[data-tone="green"]::before  { background: linear-gradient(90deg, var(--ghz_green), #4ade80); }
+        .ghz_card[data-tone="purple"]::before { background: linear-gradient(90deg, var(--ghz_purple), #a78bfa); }
+        .ghz_card[data-tone="orange"]::before { background: linear-gradient(90deg, #ffb703, #ff8f1f); }
+
+        .ghz_card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ghz_card-name {
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--ghz_text);
+        }
+
+        .ghz_badge {
+            flex: none;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #b42318;
+            background: rgba(230, 57, 70, 0.12);
+            border: 1px solid rgba(230, 57, 70, 0.22);
+        }
+
+        .ghz_badge-new {
+            color: #0b6b3a;
+            background: rgba(22, 163, 74, 0.12);
+            border-color: rgba(22, 163, 74, 0.24);
+        }
+
+        .ghz_card p.ghz_desc {
+            margin: 0 0 12px;
+            font-size: 13px;
+            line-height: 1.75;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_code {
+            background: var(--ghz_dark);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12.5px;
+            line-height: 1.85;
+            color: #e6f1ff;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .ghz_kw  { color: #c79bff; }
+        .ghz_num { color: #ffbb6a; }
+        .ghz_str { color: #9be37a; }
+        .ghz_cmt { color: #708094; font-style: italic; }
+
+        .ghz_out {
+            flex: 1;
+            min-height: 76px;
+            padding: 11px 13px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8fbff, #eef4ff);
+            border-left: 4px solid var(--ghz_primary);
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12.5px;
+            line-height: 1.85;
+            color: #2b3a4b;
+            overflow-wrap: anywhere;
+        }
+
+        .ghz_out .ghz_line {
+            display: block;
+        }
+
+        .ghz_tag {
+            display: inline-block;
+            margin-right: 6px;
+            padding: 1px 7px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--ghz_primary-deep);
+        }
+
+        .ghz_tag-green  { background: var(--ghz_green); }
+        .ghz_tag-pink   { background: var(--ghz_pink); }
+        .ghz_tag-orange { background: #e08b00; }
+        .ghz_tag-gray   { background: #6b7c90; }
+
+        .ghz_card-foot {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .ghz_card-foot .ghz_btn {
+            flex: 1;
+            padding: 9px 14px;
+            font-size: 12.5px;
+        }
+
+        /* ---------- 速查表 ---------- */
+        .ghz_table-wrap {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--ghz_border);
+            background: #fff;
+        }
+
+        table.ghz_table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 640px;
+        }
+
+        table.ghz_table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, rgba(47, 111, 237, 0.12), rgba(47, 111, 237, 0.04));
+            color: var(--ghz_primary-deep);
+            font-size: 12.5px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        table.ghz_table td {
+            padding: 11px 14px;
+            border-top: 1px solid rgba(47, 111, 237, 0.08);
+            color: #33475b;
+            line-height: 1.7;
+        }
+
+        table.ghz_table tr:hover td {
+            background: rgba(47, 111, 237, 0.035);
+        }
+
+        table.ghz_table td:first-child {
+            font-family: "Consolas", "Courier New", monospace;
+            font-weight: 700;
+            color: var(--ghz_text);
+            white-space: nowrap;
+        }
+
+        .ghz_yes {
+            color: #b42318;
+            font-weight: 700;
+        }
+
+        .ghz_no {
+            color: #0b6b3a;
+            font-weight: 700;
+        }
+
+        .ghz_footer {
+            text-align: center;
+            font-size: 13px;
+            color: var(--ghz_muted);
+            padding-top: 6px;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 22px 0 40px; }
+            .ghz_container { width: min(100% - 20px, 1200px); }
+            .ghz_header { padding: 24px 20px; border-radius: 20px; }
+            .ghz_panel { padding: 20px 18px 22px; border-radius: 18px; }
+            .ghz_grid { grid-template-columns: 1fr; }
+            .ghz_chip { min-width: 56px; font-size: 16px; padding: 22px 12px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_container">
+        <header class="ghz_header">
+            <h1>16-1 JavaScript 数组主要方法</h1>
+            <p>数组是 JavaScript 中最常用的数据结构。下面的“数组实验室”可以把方法对数组的影响实时画出来，再配合 9 张方法卡片和速查表，一次看懂 <strong>增删、查找、遍历、转换、排序</strong> 五类操作，并区分哪些方法会<strong>改变原数组</strong>、哪些会<strong>返回新数组</strong>。</p>
+            <div class="ghz_chips-line">
+                <span>push / pop</span>
+                <span>unshift / shift</span>
+                <span>splice / slice</span>
+                <span>map / filter</span>
+                <span>reduce</span>
+                <span>sort / reverse</span>
+                <span>join / concat</span>
+            </div>
+        </header>
+
+        <!-- ============ 实验室 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>数组实验室</h2>
+                <em>点击按钮，看数组怎样一步一步变化</em>
+            </div>
+            <p class="ghz_panel-desc">方块里的数字就是数组元素，顶部小字是它的下标（index）。每次操作都会在下方黑色控制台打印出对应的代码和返回值。</p>
+
+            <div class="ghz_board" id="ghz_board"></div>
+
+            <div class="ghz_board-meta">
+                <span>当前数组：<b id="ghz_state">[12, 5, 88, 3, 42]</b></span>
+                <span>length：<b id="ghz_len">5</b></span>
+                <span>类型：<b id="ghz_type">Array</b></span>
+            </div>
+
+            <div class="ghz_toolbar">
+                <input class="ghz_input" id="ghz_value" type="text" value="7" placeholder="值">
+                <button class="ghz_btn" data-act="push">push 尾部添加</button>
+                <button class="ghz_btn" data-act="pop">pop 尾部删除</button>
+                <button class="ghz_btn" data-act="unshift">unshift 头部添加</button>
+                <button class="ghz_btn" data-act="shift">shift 头部删除</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="reverse">reverse 反转</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="sort">sort 排序</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="filter">filter 筛选 &gt;50</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="forEach">forEach 求和</button>
+                <button class="ghz_btn ghz_btn-warm" data-act="clear">清空数组</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="reset">重置</button>
+            </div>
+
+            <div class="ghz_console" id="ghz_console">
+                <div class="ghz_console-placeholder">// 控制台：上面任意点一个按钮，这里会显示执行结果</div>
+            </div>
+        </section>
+
+        <!-- ============ 方法卡片 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>九组常用方法</h2>
+                <em>每组都可以单独运行</em>
+            </div>
+            <div class="ghz_bar">
+                <button class="ghz_btn" onclick="ghz_runAllDemo()">运行全部演示</button>
+                <button class="ghz_btn ghz_btn-ghost" onclick="ghz_clearAllDemo()">清空结果</button>
+            </div>
+
+            <div class="ghz_grid">
+                <!-- 1 push / pop -->
+                <article class="ghz_card" data-tone="blue">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">push() / pop()</span>
+                        <span class="ghz_badge">改变原数组</span>
+                    </div>
+                    <p class="ghz_desc">在数组<strong>末尾</strong>添加（push，可一次加多个）或删除（pop）元素，返回值分别是新长度和被删掉的那个元素。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> a = [<span class="ghz_num">1</span>, <span class="ghz_num">2</span>, <span class="ghz_num">3</span>];
+a.<span class="ghz_kw">push</span>(<span class="ghz_num">4</span>, <span class="ghz_num">5</span>);  <span class="ghz_cmt">// 返回新长度</span>
+a.<span class="ghz_kw">pop</span>();       <span class="ghz_cmt">// 弹出末尾元素</span></div>
+                    <div class="ghz_out" id="ghz_out_push">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoPush()">运行 push / pop</button>
+                    </div>
+                </article>
+
+                <!-- 2 unshift / shift -->
+                <article class="ghz_card" data-tone="blue">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">unshift() / shift()</span>
+                        <span class="ghz_badge">改变原数组</span>
+                    </div>
+                    <p class="ghz_desc">在数组<strong>开头</strong>添加（unshift）或删除（shift）元素。注意：头部操作会让所有元素的下标整体后移或前移，效率比末尾操作低。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> b = [<span class="ghz_num">1</span>, <span class="ghz_num">2</span>, <span class="ghz_num">3</span>];
+b.<span class="ghz_kw">unshift</span>(<span class="ghz_num">0</span>);   <span class="ghz_cmt">// 头部插入 0</span>
+b.<span class="ghz_kw">shift</span>();      <span class="ghz_cmt">// 删除头部元素</span></div>
+                    <div class="ghz_out" id="ghz_out_unshift">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoUnshift()">运行 unshift / shift</button>
+                    </div>
+                </article>
+
+                <!-- 3 splice / slice -->
+                <article class="ghz_card" data-tone="orange">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">splice() / slice()</span>
+                        <span class="ghz_badge">一改一不改</span>
+                    </div>
+                    <p class="ghz_desc"><code>splice(起点, 个数, 新元素…)</code> 直接在原数组上删除/插入/替换；<code>slice(起点, 终点)</code> 只复制一段出来，<strong>含头不含尾</strong>，原数组不受影响。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> c = [<span class="ghz_num">10</span>, <span class="ghz_num">20</span>, <span class="ghz_num">30</span>, <span class="ghz_num">40</span>, <span class="ghz_num">50</span>];
+c.<span class="ghz_kw">splice</span>(<span class="ghz_num">1</span>, <span class="ghz_num">2</span>, <span class="ghz_str">"A"</span>, <span class="ghz_str">"B"</span>, <span class="ghz_str">"C"</span>);
+c.<span class="ghz_kw">slice</span>(<span class="ghz_num">1</span>, <span class="ghz_num">4</span>);  <span class="ghz_cmt">// 复制不下刀</span></div>
+                    <div class="ghz_out" id="ghz_out_splice">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoSplice()">运行 splice / slice</button>
+                    </div>
+                </article>
+
+                <!-- 4 concat / join -->
+                <article class="ghz_card" data-tone="green">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">concat() / join()</span>
+                        <span class="ghz_badge ghz_badge-new">返回新值</span>
+                    </div>
+                    <p class="ghz_desc"><code>concat()</code> 把多个数组或值拼成一个新数组；<code>join(分隔符)</code> 把元素用分隔符连成字符串，是数组转文本最常用的方式。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> x = [<span class="ghz_num">1</span>, <span class="ghz_num">2</span>], y = [<span class="ghz_num">3</span>, <span class="ghz_num">4</span>];
+<span class="ghz_kw">var</span> z = x.<span class="ghz_kw">concat</span>(y, <span class="ghz_num">5</span>);
+z.<span class="ghz_kw">join</span>(<span class="ghz_str">"-"</span>);</div>
+                    <div class="ghz_out" id="ghz_out_concat">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoConcat()">运行 concat / join</button>
+                    </div>
+                </article>
+
+                <!-- 5 indexOf / includes / find -->
+                <article class="ghz_card" data-tone="pink">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">indexOf() / includes() / find()</span>
+                        <span class="ghz_badge ghz_badge-new">查找</span>
+                    </div>
+                    <p class="ghz_desc">找元素位置用 <code>indexOf</code>（找不到返回 -1），判断存在用 <code>includes</code>（返回布尔），按条件找元素用 <code>find</code> / <code>findIndex</code>。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> f = [<span class="ghz_str">"苹果"</span>, <span class="ghz_str">"香蕉"</span>, <span class="ghz_str">"橙子"</span>];
+f.<span class="ghz_kw">indexOf</span>(<span class="ghz_str">"橙子"</span>);
+f.<span class="ghz_kw">includes</span>(<span class="ghz_str">"香蕉"</span>);
+f.<span class="ghz_kw">find</span>(<span class="ghz_kw">function</span> (s) { ... });</div>
+                    <div class="ghz_out" id="ghz_out_find">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoFind()">运行查找方法</button>
+                    </div>
+                </article>
+
+                <!-- 6 filter / map -->
+                <article class="ghz_card" data-tone="purple">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">filter() / map()</span>
+                        <span class="ghz_badge ghz_badge-new">返回新数组</span>
+                    </div>
+                    <p class="ghz_desc"><code>filter</code> 按条件筛选，留下返回 <code>true</code> 的元素；<code>map</code> 把每个元素加工后放进新数组。两者都<strong>不动原数组</strong>，长度不变或变短。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> n = [<span class="ghz_num">1</span>, <span class="ghz_num">2</span>, <span class="ghz_num">3</span>, <span class="ghz_num">4</span>, <span class="ghz_num">5</span>, <span class="ghz_num">6</span>];
+n.<span class="ghz_kw">filter</span>(<span class="ghz_kw">function</span> (v) { <span class="ghz_kw">return</span> v % <span class="ghz_num">2</span> === <span class="ghz_num">0</span>; });
+n.<span class="ghz_kw">map</span>(<span class="ghz_kw">function</span> (v) { <span class="ghz_kw">return</span> v * <span class="ghz_num">2</span>; });</div>
+                    <div class="ghz_out" id="ghz_out_mapfilter">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoMapFilter()">运行 filter / map</button>
+                    </div>
+                </article>
+
+                <!-- 7 reduce / forEach -->
+                <article class="ghz_card" data-tone="purple">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">reduce() / forEach()</span>
+                        <span class="ghz_badge ghz_badge-new">遍历</span>
+                    </div>
+                    <p class="ghz_desc"><code>forEach</code> 只负责挨个遍历、没有返回值；<code>reduce</code> 能把整个数组“累”成一个结果，比如求和、求最大值、拼字符串。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> n = [<span class="ghz_num">1</span>, <span class="ghz_num">2</span>, <span class="ghz_num">3</span>, <span class="ghz_num">4</span>, <span class="ghz_num">5</span>];
+n.<span class="ghz_kw">reduce</span>(<span class="ghz_kw">function</span> (sum, v) {
+  <span class="ghz_kw">return</span> sum + v;
+}, <span class="ghz_num">0</span>);  <span class="ghz_cmt">// 初始值 0</span></div>
+                    <div class="ghz_out" id="ghz_out_reduce">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoReduce()">运行 reduce / forEach</button>
+                    </div>
+                </article>
+
+                <!-- 8 sort / reverse -->
+                <article class="ghz_card" data-tone="orange">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">sort() / reverse()</span>
+                        <span class="ghz_badge">改变原数组</span>
+                    </div>
+                    <p class="ghz_desc"><code>reverse()</code> 原地反转。<code>sort()</code> 默认把元素当<strong>字符串</strong>比较，所以 <code>10</code> 会排在 <code>9</code> 前面；数字排序一定要传 <code>(a, b) =&gt; a - b</code> 比较函数。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> num = [<span class="ghz_num">10</span>, <span class="ghz_num">9</span>, <span class="ghz_num">100</span>, <span class="ghz_num">1</span>];
+num.<span class="ghz_kw">sort</span>();                    <span class="ghz_cmt">// 按字符串</span>
+num.<span class="ghz_kw">sort</span>(<span class="ghz_kw">function</span> (a, b) { <span class="ghz_kw">return</span> a - b; });
+[<span class="ghz_num">1</span>, <span class="ghz_num">2</span>, <span class="ghz_num">3</span>].<span class="ghz_kw">reverse</span>();</div>
+                    <div class="ghz_out" id="ghz_out_sort">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoSort()">运行 sort / reverse</button>
+                    </div>
+                </article>
+
+                <!-- 9 flat / fill / Array.from -->
+                <article class="ghz_card" data-tone="green">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">flat() / fill() / Array.from()</span>
+                        <span class="ghz_badge ghz_badge-new">进阶工具</span>
+                    </div>
+                    <p class="ghz_desc"><code>flat(层数)</code> 拍平嵌套数组；<code>fill(值)</code> 用同一个值填满数组；<code>Array.from()</code> 把类数组、字符串、Set 等转成真正的数组。</p>
+                    <div class="ghz_code">[<span class="ghz_num">1</span>, [<span class="ghz_num">2</span>, [<span class="ghz_num">3</span>]]].<span class="ghz_kw">flat</span>(<span class="ghz_num">2</span>);
+<span class="ghz_kw">new</span> <span class="ghz_kw">Array</span>(<span class="ghz_num">5</span>).<span class="ghz_kw">fill</span>(<span class="ghz_num">0</span>);
+<span class="ghz_kw">Array</span>.<span class="ghz_kw">from</span>(<span class="ghz_str">"高浩哲"</span>);
+<span class="ghz_kw">Array</span>.<span class="ghz_kw">isArray</span>([]);</div>
+                    <div class="ghz_out" id="ghz_out_other">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoOther()">运行进阶方法</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- ============ 速查表 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>方法速查表</h2>
+                <em>红色“会”= 改动原数组；绿色“不”= 原数组安全</em>
+            </div>
+            <div class="ghz_table-wrap">
+                <table class="ghz_table">
+                    <thead>
+                        <tr>
+                            <th>方法</th>
+                            <th>作用</th>
+                            <th>改变原数组</th>
+                            <th>返回值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>push(…)</td><td>在末尾添加一个或多个元素</td><td class="ghz_yes">会</td><td>新长度</td></tr>
+                        <tr><td>pop()</td><td>删除并返回末尾元素</td><td class="ghz_yes">会</td><td>被删除的元素</td></tr>
+                        <tr><td>unshift(…)</td><td>在开头添加一个或多个元素</td><td class="ghz_yes">会</td><td>新长度</td></tr>
+                        <tr><td>shift()</td><td>删除并返回开头元素</td><td class="ghz_yes">会</td><td>被删除的元素</td></tr>
+                        <tr><td>splice(s, n, …)</td><td>从下标 s 开始删除 n 个并可插入新元素</td><td class="ghz_yes">会</td><td>被删除元素组成的新数组</td></tr>
+                        <tr><td>slice(s, e)</td><td>截取 [s, e) 区间，含头不含尾</td><td class="ghz_no">不</td><td>新数组</td></tr>
+                        <tr><td>concat(…)</td><td>拼接数组或值</td><td class="ghz_no">不</td><td>新数组</td></tr>
+                        <tr><td>join(sep)</td><td>用分隔符把元素连成字符串</td><td class="ghz_no">不</td><td>字符串</td></tr>
+                        <tr><td>reverse()</td><td>反转元素顺序</td><td class="ghz_yes">会</td><td>反转后的原数组</td></tr>
+                        <tr><td>sort(fn)</td><td>排序（默认按字符串比较）</td><td class="ghz_yes">会</td><td>排序后的原数组</td></tr>
+                        <tr><td>indexOf(v)</td><td>查找元素下标</td><td class="ghz_no">不</td><td>下标，找不到为 -1</td></tr>
+                        <tr><td>includes(v)</td><td>判断是否包含某元素</td><td class="ghz_no">不</td><td>true / false</td></tr>
+                        <tr><td>find(fn)</td><td>返回第一个满足条件的元素</td><td class="ghz_no">不</td><td>元素或 undefined</td></tr>
+                        <tr><td>findIndex(fn)</td><td>返回第一个满足条件的元素下标</td><td class="ghz_no">不</td><td>下标或 -1</td></tr>
+                        <tr><td>filter(fn)</td><td>筛选出满足条件的元素</td><td class="ghz_no">不</td><td>新数组</td></tr>
+                        <tr><td>map(fn)</td><td>逐个加工，映射成新数组</td><td class="ghz_no">不</td><td>新数组</td></tr>
+                        <tr><td>forEach(fn)</td><td>逐个遍历执行回调</td><td class="ghz_no">不</td><td>undefined</td></tr>
+                        <tr><td>reduce(fn, init)</td><td>累加器，把数组归并成一个值</td><td class="ghz_no">不</td><td>累计结果</td></tr>
+                        <tr><td>some(fn) / every(fn)</td><td>是否有满足 / 是否全部满足条件</td><td class="ghz_no">不</td><td>true / false</td></tr>
+                        <tr><td>flat(n)</td><td>拍平 n 层嵌套数组</td><td class="ghz_no">不</td><td>新数组</td></tr>
+                        <tr><td>fill(v)</td><td>用同一个值填充数组</td><td class="ghz_yes">会</td><td>填充后的原数组</td></tr>
+                        <tr><td>Array.from(x)</td><td>把类数组 / 字符串 / Set 转为数组</td><td class="ghz_no">不</td><td>新数组</td></tr>
+                        <tr><td>Array.isArray(x)</td><td>判断是否为数组</td><td class="ghz_no">不</td><td>true / false</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="ghz_footer">高浩哲 · 《高级网页设计》课堂实践 · 16-1 · JavaScript 数组主要方法</footer>
+    </div>
+
+    <script>
+        /* ================= 工具函数 ================= */
+        function ghz_esc(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function ghz_line(tag, text, tone) {
+            var cls = 'ghz_tag' + (tone ? ' ghz_tag-' + tone : '');
+            return '<span class="ghz_line"><span class="' + cls + '">' + tag + '</span>' + ghz_esc(text) + '</span>';
+        }
+
+        function ghz_out(id, lines) {
+            document.getElementById(id).innerHTML = lines.join('');
+        }
+
+        function ghz_arrText(arr) {
+            return '[' + arr.join(', ') + ']';
+        }
+
+        /* ================= 数组实验室 ================= */
+        var ghz_arr = [12, 5, 88, 3, 42];
+
+        function ghz_renderArr() {
+            var board = document.getElementById('ghz_board');
+            var html = '';
+            if (ghz_arr.length === 0) {
+                html = '<span class="ghz_empty">空数组 · length = 0，用 push / unshift 加点东西进来</span>';
+            } else {
+                for (var i = 0; i < ghz_arr.length; i++) {
+                    html += '<span class="ghz_chip" style="animation-delay:' + (i * 0.045).toFixed(2) + 's">' +
+                            '<span class="ghz_chip-index">index ' + i + '</span>' +
+                            ghz_esc(ghz_arr[i]) + '</span>';
+                }
+            }
+            board.innerHTML = html;
+            document.getElementById('ghz_state').textContent = ghz_arrText(ghz_arr);
+            document.getElementById('ghz_len').textContent = ghz_arr.length;
+            document.getElementById('ghz_type').textContent = Array.isArray(ghz_arr) ? 'Array' : '未知';
+        }
+
+        function ghz_log(code, result) {
+            var box = document.getElementById('ghz_console');
+            var holder = box.querySelector('.ghz_console-placeholder');
+            if (holder) {
+                box.removeChild(holder);
+            }
+            var item = document.createElement('div');
+            item.className = 'ghz_log-item';
+            item.innerHTML = '<div class="ghz_log-code">' + ghz_esc(code) + '</div>' +
+                             '<div class="ghz_log-res">→ ' + ghz_esc(result) + '</div>';
+            box.insertBefore(item, box.firstChild);
+            while (box.children.length > 8) {
+                box.removeChild(box.lastChild);
+            }
+        }
+
+        function ghz_readValue() {
+            var raw = document.getElementById('ghz_value').value.trim();
+            if (raw === '') {
+                return ghz_arr.length + 1;
+            }
+            var num = Number(raw);
+            return isNaN(num) ? raw : num;
+        }
+
+        function ghz_doAction(act) {
+            var v = ghz_readValue();
+            var res;
+
+            switch (act) {
+                case 'push':
+                    res = ghz_arr.push(v);
+                    ghz_log('arr.push(' + v + ')', '返回新长度 ' + res + '，arr = ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'pop':
+                    res = ghz_arr.pop();
+                    ghz_log('arr.pop()', '返回被删除的 ' + (res === undefined ? 'undefined（数组本来为空）' : res) +
+                            '，arr = ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'unshift':
+                    res = ghz_arr.unshift(v);
+                    ghz_log('arr.unshift(' + v + ')', '返回新长度 ' + res + '，所有旧元素下标 +1，arr = ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'shift':
+                    res = ghz_arr.shift();
+                    ghz_log('arr.shift()', '返回被删除的 ' + (res === undefined ? 'undefined（数组本来为空）' : res) +
+                            '，所有剩余元素下标 -1，arr = ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'reverse':
+                    ghz_arr.reverse();
+                    ghz_log('arr.reverse()', '原数组已被原地反转 → ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'sort':
+                    ghz_arr.sort();
+                    ghz_log('arr.sort()', '默认按字符串比较排序 → ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'filter':
+                    var ghz_big = ghz_arr.filter(function (item) {
+                        return typeof item === 'number' && item > 50;
+                    });
+                    ghz_log('arr.filter(function (v) { return v > 50; })',
+                            '返回新数组 ' + ghz_arrText(ghz_big) + '，原数组仍是 ' + ghz_arrText(ghz_arr));
+                    break;
+
+                case 'forEach':
+                    var ghz_sum = 0;
+                    ghz_arr.forEach(function (item) {
+                        if (typeof item === 'number') {
+                            ghz_sum += item;
+                        }
+                    });
+                    ghz_log('var sum = 0; arr.forEach(function (v) { ... })',
+                            '数字元素求和 = ' + ghz_sum + '，forEach 本身返回 undefined');
+                    break;
+
+                case 'clear':
+                    ghz_arr.length = 0;
+                    ghz_log('arr.length = 0', '数组被清空，length = 0');
+                    break;
+
+                case 'reset':
+                    ghz_arr = [12, 5, 88, 3, 42];
+                    ghz_log('var arr = [12, 5, 88, 3, 42]', '已恢复初始数组');
+                    break;
+            }
+            ghz_renderArr();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var ghz_btns = document.querySelectorAll('.ghz_toolbar .ghz_btn');
+            for (var i = 0; i < ghz_btns.length; i++) {
+                ghz_btns[i].addEventListener('click', function () {
+                    ghz_doAction(this.getAttribute('data-act'));
+                });
+            }
+            document.getElementById('ghz_value').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    ghz_doAction('push');
+                }
+            });
+            ghz_renderArr();
+        });
+
+        /* ================= 方法演示卡片 ================= */
+        function ghz_demoPush() {
+            var a = [1, 2, 3];
+            var len = a.push(4, 5);
+            var popped = a.pop();
+            ghz_out('ghz_out_push', [
+                ghz_line('push', 'a.push(4, 5) 返回新长度 ' + len + '，a = ' + ghz_arrText(a)),
+                ghz_line('pop', 'a.pop() 返回 ' + popped + '，a = ' + ghz_arrText(a)),
+                ghz_line('要点', 'push 可一次加多个，pop 只能弹一个', 'gray')
+            ]);
+        }
+
+        function ghz_demoUnshift() {
+            var b = [1, 2, 3];
+            var len = b.unshift(0);
+            var shifted = b.shift();
+            ghz_out('ghz_out_unshift', [
+                ghz_line('unshift', 'b.unshift(0) 返回新长度 ' + len + '，b = ' + ghz_arrText(b)),
+                ghz_line('shift', 'b.shift() 返回 ' + shifted + '，b = ' + ghz_arrText(b)),
+                ghz_line('要点', '头部操作要移动所有元素，比 push / pop 慢', 'gray')
+            ]);
+        }
+
+        function ghz_demoSplice() {
+            var c = [10, 20, 30, 40, 50];
+            var removed = c.splice(1, 2, 'A', 'B', 'C');
+            var copy = c.slice(1, 4);
+            ghz_out('ghz_out_splice', [
+                ghz_line('splice', '从下标 1 删除 2 个 → 返回 ' + ghz_arrText(removed)),
+                ghz_line('原数组', 'c = ' + ghz_arrText(c) + '（被改了）', 'pink'),
+                ghz_line('slice', 'c.slice(1, 4) = ' + ghz_arrText(copy) + '，c 不变', 'green')
+            ]);
+        }
+
+        function ghz_demoConcat() {
+            var x = [1, 2];
+            var y = [3, 4];
+            var z = x.concat(y, 5, [6, 7]);
+            ghz_out('ghz_out_concat', [
+                ghz_line('concat', 'x.concat(y, 5, [6, 7]) = ' + ghz_arrText(z)),
+                ghz_line('join', 'z.join("-") = "' + z.join('-') + '"'),
+                ghz_line('不变', 'x = ' + ghz_arrText(x) + '，y = ' + ghz_arrText(y), 'green')
+            ]);
+        }
+
+        function ghz_demoFind() {
+            var f = ['苹果', '香蕉', '橙子', '西瓜'];
+            var target = f.find(function (item) {
+                return item.indexOf('瓜') > -1;
+            });
+            var targetIndex = f.findIndex(function (item) {
+                return item.indexOf('瓜') > -1;
+            });
+            ghz_out('ghz_out_find', [
+                ghz_line('indexOf', 'f.indexOf("橙子") = ' + f.indexOf('橙子') + '，f.indexOf("葡萄") = ' + f.indexOf('葡萄')),
+                ghz_line('includes', 'f.includes("香蕉") = ' + f.includes('香蕉')),
+                ghz_line('find', '含“瓜”的元素 = ' + target + '，下标 = ' + targetIndex, 'green')
+            ]);
+        }
+
+        function ghz_demoMapFilter() {
+            var n = [1, 2, 3, 4, 5, 6];
+            var evens = n.filter(function (v) {
+                return v % 2 === 0;
+            });
+            var doubled = n.map(function (v) {
+                return v * 2;
+            });
+            var labeled = n.map(function (v, i) {
+                return i + ':' + v;
+            });
+            ghz_out('ghz_out_mapfilter', [
+                ghz_line('filter', '偶数 = ' + ghz_arrText(evens)),
+                ghz_line('map', '每项 ×2 = ' + ghz_arrText(doubled)),
+                ghz_line('map', '带下标 = ' + ghz_arrText(labeled), 'green'),
+                ghz_line('原数组', 'n = ' + ghz_arrText(n) + ' 没变', 'gray')
+            ]);
+        }
+
+        function ghz_demoReduce() {
+            var n = [1, 2, 3, 4, 5];
+            var sum = n.reduce(function (total, v) {
+                return total + v;
+            }, 0);
+            var max = n.reduce(function (a, b) {
+                return a > b ? a : b;
+            });
+            var visited = [];
+            n.forEach(function (v, i) {
+                visited.push('[' + i + ']=' + v);
+            });
+            ghz_out('ghz_out_reduce', [
+                ghz_line('reduce', '求和（初始值 0）= ' + sum),
+                ghz_line('reduce', '最大值（无初始值，用首项）= ' + max),
+                ghz_line('forEach', visited.join('  '), 'purple'),
+                ghz_line('区别', 'reduce 有返回值，forEach 返回 undefined', 'gray')
+            ]);
+        }
+
+        function ghz_demoSort() {
+            var num = [10, 9, 100, 1];
+            var asString = num.slice().sort();
+            var asNumber = num.slice().sort(function (a, b) {
+                return a - b;
+            });
+            var rev = [1, 2, 3].reverse();
+            ghz_out('ghz_out_sort', [
+                ghz_line('sort()', '默认字符串排序 → ' + ghz_arrText(asString) + '（10 排在 9 前）', 'orange'),
+                ghz_line('sort(fn)', '数字升序 → ' + ghz_arrText(asNumber)),
+                ghz_line('reverse', '[1, 2, 3].reverse() = ' + ghz_arrText(rev)),
+                ghz_line('提示', 'sort / reverse 都会改动原数组', 'gray')
+            ]);
+        }
+
+        function ghz_demoOther() {
+            var nested = [1, [2, [3, [4]]]];
+            var flatArr = nested.flat(2);
+            var filled = new Array(5).fill(0);
+            var chars = Array.from('高浩哲');
+            ghz_out('ghz_out_other', [
+                ghz_line('flat(2)', ghz_arrText(nested) + ' → ' + ghz_arrText(flatArr)),
+                ghz_line('fill(0)', 'new Array(5).fill(0) = ' + ghz_arrText(filled)),
+                ghz_line('Array.from', 'Array.from("高浩哲") = ' + ghz_arrText(chars)),
+                ghz_line('isArray', 'Array.isArray([]) = ' + Array.isArray([]) + '，Array.isArray("abc") = ' + Array.isArray('abc'), 'green')
+            ]);
+        }
+
+        function ghz_runAllDemo() {
+            ghz_demoPush();
+            ghz_demoUnshift();
+            ghz_demoSplice();
+            ghz_demoConcat();
+            ghz_demoFind();
+            ghz_demoMapFilter();
+            ghz_demoReduce();
+            ghz_demoSort();
+            ghz_demoOther();
+        }
+
+        function ghz_clearAllDemo() {
+            var boxes = document.querySelectorAll('.ghz_out');
+            for (var i = 0; i < boxes.length; i++) {
+                boxes[i].innerHTML = '// 结果已清空，点击“运行”重新演示';
+            }
+        }
+    </script>
+</body>
+</html>

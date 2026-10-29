@@ -51,3 +51,15 @@ logged
 ## 2026-10-29 13:34:17 +08 | model: DeepSeek-V4.1-Flash
 
 提交项目
+
+## 2026-10-29 13:40:00 +08 | model: DeepSeek-V4.1-Flash
+
+完成16-1.html,展示javascript数组的主要方法，形象美观一些
+
+## 2026-10-29 13:44:46 +08 | model: DeepSeek-V4.1-Flash
+
+帮我完成16-2.html，展示javascript对象
+
+## 2026-10-29 13:49:39 +08 | model: DeepSeek-V4.1-Flash
+
+上传项目

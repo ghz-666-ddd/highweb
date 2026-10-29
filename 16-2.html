@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-29，功能：JavaScript 对象核心知识可视化演示 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-2 JavaScript 对象</title>
+    <style>
+        :root {
+            --ghz_bg-1: #f5f6ff;
+            --ghz_bg-2: #eefaf6;
+            --ghz_card: rgba(255, 255, 255, 0.92);
+            --ghz_primary: #3b4cf0;
+            --ghz_primary-deep: #1f2ab5;
+            --ghz_mint: #0e9f6e;
+            --ghz_mint-soft: #10b981;
+            --ghz_amber: #f59f00;
+            --ghz_rose: #e0348a;
+            --ghz_text: #1b2433;
+            --ghz_muted: #5f6b7d;
+            --ghz_border: rgba(59, 76, 240, 0.14);
+            --ghz_dark: #161d2e;
+            --ghz_shadow: 0 16px 40px rgba(38, 52, 130, 0.13);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_text);
+            background:
+                radial-gradient(circle at top left, rgba(59, 76, 240, 0.16), transparent 26%),
+                radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(245, 159, 0, 0.14), transparent 30%),
+                linear-gradient(135deg, var(--ghz_bg-1), var(--ghz_bg-2));
+            min-height: 100vh;
+            padding: 40px 0 60px;
+        }
+
+        .ghz_container {
+            width: min(1200px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .ghz_header {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1f2ab5 0%, #3b4cf0 46%, #0e9f6e 100%);
+            color: #fff;
+            border-radius: 26px;
+            padding: 36px 38px 34px;
+            box-shadow: var(--ghz_shadow);
+            margin-bottom: 28px;
+        }
+
+        .ghz_header::before,
+        .ghz_header::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .ghz_header::before {
+            width: 250px;
+            height: 250px;
+            top: -120px;
+            right: -60px;
+        }
+
+        .ghz_header::after {
+            width: 180px;
+            height: 180px;
+            left: -60px;
+            bottom: -100px;
+        }
+
+        .ghz_header h1 {
+            position: relative;
+            z-index: 1;
+            margin: 0 0 10px;
+            font-size: clamp(22px, 2.4vw, 32px);
+            letter-spacing: 2px;
+        }
+
+        .ghz_header p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.92);
+            max-width: 930px;
+        }
+
+        .ghz_header code {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 1px 7px;
+            border-radius: 6px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+        }
+
+        .ghz_chips-line {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .ghz_chips-line span {
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.26);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ---------- 通用面板 ---------- */
+        .ghz_panel {
+            background: var(--ghz_card);
+            border: 1px solid var(--ghz_border);
+            border-radius: 22px;
+            box-shadow: var(--ghz_shadow);
+            padding: 26px 28px 28px;
+            margin-bottom: 26px;
+        }
+
+        .ghz_panel-title {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .ghz_panel-title h2 {
+            margin: 0;
+            font-size: 21px;
+            color: var(--ghz_primary-deep);
+            letter-spacing: 1px;
+        }
+
+        .ghz_panel-title em {
+            font-style: normal;
+            font-size: 13px;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_panel-desc {
+            margin: 0 0 18px;
+            font-size: 13px;
+            line-height: 1.85;
+            color: var(--ghz_muted);
+        }
+
+        /* ---------- 对象实验室 ---------- */
+        .ghz_board {
+            border-radius: 18px;
+            border: 2px dashed rgba(59, 76, 240, 0.26);
+            background: linear-gradient(135deg, rgba(59, 76, 240, 0.06), rgba(16, 185, 129, 0.08));
+            padding: 16px 18px;
+            min-height: 150px;
+        }
+
+        .ghz_board-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(59, 76, 240, 0.18);
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_obj-name {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .ghz_obj-count {
+            padding: 2px 9px;
+            border-radius: 999px;
+            background: rgba(59, 76, 240, 0.12);
+            color: var(--ghz_primary-deep);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .ghz_prop {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 8px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid rgba(59, 76, 240, 0.12);
+            margin-bottom: 8px;
+            box-shadow: 0 6px 14px rgba(38, 52, 130, 0.06);
+            animation: ghz_in 0.34s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+        }
+
+        .ghz_prop:last-child { margin-bottom: 0; }
+
+        .ghz_prop-key {
+            flex: none;
+            display: inline-block;
+            min-width: 96px;
+            padding: 3px 10px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(59, 76, 240, 0.14), rgba(59, 76, 240, 0.06));
+            color: var(--ghz_primary-deep);
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .ghz_prop-key::after {
+            content: ":";
+            color: #8794a8;
+        }
+
+        .ghz_prop-val {
+            flex: 1;
+            min-width: 120px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13.5px;
+            color: #24384f;
+            overflow-wrap: anywhere;
+        }
+
+        .ghz_prop-type {
+            flex: none;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            background: #6b7c90;
+        }
+
+        .ghz_type-string  { background: #0e9f6e; }
+        .ghz_type-number  { background: #e08b00; }
+        .ghz_type-boolean { background: #3b4cf0; }
+        .ghz_type-array   { background: #e0348a; }
+        .ghz_type-object  { background: #7c3aed; }
+        .ghz_type-function{ background: #0f766e; }
+        .ghz_type-other   { background: #6b7c90; }
+
+        .ghz_prop-del {
+            flex: none;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+            line-height: 1;
+            color: #b42318;
+            background: rgba(224, 52, 82, 0.1);
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .ghz_prop-del:hover {
+            background: rgba(224, 52, 82, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .ghz_empty {
+            color: #9aa9ba;
+            font-size: 14px;
+            font-style: italic;
+            padding: 14px 2px;
+        }
+
+        @keyframes ghz_in {
+            from { opacity: 0; transform: translateY(10px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .ghz_board-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 14px 0 18px;
+            font-size: 13px;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_board-meta b {
+            color: var(--ghz_primary-deep);
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 14px;
+        }
+
+        #ghz_json {
+            word-break: break-all;
+            font-size: 12.5px;
+        }
+
+        .ghz_toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ghz_field {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid var(--ghz_border);
+        }
+
+        .ghz_field label {
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12px;
+            color: #8794a8;
+        }
+
+        .ghz_input {
+            width: 92px;
+            padding: 7px 4px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--ghz_text);
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .ghz_input-wide { width: 150px; }
+
+        .ghz_btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            color: #fff;
+            background: linear-gradient(135deg, var(--ghz_primary), var(--ghz_primary-deep));
+            box-shadow: 0 8px 16px rgba(31, 42, 181, 0.26);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .ghz_btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(31, 42, 181, 0.32);
+        }
+
+        .ghz_btn:active { transform: translateY(0) scale(0.98); }
+
+        .ghz_btn-ghost {
+            color: var(--ghz_primary-deep);
+            background: #fff;
+            border: 1px solid var(--ghz_border);
+            box-shadow: 0 6px 14px rgba(38, 52, 130, 0.08);
+        }
+
+        .ghz_btn-mint {
+            background: linear-gradient(135deg, var(--ghz_mint-soft), #0b7a56);
+            box-shadow: 0 8px 16px rgba(11, 122, 86, 0.26);
+        }
+
+        .ghz_btn-warm {
+            background: linear-gradient(135deg, #f59f00, #e8590c);
+            box-shadow: 0 8px 16px rgba(232, 89, 12, 0.26);
+        }
+
+        .ghz_console {
+            margin-top: 20px;
+            background: var(--ghz_dark);
+            border-radius: 16px;
+            padding: 14px 16px;
+            min-height: 118px;
+            max-height: 280px;
+            overflow-y: auto;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.78;
+            color: #d7e6f7;
+        }
+
+        .ghz_console-placeholder {
+            color: #8598ad;
+            font-style: italic;
+        }
+
+        .ghz_log-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            animation: ghz_fade 0.3s ease both;
+        }
+
+        .ghz_log-item:last-child { border-bottom: none; }
+
+        .ghz_log-code { color: #9be37a; }
+
+        .ghz_log-code::before {
+            content: "› ";
+            color: #5a7391;
+        }
+
+        .ghz_log-res {
+            color: #8fb4dd;
+            padding-left: 12px;
+        }
+
+        @keyframes ghz_fade {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- 知识卡片 ---------- */
+        .ghz_bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 0 0 20px;
+        }
+
+        .ghz_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 22px;
+        }
+
+        .ghz_card {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: var(--ghz_card);
+            border: 1px solid var(--ghz_border);
+            border-radius: 20px;
+            padding: 24px 22px 20px;
+            box-shadow: var(--ghz_shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .ghz_card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 46px rgba(38, 52, 130, 0.17);
+        }
+
+        .ghz_card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--ghz_primary), #6f7dff);
+        }
+
+        .ghz_card[data-tone="mint"]::before   { background: linear-gradient(90deg, var(--ghz_mint), #4ade80); }
+        .ghz_card[data-tone="amber"]::before  { background: linear-gradient(90deg, #f59f00, #ffc078); }
+        .ghz_card[data-tone="rose"]::before   { background: linear-gradient(90deg, var(--ghz_rose), #ff8fc0); }
+        .ghz_card[data-tone="violet"]::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+
+        .ghz_card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ghz_card-name {
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 16.5px;
+            font-weight: 700;
+            color: var(--ghz_text);
+        }
+
+        .ghz_badge {
+            flex: none;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            color: #8a4b00;
+            background: rgba(245, 159, 0, 0.16);
+            border: 1px solid rgba(245, 159, 0, 0.28);
+        }
+
+        .ghz_badge-new {
+            color: #0b6b3a;
+            background: rgba(14, 159, 110, 0.12);
+            border-color: rgba(14, 159, 110, 0.26);
+        }
+
+        .ghz_card p.ghz_desc {
+            margin: 0 0 12px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_code {
+            background: var(--ghz_dark);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12.5px;
+            line-height: 1.9;
+            color: #e6f1ff;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .ghz_kw  { color: #c79bff; }
+        .ghz_num { color: #ffbb6a; }
+        .ghz_str { color: #9be37a; }
+        .ghz_cmt { color: #708094; font-style: italic; }
+        .ghz_fn  { color: #7fd4ff; }
+
+        .ghz_out {
+            flex: 1;
+            min-height: 80px;
+            padding: 11px 13px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8fbff, #eef5ff);
+            border-left: 4px solid var(--ghz_primary);
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12.5px;
+            line-height: 1.9;
+            color: #2b3a4b;
+            overflow-wrap: anywhere;
+        }
+
+        .ghz_out .ghz_line { display: block; }
+
+        .ghz_tag {
+            display: inline-block;
+            margin-right: 6px;
+            padding: 1px 7px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--ghz_primary-deep);
+        }
+
+        .ghz_tag-green  { background: var(--ghz_mint); }
+        .ghz_tag-pink   { background: var(--ghz_rose); }
+        .ghz_tag-orange { background: #e08b00; }
+        .ghz_tag-gray   { background: #6b7c90; }
+        .ghz_tag-violet { background: #7c3aed; }
+
+        .ghz_card-foot {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .ghz_card-foot .ghz_btn {
+            flex: 1;
+            padding: 9px 14px;
+            font-size: 12.5px;
+        }
+
+        /* ---------- 原型链 ---------- */
+        .ghz_chain {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 6px;
+            padding: 20px 18px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(59, 76, 240, 0.06), rgba(124, 58, 237, 0.07));
+            border: 1px dashed rgba(59, 76, 240, 0.24);
+        }
+
+        .ghz_chain-node {
+            flex: 1 1 170px;
+            min-width: 160px;
+            padding: 14px 14px 12px;
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid rgba(59, 76, 240, 0.16);
+            box-shadow: 0 8px 18px rgba(38, 52, 130, 0.09);
+        }
+
+        .ghz_chain-node h3 {
+            margin: 0 0 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ghz_primary-deep);
+            font-family: "Consolas", "Courier New", monospace;
+        }
+
+        .ghz_chain-node ul {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 12px;
+            line-height: 1.85;
+            color: #4b5b6e;
+            font-family: "Consolas", "Courier New", monospace;
+        }
+
+        .ghz_chain-node[data-level="1"] h3 { color: var(--ghz_mint); }
+        .ghz_chain-node[data-level="3"] h3 { color: #7c3aed; }
+        .ghz_chain-node[data-level="4"] h3 { color: #98a6b8; }
+
+        .ghz_chain-arrow {
+            align-self: center;
+            flex: none;
+            font-size: 20px;
+            color: #97a4b8;
+        }
+
+        /* ---------- 速查表 ---------- */
+        .ghz_table-wrap {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--ghz_border);
+            background: #fff;
+        }
+
+        table.ghz_table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 680px;
+        }
+
+        table.ghz_table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, rgba(59, 76, 240, 0.12), rgba(14, 159, 110, 0.06));
+            color: var(--ghz_primary-deep);
+            font-size: 12.5px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        table.ghz_table td {
+            padding: 11px 14px;
+            border-top: 1px solid rgba(59, 76, 240, 0.08);
+            color: #33475b;
+            line-height: 1.7;
+        }
+
+        table.ghz_table tr:hover td { background: rgba(59, 76, 240, 0.035); }
+
+        table.ghz_table td:first-child {
+            font-family: "Consolas", "Courier New", monospace;
+            font-weight: 700;
+            color: var(--ghz_text);
+            white-space: nowrap;
+        }
+
+        .ghz_footer {
+            text-align: center;
+            font-size: 13px;
+            color: var(--ghz_muted);
+            padding-top: 6px;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 22px 0 40px; }
+            .ghz_container { width: min(100% - 20px, 1200px); }
+            .ghz_header { padding: 24px 20px; border-radius: 20px; }
+            .ghz_panel { padding: 20px 18px 22px; border-radius: 18px; }
+            .ghz_grid { grid-template-columns: 1fr; }
+            .ghz_chain-arrow { display: none; }
+            .ghz_input { width: 74px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_container">
+        <header class="ghz_header">
+            <h1>16-2 JavaScript 对象</h1>
+            <p>对象是 JavaScript 的“万能容器”：它把一组<strong>键值对</strong>打包在一起，描述一个有属性的东西——一个人、一个商品、一条配置。下面的“对象实验室”可以直接增删改属性并实时看到结构变化，再配合 9 张知识卡片、原型链图解和速查表，把 <code>创建 / 访问 / 遍历 / 解构 / 拷贝 / this / 原型 / class / JSON</code> 串成一条完整的线索。</p>
+            <div class="ghz_chips-line">
+                <span>字面量 / new Object</span>
+                <span>点访问 / 方括号</span>
+                <span>keys / values / entries</span>
+                <span>解构 + 展开</span>
+                <span>this 指向</span>
+                <span>prototype / class</span>
+                <span>JSON 与深拷贝</span>
+            </div>
+        </header>
+
+        <!-- ============ 对象实验室 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>对象实验室</h2>
+                <em>点按钮看属性怎么变，右侧小标签是值的类型</em>
+            </div>
+            <p class="ghz_panel-desc">下面这个对象就是一条“学生记录”。每一行是一个属性：左边是键（key），中间是值（value），右边是这个值的数据类型。点行尾的 × 可以直接删除该属性，也可以在下面输入键和值来新增或修改。</p>
+
+            <div class="ghz_board" id="ghz_board"></div>
+
+            <div class="ghz_board-meta">
+                <span>属性个数：<b id="ghz_count">5</b></span>
+                <span>原型：<b id="ghz_proto">Object.prototype</b></span>
+                <span>JSON：<b id="ghz_json">—</b></span>
+            </div>
+
+            <div class="ghz_toolbar">
+                <div class="ghz_field">
+                    <label>key</label>
+                    <input class="ghz_input" id="ghz_key" type="text" value="grade" placeholder="键名">
+                </div>
+                <div class="ghz_field">
+                    <label>value</label>
+                    <input class="ghz_input ghz_input-wide" id="ghz_value" type="text" value="大三" placeholder="值">
+                </div>
+                <button class="ghz_btn" data-act="set">obj[key] = value</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="get">读取 obj[key]</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="del">delete obj[key]</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="has">in 检查</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="keys">Object.keys</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="values">Object.values</button>
+                <button class="ghz_btn ghz_btn-ghost" data-act="entries">Object.entries</button>
+                <button class="ghz_btn ghz_btn-mint" data-act="forin">for...in 遍历</button>
+                <button class="ghz_btn ghz_btn-warm" data-act="reset">重置对象</button>
+            </div>
+
+            <div class="ghz_console" id="ghz_console">
+                <div class="ghz_console-placeholder">// 控制台：点上面的按钮，这里会显示执行了什么代码、拿到了什么结果</div>
+            </div>
+        </section>
+
+        <!-- ============ 知识卡片 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>九组必会知识点</h2>
+                <em>每张卡片都能单独运行</em>
+            </div>
+            <div class="ghz_bar">
+                <button class="ghz_btn" onclick="ghz_runAllDemo()">运行全部演示</button>
+                <button class="ghz_btn ghz_btn-ghost" onclick="ghz_clearAllDemo()">清空结果</button>
+            </div>
+
+            <div class="ghz_grid">
+                <!-- 1 创建与访问 -->
+                <article class="ghz_card" data-tone="blue">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">创建与访问</span>
+                        <span class="ghz_badge ghz_badge-new">基础</span>
+                    </div>
+                    <p class="ghz_desc">最常用的是<strong>字面量</strong>写法 <code>{}</code>。访问属性有两种：点号 <code>obj.name</code> 写法简洁，方括号 <code>obj["name"]</code> 可以用变量当键名。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> stu = {
+  name: <span class="ghz_str">"高浩哲"</span>,
+  age: <span class="ghz_num">20</span>,
+  <span class="ghz_str">"my school"</span>: <span class="ghz_str">"某大学"</span>   <span class="ghz_cmt">// 键名含空格</span>
+};
+stu.name;            <span class="ghz_cmt">// 点访问</span>
+stu[<span class="ghz_str">"age"</span>];         <span class="ghz_cmt">// 方括号</span>
+<span class="ghz_kw">var</span> k = <span class="ghz_str">"my school"</span>;
+stu[k];              <span class="ghz_cmt">// 键名是变量</span></div>
+                    <div class="ghz_out" id="ghz_out_access">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoAccess()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 2 增删改查 -->
+                <article class="ghz_card" data-tone="mint">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">增 / 删 / 改 / 判断</span>
+                        <span class="ghz_badge ghz_badge-new">常用</span>
+                    </div>
+                    <p class="ghz_desc">赋值就是新增或修改：键存在则改值，不存在则新建。<code>delete</code> 删除属性，<code>in</code> 和 <code>hasOwnProperty</code> 用来判断属性是否存在（前者会查原型链）。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> o = { name: <span class="ghz_str">"高浩哲"</span> };
+o.age = <span class="ghz_num">20</span>;              <span class="ghz_cmt">// 新增</span>
+o.age = <span class="ghz_num">21</span>;              <span class="ghz_cmt">// 修改</span>
+<span class="ghz_kw">delete</span> o.age;           <span class="ghz_cmt">// 删除，返回 true</span>
+<span class="ghz_str">"name"</span> <span class="ghz_kw">in</span> o;            <span class="ghz_cmt">// true</span>
+o.<span class="ghz_fn">hasOwnProperty</span>(<span class="ghz_str">"name"</span>); <span class="ghz_cmt">// true</span></div>
+                    <div class="ghz_out" id="ghz_out_crud">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoCrud()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 3 遍历 -->
+                <article class="ghz_card" data-tone="amber">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">遍历对象</span>
+                        <span class="ghz_badge ghz_badge-new">三个方法</span>
+                    </div>
+                    <p class="ghz_desc"><code>Object.keys</code> 拿键、<code>Object.values</code> 拿值、<code>Object.entries</code> 拿“键值对数组”，配合数组方法就能自由加工。<code>for...in</code> 也能遍历，但会带上原型链上的属性，通常要加 <code>hasOwnProperty</code> 过滤。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> score = { 语文: <span class="ghz_num">92</span>, 数学: <span class="ghz_num">88</span>, 英语: <span class="ghz_num">76</span> };
+<span class="ghz_kw">Object</span>.<span class="ghz_fn">keys</span>(score);
+<span class="ghz_kw">Object</span>.<span class="ghz_fn">values</span>(score);
+<span class="ghz_kw">Object</span>.<span class="ghz_fn">entries</span>(score);
+<span class="ghz_kw">Object</span>.<span class="ghz_fn">entries</span>(score).<span class="ghz_fn">map</span>(<span class="ghz_kw">function</span> (p) {
+  <span class="ghz_kw">return</span> p[<span class="ghz_num">0</span>] + <span class="ghz_str">"="</span> + p[<span class="ghz_num">1</span>];
+});</div>
+                    <div class="ghz_out" id="ghz_out_loop">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoLoop()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 4 解构 -->
+                <article class="ghz_card" data-tone="violet">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">解构赋值</span>
+                        <span class="ghz_badge">提取属性</span>
+                    </div>
+                    <p class="ghz_desc">解构能一次性把对象里的属性“拆”成变量，常用在函数参数上。可以<strong>重命名</strong>（<code>name: n</code>）、给<strong>默认值</strong>（<code>= "未知"</code>），也能拆到<strong>嵌套</strong>和数组里。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> stu = { name: <span class="ghz_str">"高浩哲"</span>, age: <span class="ghz_num">20</span>,
+            skills: [<span class="ghz_str">"HTML"</span>, <span class="ghz_str">"JS"</span>] };
+<span class="ghz_kw">var</span> { name, age } = stu;
+<span class="ghz_kw">var</span> { name: userName } = stu;      <span class="ghz_cmt">// 重命名</span>
+<span class="ghz_kw">var</span> { city = <span class="ghz_str">"未填写"</span> } = stu;    <span class="ghz_cmt">// 默认值</span>
+<span class="ghz_kw">var</span> { skills: [first] } = stu;     <span class="ghz_cmt">// 嵌套</span></div>
+                    <div class="ghz_out" id="ghz_out_destruct">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoDestruct()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 5 拷贝 -->
+                <article class="ghz_card" data-tone="rose">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">展开与浅拷贝</span>
+                        <span class="ghz_badge">易错点</span>
+                    </div>
+                    <p class="ghz_desc"><code>{ ...obj }</code> 和 <code>Object.assign</code> 都只做<strong>第一层</strong>复制：改基本类型的属性互不影响，但<strong>嵌套的对象 / 数组仍是同一个引用</strong>，改一处两边一起变。要彻底分开得用深拷贝。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> a = { name: <span class="ghz_str">"原"</span>, tags: [<span class="ghz_str">"JS"</span>] };
+<span class="ghz_kw">var</span> b = { ...a };          <span class="ghz_cmt">// 浅拷贝</span>
+b.name = <span class="ghz_str">"改"</span>;
+a.name;                    <span class="ghz_cmt">// 仍是"原"</span>
+b.tags.<span class="ghz_fn">push</span>(<span class="ghz_str">"CSS"</span>);
+a.tags;                    <span class="ghz_cmt">// 也被改了！</span></div>
+                    <div class="ghz_out" id="ghz_out_copy">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoCopy()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 6 方法 this -->
+                <article class="ghz_card" data-tone="mint">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">方法与 this</span>
+                        <span class="ghz_badge">重点</span>
+                    </div>
+                    <p class="ghz_desc">对象里的函数叫<strong>方法</strong>。普通方法里的 <code>this</code> 指向“调用它的那个对象”。<strong>箭头函数没有自己的 this</strong>，它只能借用外层的，所以不要在对象方法里随手写成箭头函数。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> counter = {
+  n: <span class="ghz_num">0</span>,
+  <span class="ghz_fn">inc</span>: <span class="ghz_kw">function</span> () {
+    <span class="ghz_kw">this</span>.n++;            <span class="ghz_cmt">// this = counter</span>
+    <span class="ghz_kw">return</span> <span class="ghz_kw">this</span>.n;
+  }
+};
+counter.<span class="ghz_fn">inc</span>();  <span class="ghz_cmt">// 1</span>
+counter.<span class="ghz_fn">inc</span>();  <span class="ghz_cmt">// 2</span></div>
+                    <div class="ghz_out" id="ghz_out_this">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoThis()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 7 构造函数与原型 -->
+                <article class="ghz_card" data-tone="blue">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">构造函数与原型</span>
+                        <span class="ghz_badge">原理</span>
+                    </div>
+                    <p class="ghz_desc">用 <code>new</code> 调用函数就能批量造对象：函数里的 <code>this</code> 指向新对象。把方法挂在 <code>prototype</code> 上，所有实例<strong>共用同一份函数</strong>，不浪费内存。</p>
+                    <div class="ghz_code"><span class="ghz_kw">function</span> <span class="ghz_fn">Person</span>(name, age) {
+  <span class="ghz_kw">this</span>.name = name;
+  <span class="ghz_kw">this</span>.age = age;
+}
+<span class="ghz_fn">Person</span>.prototype.<span class="ghz_fn">say</span> = <span class="ghz_kw">function</span> () {
+  <span class="ghz_kw">return</span> <span class="ghz_kw">this</span>.name + <span class="ghz_str">" 今年 "</span> + <span class="ghz_kw">this</span>.age;
+};
+<span class="ghz_kw">var</span> p = <span class="ghz_kw">new</span> <span class="ghz_fn">Person</span>(<span class="ghz_str">"高浩哲"</span>, <span class="ghz_num">20</span>);
+p <span class="ghz_kw">instanceof</span> <span class="ghz_fn">Person</span>;   <span class="ghz_cmt">// true</span></div>
+                    <div class="ghz_out" id="ghz_out_proto">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoProtoFn()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 8 class -->
+                <article class="ghz_card" data-tone="violet">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">class 类语法</span>
+                        <span class="ghz_badge ghz_badge-new">现代写法</span>
+                    </div>
+                    <p class="ghz_desc"><code>class</code> 只是构造函数 + 原型的语法糖，看起来更像其他语言。支持 <code>constructor</code>、<code>get / set</code> 存取器、<code>static</code> 静态方法，以及 <code>extends</code> + <code>super</code> 继承。</p>
+                    <div class="ghz_code"><span class="ghz_kw">class</span> <span class="ghz_fn">Student</span> {
+  <span class="ghz_fn">constructor</span>(name) { <span class="ghz_kw">this</span>.name = name; }
+  <span class="ghz_kw">get</span> <span class="ghz_fn">info</span>() { <span class="ghz_kw">return</span> <span class="ghz_str">"学生："</span> + <span class="ghz_kw">this</span>.name; }
+  <span class="ghz_kw">static</span> <span class="ghz_fn">create</span>(n) { <span class="ghz_kw">return</span> <span class="ghz_kw">new</span> <span class="ghz_fn">Student</span>(n); }
+}
+<span class="ghz_kw">class</span> <span class="ghz_fn">Monitor</span> <span class="ghz_kw">extends</span> <span class="ghz_fn">Student</span> {
+  <span class="ghz_fn">constructor</span>(name) { <span class="ghz_kw">super</span>(name); <span class="ghz_kw">this</span>.duty = <span class="ghz_str">"班长"</span>; }
+}</div>
+                    <div class="ghz_out" id="ghz_out_class">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoClass()">运行演示</button>
+                    </div>
+                </article>
+
+                <!-- 9 JSON 与深拷贝 -->
+                <article class="ghz_card" data-tone="amber">
+                    <div class="ghz_card-head">
+                        <span class="ghz_card-name">JSON 与深拷贝</span>
+                        <span class="ghz_badge">实战</span>
+                    </div>
+                    <p class="ghz_desc"><code>JSON.stringify</code> 把对象变成字符串（可存本地、可发网络），<code>JSON.parse</code> 再转回对象。经典深拷贝 <code>JSON.parse(JSON.stringify(obj))</code> 会丢掉函数和 undefined，现代直接用 <code>structuredClone</code> 更稳。</p>
+                    <div class="ghz_code"><span class="ghz_kw">var</span> o = { name: <span class="ghz_str">"高浩哲"</span>, tags: [<span class="ghz_str">"JS"</span>] };
+<span class="ghz_kw">var</span> str = <span class="ghz_kw">JSON</span>.<span class="ghz_fn">stringify</span>(o);
+<span class="ghz_kw">var</span> back = <span class="ghz_kw">JSON</span>.<span class="ghz_fn">parse</span>(str);
+back.tags.<span class="ghz_fn">push</span>(<span class="ghz_str">"CSS"</span>);
+o.tags;   <span class="ghz_cmt">// 不受影响，真的分开了</span>
+<span class="ghz_kw">Object</span>.<span class="ghz_fn">freeze</span>(o);   <span class="ghz_cmt">// 冻结，禁止改</span></div>
+                    <div class="ghz_out" id="ghz_out_json">// 点击运行查看结果</div>
+                    <div class="ghz_card-foot">
+                        <button class="ghz_btn" onclick="ghz_demoJson()">运行演示</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- ============ 原型链 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>原型链是怎么找属性的</h2>
+                <em>自己没有的，就顺着 __proto__ 往上找</em>
+            </div>
+            <p class="ghz_panel-desc">访问 <code>p.say()</code> 时，引擎先在 <code>p</code> 自己的属性里找，找不到就去 <code>Person.prototype</code>，再找不到就去 <code>Object.prototype</code>，一直到 <code>null</code> 才算真的没有。这条“层层往上找”的链子就叫原型链。</p>
+
+            <div class="ghz_chain">
+                <div class="ghz_chain-node" data-level="1">
+                    <h3>p（实例对象）</h3>
+                    <ul>
+                        <li>name: "高浩哲"</li>
+                        <li>age: 20</li>
+                        <li>__proto__ ↓</li>
+                    </ul>
+                </div>
+                <span class="ghz_chain-arrow">→</span>
+                <div class="ghz_chain-node" data-level="2">
+                    <h3>Person.prototype</h3>
+                    <ul>
+                        <li>say: function ()</li>
+                        <li>constructor: Person</li>
+                        <li>__proto__ ↓</li>
+                    </ul>
+                </div>
+                <span class="ghz_chain-arrow">→</span>
+                <div class="ghz_chain-node" data-level="3">
+                    <h3>Object.prototype</h3>
+                    <ul>
+                        <li>hasOwnProperty()</li>
+                        <li>toString()</li>
+                        <li>__proto__ ↓</li>
+                    </ul>
+                </div>
+                <span class="ghz_chain-arrow">→</span>
+                <div class="ghz_chain-node" data-level="4">
+                    <h3>null</h3>
+                    <ul>
+                        <li>链条终点</li>
+                        <li>再找不到就是 undefined</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ 速查表 ============ -->
+        <section class="ghz_panel">
+            <div class="ghz_panel-title">
+                <h2>对象操作速查表</h2>
+                <em>写作业、考试前扫一眼就够</em>
+            </div>
+            <div class="ghz_table-wrap">
+                <table class="ghz_table">
+                    <thead>
+                        <tr>
+                            <th>写法 / 方法</th>
+                            <th>作用</th>
+                            <th>返回值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>{ key: value }</td><td>对象字面量，创建对象最快的方式</td><td>新对象</td></tr>
+                        <tr><td>obj.key</td><td>点号访问属性，键名必须是合法标识符</td><td>属性值 / undefined</td></tr>
+                        <tr><td>obj["key"]</td><td>方括号访问，支持变量、空格、数字键名</td><td>属性值 / undefined</td></tr>
+                        <tr><td>obj.key = v</td><td>键存在就是修改，不存在就是新增</td><td>赋进去的值</td></tr>
+                        <tr><td>delete obj.key</td><td>删除自有属性（数组别用，用 splice）</td><td>true / false</td></tr>
+                        <tr><td>"key" in obj</td><td>判断属性是否存在，包括原型链上的</td><td>true / false</td></tr>
+                        <tr><td>obj.hasOwnProperty("key")</td><td>只判断对象自己的属性</td><td>true / false</td></tr>
+                        <tr><td>Object.keys(obj)</td><td>取出所有可枚举的键</td><td>字符串数组</td></tr>
+                        <tr><td>Object.values(obj)</td><td>取出所有可枚举的值</td><td>数组</td></tr>
+                        <tr><td>Object.entries(obj)</td><td>取出 [键, 值] 组成的二维数组</td><td>数组</td></tr>
+                        <tr><td>Object.assign(t, s…)</td><td>把源对象属性合并到目标对象（浅拷贝）</td><td>目标对象</td></tr>
+                        <tr><td>{ ...obj }</td><td>展开语法做浅拷贝 / 合并</td><td>新对象</td></tr>
+                        <tr><td>Object.freeze(obj)</td><td>冻结对象，属性不可增删改</td><td>被冻结的对象</td></tr>
+                        <tr><td>Object.create(p)</td><td>以 p 为原型创建新对象</td><td>新对象</td></tr>
+                        <tr><td>new Fn(…)</td><td>调用构造函数生成实例</td><td>实例对象</td></tr>
+                        <tr><td>obj instanceof Fn</td><td>判断实例是否来自某个构造函数</td><td>true / false</td></tr>
+                        <tr><td>JSON.stringify(obj)</td><td>对象 → JSON 字符串（会丢函数、undefined）</td><td>字符串</td></tr>
+                        <tr><td>JSON.parse(str)</td><td>JSON 字符串 → 对象</td><td>对象</td></tr>
+                        <tr><td>structuredClone(obj)</td><td>原生深拷贝，支持嵌套和日期</td><td>全新的对象</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="ghz_footer">高浩哲 · 《高级网页设计》课堂实践 · 16-2 · JavaScript 对象</footer>
+    </div>
+
+    <script>
+        /* ================= 通用工具 ================= */
+        function ghz_esc(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function ghz_line(tag, text, tone) {
+            var cls = 'ghz_tag' + (tone ? ' ghz_tag-' + tone : '');
+            return '<span class="ghz_line"><span class="' + cls + '">' + tag + '</span>' + ghz_esc(text) + '</span>';
+        }
+
+        function ghz_out(id, lines) {
+            document.getElementById(id).innerHTML = lines.join('');
+        }
+
+        /* 把任意值转成适合显示的字符串 */
+        function ghz_show(v) {
+            if (typeof v === 'string') {
+                return '"' + v + '"';
+            }
+            if (typeof v === 'function') {
+                return 'function () { … }';
+            }
+            if (v === undefined) {
+                return 'undefined';
+            }
+            if (v === null) {
+                return 'null';
+            }
+            if (typeof v === 'object') {
+                return JSON.stringify(v);
+            }
+            return String(v);
+        }
+
+        function ghz_typeOf(v) {
+            if (Array.isArray(v)) {
+                return 'array';
+            }
+            return typeof v;
+        }
+
+        /* ================= 对象实验室 ================= */
+        var ghz_obj = {
+            name: '高浩哲',
+            age: 20,
+            major: '数字媒体技术',
+            city: '杭州',
+            skills: ['HTML', 'CSS', 'JavaScript']
+        };
+
+        function ghz_renderObj() {
+            var board = document.getElementById('ghz_board');
+            var keys = Object.keys(ghz_obj);
+            var html = '<div class="ghz_board-head"><span class="ghz_obj-name">var stu = {</span>' +
+                       '<span class="ghz_obj-count">' + keys.length + ' 个属性</span>' +
+                       '<span class="ghz_obj-count">' + (keys.length ? '按插入顺序排列' : '空对象') + '</span></div>';
+
+            if (keys.length === 0) {
+                html += '<div class="ghz_empty">// 对象空了：用上面的输入框 + 按钮加几个属性回来</div>';
+            } else {
+                for (var i = 0; i < keys.length; i++) {
+                    var k = keys[i];
+                    var v = ghz_obj[k];
+                    var t = ghz_typeOf(v);
+                    html += '<div class="ghz_prop" style="animation-delay:' + (i * 0.04).toFixed(2) + 's">' +
+                                '<span class="ghz_prop-key">' + ghz_esc(k) + '</span>' +
+                                '<span class="ghz_prop-val">' + ghz_esc(ghz_show(v)) + '</span>' +
+                                '<span class="ghz_prop-type ghz_type-' + t + '">' + t + '</span>' +
+                                '<button class="ghz_prop-del" data-key="' + ghz_esc(k) + '" title="删除该属性">×</button>' +
+                            '</div>';
+                }
+            }
+
+            board.innerHTML = html;
+            document.getElementById('ghz_count').textContent = keys.length;
+            document.getElementById('ghz_proto').textContent = Object.getPrototypeOf(ghz_obj) === Object.prototype ?
+                'Object.prototype' : '自定义原型';
+            document.getElementById('ghz_json').textContent = JSON.stringify(ghz_obj);
+        }
+
+        function ghz_log(code, result) {
+            var box = document.getElementById('ghz_console');
+            var holder = box.querySelector('.ghz_console-placeholder');
+            if (holder) {
+                box.removeChild(holder);
+            }
+            var item = document.createElement('div');
+            item.className = 'ghz_log-item';
+            item.innerHTML = '<div class="ghz_log-code">' + ghz_esc(code) + '</div>' +
+                             '<div class="ghz_log-res">→ ' + ghz_esc(result) + '</div>';
+            box.insertBefore(item, box.firstChild);
+            while (box.children.length > 8) {
+                box.removeChild(box.lastChild);
+            }
+        }
+
+        function ghz_readKey() {
+            var k = document.getElementById('ghz_key').value.trim();
+            return k === '' ? 'grade' : k;
+        }
+
+        /* 输入框里的值尽量转成数字，转不了就当字符串（"true"/"false" 转布尔） */
+        function ghz_readValue() {
+            var raw = document.getElementById('ghz_value').value.trim();
+            if (raw === '') {
+                return '';
+            }
+            if (raw === 'true') {
+                return true;
+            }
+            if (raw === 'false') {
+                return false;
+            }
+            var num = Number(raw);
+            return isNaN(num) ? raw : num;
+        }
+
+        function ghz_doAction(act) {
+            var k = ghz_readKey();
+            var v = ghz_readValue();
+            var existed = Object.prototype.hasOwnProperty.call(ghz_obj, k);
+
+            switch (act) {
+                case 'set':
+                    ghz_obj[k] = v;
+                    ghz_log('stu["' + k + '"] = ' + ghz_show(v),
+                            (existed ? '属性已存在 → 修改为 ' : '属性不存在 → 新增 ') + ghz_show(v) +
+                            '，现在共 ' + Object.keys(ghz_obj).length + ' 个属性');
+                    break;
+
+                case 'get':
+                    ghz_log('stu["' + k + '"]', existed ? '返回 ' + ghz_show(ghz_obj[k]) :
+                            '返回 undefined（这个键不存在，注意不是报错）');
+                    break;
+
+                case 'del':
+                    if (existed) {
+                        delete ghz_obj[k];
+                        ghz_log('delete stu["' + k + '"]', '删除成功，剩下的键：' + Object.keys(ghz_obj).join(', '));
+                    } else {
+                        ghz_log('delete stu["' + k + '"]', '这个键本来就不存在，delete 依旧返回 true（老坑）');
+                    }
+                    break;
+
+                case 'has':
+                    ghz_log('"' + k + '" in stu  /  stu.hasOwnProperty("' + k + '")',
+                            'in → ' + (k in ghz_obj) + '，hasOwnProperty → ' + existed);
+                    break;
+
+                case 'keys':
+                    ghz_log('Object.keys(stu)', '[' + Object.keys(ghz_obj).join(', ') + ']');
+                    break;
+
+                case 'values':
+                    ghz_log('Object.values(stu)', JSON.stringify(Object.values(ghz_obj)));
+                    break;
+
+                case 'entries':
+                    ghz_log('Object.entries(stu)', JSON.stringify(Object.entries(ghz_obj)));
+                    break;
+
+                case 'forin':
+                    var parts = [];
+                    for (var prop in ghz_obj) {
+                        if (Object.prototype.hasOwnProperty.call(ghz_obj, prop)) {
+                            parts.push(prop + '=' + ghz_show(ghz_obj[prop]));
+                        }
+                    }
+                    ghz_log('for (var p in stu) { ... }',
+                            parts.length ? parts.join('  ') + '（已用 hasOwnProperty 过滤掉原型属性）' : '对象为空，循环一次都没进');
+                    break;
+
+                case 'reset':
+                    ghz_obj = {
+                        name: '高浩哲',
+                        age: 20,
+                        major: '数字媒体技术',
+                        city: '杭州',
+                        skills: ['HTML', 'CSS', 'JavaScript']
+                    };
+                    ghz_log('var stu = { name, age, major, city, skills }', '已恢复初始的 5 个属性');
+                    break;
+            }
+            ghz_renderObj();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var btns = document.querySelectorAll('.ghz_toolbar .ghz_btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].addEventListener('click', function () {
+                    ghz_doAction(this.getAttribute('data-act'));
+                });
+            }
+
+            /* 事件委托：删除行尾小 × */
+            document.getElementById('ghz_board').addEventListener('click', function (e) {
+                var target = e.target;
+                if (target.className === 'ghz_prop-del') {
+                    var key = target.getAttribute('data-key');
+                    delete ghz_obj[key];
+                    ghz_log('delete stu["' + key + '"]', '已删除该属性，剩下 ' + Object.keys(ghz_obj).length + ' 个');
+                    ghz_renderObj();
+                }
+            });
+
+            ghz_renderObj();
+        });
+
+        /* ================= 卡片演示 ================= */
+        function ghz_demoAccess() {
+            var stu = {
+                name: '高浩哲',
+                age: 20,
+                'my school': '某大学'
+            };
+            var k = 'my school';
+            ghz_out('ghz_out_access', [
+                ghz_line('点访问', 'stu.name = ' + ghz_show(stu.name)),
+                ghz_line('方括号', 'stu["age"] = ' + ghz_show(stu['age'])),
+                ghz_line('变量键', 'var k = "my school"; stu[k] = ' + ghz_show(stu[k])),
+                ghz_line('坑', 'stu.my school 会报语法错误，含空格 / 短横线的键只能用方括号', 'gray')
+            ]);
+        }
+
+        function ghz_demoCrud() {
+            var o = { name: '高浩哲' };
+            o.age = 20;
+            var afterAdd = JSON.stringify(o);
+            o.age = 21;
+            var afterEdit = JSON.stringify(o);
+            delete o.age;
+            ghz_out('ghz_out_crud', [
+                ghz_line('新增', 'o.age = 20 → ' + afterAdd),
+                ghz_line('修改', 'o.age = 21 → ' + afterEdit),
+                ghz_line('删除', 'delete o.age → ' + JSON.stringify(o)),
+                ghz_line('判断', '"name" in o = ' + ('name' in o) + '，o.hasOwnProperty("age") = ' + o.hasOwnProperty('age'), 'green'),
+                ghz_line('坑', 'delete 删不掉原型上的属性；数组删元素请用 splice，别用 delete', 'gray')
+            ]);
+        }
+
+        function ghz_demoLoop() {
+            var score = { 语文: 92, 数学: 88, 英语: 76 };
+            var entries = Object.entries(score);
+            var pairs = entries.map(function (p) {
+                return p[0] + '=' + p[1];
+            });
+            var total = Object.values(score).reduce(function (sum, v) {
+                return sum + v;
+            }, 0);
+            ghz_out('ghz_out_loop', [
+                ghz_line('keys', Object.keys(score).join(' / ')),
+                ghz_line('values', Object.values(score).join(' / ')),
+                ghz_line('entries', '共 ' + entries.length + ' 组，第一组是 ' + JSON.stringify(entries[0])),
+                ghz_line('加工', pairs.join('，') + '；总分 ' + total, 'green'),
+                ghz_line('提示', 'entries 常配 map / filter / reduce 一起用', 'gray')
+            ]);
+        }
+
+        function ghz_demoDestruct() {
+            var stu = { name: '高浩哲', age: 20, skills: ['HTML', 'JS'] };
+            var name = stu.name;
+            var age = stu.age;
+            var userName = stu.name;
+            var city = stu.city === undefined ? '未填写' : stu.city;
+            var first = stu.skills[0];
+
+            /* 函数参数解构：一次取需要的几个字段 */
+            function ghz_intro(opts) {
+                return opts.name + '（' + opts.age + ' 岁）';
+            }
+            ghz_out('ghz_out_destruct', [
+                ghz_line('基础', 'var { name, age } = stu → ' + name + ' / ' + age),
+                ghz_line('重命名', 'var { name: userName } = stu → userName = ' + userName),
+                ghz_line('默认值', 'var { city = "未填写" } = stu → ' + city, 'green'),
+                ghz_line('嵌套', 'var { skills: [first] } = stu → ' + first),
+                ghz_line('参数', 'ghz_intro(stu) → ' + ghz_intro(stu), 'violet')
+            ]);
+        }
+
+        function ghz_demoCopy() {
+            var a = { name: '原', tags: ['JS'], detail: { city: '杭州' } };
+            var b = Object.assign ? Object.assign({}, a) : { name: a.name, tags: a.tags, detail: a.detail };
+            b.name = '改';
+            b.tags.push('CSS');
+            b.detail.city = '上海';
+
+            var deep = JSON.parse(JSON.stringify(a));
+            deep.detail.city = '北京';
+
+            ghz_out('ghz_out_copy', [
+                ghz_line('浅拷贝', 'b.name 改成 "改" 后，a.name 仍是 ' + ghz_show(a.name), 'green'),
+                ghz_line('嵌套坑', 'b.tags.push("CSS") 后 a.tags = ' + JSON.stringify(a.tags) + '，跟着变了', 'pink'),
+                ghz_line('嵌套坑', 'b.detail.city 改成上海后 a.detail.city = ' + ghz_show(a.detail.city), 'pink'),
+                ghz_line('深拷贝', 'JSON 方式复制出的对象改 city，原对象仍是 ' + ghz_show(a.detail.city), 'green'),
+                ghz_line('结论', '浅拷贝只复制第一层，嵌套对象共用同一个引用', 'gray')
+            ]);
+        }
+
+        function ghz_demoThis() {
+            var counter = {
+                n: 0,
+                inc: function () {
+                    this.n++;
+                    return this.n;
+                }
+            };
+            var first = counter.inc();
+            var second = counter.inc();
+
+            /* 普通嵌套函数 this 会丢，箭头函数能继承外层的 this */
+            var outer = {
+                n: 7,
+                normal: function () {
+                    var inner = function () {
+                        return typeof this.n;
+                    };
+                    return inner();
+                },
+                arrow: function () {
+                    var inner = () => this.n;
+                    return inner();
+                }
+            };
+
+            ghz_out('ghz_out_this', [
+                ghz_line('第 1 次', 'counter.inc() → ' + first),
+                ghz_line('第 2 次', 'counter.inc() → ' + second + '，this.n 一直在累加'),
+                ghz_line('嵌套函数', 'outer.normal() 里的 inner() 返回 ' + outer.normal() + '（this 丢了）', 'pink'),
+                ghz_line('箭头函数', 'outer.arrow() 里的 inner() 返回 ' + outer.arrow() + '（继承了外层 this）', 'green'),
+                ghz_line('结论', '谁调用方法，this 就指向谁；箭头函数没有自己的 this，只能用外层的', 'violet'),
+                ghz_line('提示', '对象方法用 function 写，回调里需要 this 时再用箭头函数', 'gray')
+            ]);
+        }
+
+        function ghz_demoProtoFn() {
+            function Person(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            Person.prototype.say = function () {
+                return this.name + ' 今年 ' + this.age + ' 岁';
+            };
+
+            var p1 = new Person('高浩哲', 20);
+            var p2 = new Person('同学 A', 19);
+
+            ghz_out('ghz_out_proto', [
+                ghz_line('实例 1', 'p1.say() → ' + p1.say()),
+                ghz_line('实例 2', 'p2.say() → ' + p2.say()),
+                ghz_line('共享', 'p1.say === p2.say → ' + (p1.say === p2.say) + '（同一个函数，省内存）', 'green'),
+                ghz_line('判断', 'p1 instanceof Person → ' + (p1 instanceof Person)),
+                ghz_line('new 的四步', '建空对象 → this 指向它 → 执行函数体 → 返回这个对象', 'gray')
+            ]);
+        }
+
+        function ghz_demoClass() {
+            class Student {
+                constructor(name) {
+                    this.name = name;
+                }
+                get info() {
+                    return '学生：' + this.name;
+                }
+                set info(v) {
+                    this.name = v;
+                }
+                static create(n) {
+                    return new Student(n);
+                }
+            }
+
+            class Monitor extends Student {
+                constructor(name) {
+                    super(name);
+                    this.duty = '班长';
+                }
+                get info() {
+                    return super.info + '（' + this.duty + '）';
+                }
+            }
+
+            var s = Student.create('高浩哲');
+            var m = new Monitor('同学 B');
+
+            ghz_out('ghz_out_class', [
+                ghz_line('static', 'Student.create("高浩哲") → ' + s.name),
+                ghz_line('getter', 's.info → ' + s.info),
+                ghz_line('继承', 'm.info → ' + m.info, 'violet'),
+                ghz_line('实例判断', 'm instanceof Monitor = ' + (m instanceof Monitor) +
+                        '，m instanceof Student = ' + (m instanceof Student)),
+                ghz_line('本质', 'class 就是构造函数 + 原型的语法糖', 'gray')
+            ]);
+        }
+
+        function ghz_demoJson() {
+            var o = { name: '高浩哲', age: 20, tags: ['JS'], say: function () {}, empty: undefined };
+            var str = JSON.stringify(o);
+            var back = JSON.parse(str);
+            back.tags.push('CSS');
+
+            var frozen = Object.freeze({ v: 1 });
+            frozen.v = 100;
+
+            ghz_out('ghz_out_json', [
+                ghz_line('stringify', str),
+                ghz_line('注意', '函数 say 和 undefined 的 empty 在转换时被丢掉了', 'pink'),
+                ghz_line('parse', 'JSON.parse 后 tags 被改成 ' + JSON.stringify(back.tags) + '，原对象 tags = ' + JSON.stringify(o.tags), 'green'),
+                ghz_line('freeze', 'Object.freeze 后改 v 无效，依然是 ' + frozen.v + '，isFrozen = ' + Object.isFrozen(frozen)),
+                ghz_line('深拷贝', '现代写法：structuredClone(obj) / JSON.parse(JSON.stringify(obj))', 'gray')
+            ]);
+        }
+
+        function ghz_runAllDemo() {
+            ghz_demoAccess();
+            ghz_demoCrud();
+            ghz_demoLoop();
+            ghz_demoDestruct();
+            ghz_demoCopy();
+            ghz_demoThis();
+            ghz_demoProtoFn();
+            ghz_demoClass();
+            ghz_demoJson();
+        }
+
+        function ghz_clearAllDemo() {
+            var boxes = document.querySelectorAll('.ghz_out');
+            for (var i = 0; i < boxes.length; i++) {
+                boxes[i].innerHTML = '// 结果已清空，点击“运行演示”重新查看';
+            }
+        }
+    </script>
+</body>
+</html>
