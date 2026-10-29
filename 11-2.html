@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：CSS3 3D 动画七种效果 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -33,13 +34,13 @@
             min-height: 100vh;
         }
 
-        .gaohaozhe_container {
+        .ghz_container {
             width: min(1180px, calc(100% - 32px));
             margin: 0 auto;
             padding: 44px 0 60px;
         }
 
-        .gaohaozhe_header {
+        .ghz_header {
             background: linear-gradient(135deg, rgba(47, 111, 237, 0.94), rgba(86, 156, 255, 0.9));
             color: #fff;
             border-radius: 24px;
@@ -48,24 +49,24 @@
             margin-bottom: 30px;
         }
 
-        .gaohaozhe_header h1 {
+        .ghz_header h1 {
             margin: 0 0 8px;
             font-size: 28px;
         }
 
-        .gaohaozhe_header p {
+        .ghz_header p {
             margin: 0;
             opacity: 0.92;
             font-size: 15px;
         }
 
-        .gaohaozhe_grid {
+        .ghz_grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 24px;
         }
 
-        .gaohaozhe_card {
+        .ghz_card {
             background: var(--lvmohan-card);
             border: 1px solid var(--lvmohan-border);
             border-radius: 20px;
@@ -73,19 +74,19 @@
             box-shadow: var(--lvmohan-shadow);
         }
 
-        .gaohaozhe_card h2 {
+        .ghz_card h2 {
             margin: 0 0 4px;
             font-size: 19px;
             color: var(--lvmohan-primary-deep);
         }
 
-        .gaohaozhe_card p {
+        .ghz_card p {
             margin: 0 0 12px;
             font-size: 13px;
             color: var(--lvmohan-muted);
         }
 
-        .gaohaozhe_stage {
+        .ghz_stage {
             height: 240px;
             border-radius: 14px;
             background:
@@ -98,7 +99,7 @@
             overflow: hidden;
         }
 
-        .gaohaozhe_hint {
+        .ghz_hint {
             font-size: 12px;
             color: var(--lvmohan-muted);
             text-align: center;
@@ -106,21 +107,21 @@
         }
 
         /* ========== 动画一：旋转立方体 ========== */
-        .gaohaozhe_cube-scene {
+        .ghz_cube-scene {
             perspective: 900px;
             width: 160px;
             height: 160px;
         }
 
-        .gaohaozhe_cube {
+        .ghz_cube {
             position: relative;
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
-            animation: gaohaozhe_cube-rotate 9s linear infinite;
+            animation: ghz_cube-rotate 9s linear infinite;
         }
 
-        .gaohaozhe_cube-face {
+        .ghz_cube-face {
             position: absolute;
             width: 120px;
             height: 120px;
@@ -138,26 +139,26 @@
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
         }
 
-        .gaohaozhe_cube-face--front  { transform: translateZ(60px); }
-        .gaohaozhe_cube-face--back   { transform: rotateY(180deg) translateZ(60px); background: rgba(23, 71, 185, 0.78); }
-        .gaohaozhe_cube-face--right  { transform: rotateY(90deg) translateZ(60px); background: rgba(86, 156, 255, 0.78); }
-        .gaohaozhe_cube-face--left   { transform: rotateY(-90deg) translateZ(60px); background: rgba(86, 156, 255, 0.78); }
-        .gaohaozhe_cube-face--top    { transform: rotateX(90deg) translateZ(60px); background: rgba(255, 183, 3, 0.8); }
-        .gaohaozhe_cube-face--bottom { transform: rotateX(-90deg) translateZ(60px); background: rgba(255, 183, 3, 0.8); }
+        .ghz_cube-face--front  { transform: translateZ(60px); }
+        .ghz_cube-face--back   { transform: rotateY(180deg) translateZ(60px); background: rgba(23, 71, 185, 0.78); }
+        .ghz_cube-face--right  { transform: rotateY(90deg) translateZ(60px); background: rgba(86, 156, 255, 0.78); }
+        .ghz_cube-face--left   { transform: rotateY(-90deg) translateZ(60px); background: rgba(86, 156, 255, 0.78); }
+        .ghz_cube-face--top    { transform: rotateX(90deg) translateZ(60px); background: rgba(255, 183, 3, 0.8); }
+        .ghz_cube-face--bottom { transform: rotateX(-90deg) translateZ(60px); background: rgba(255, 183, 3, 0.8); }
 
-        @keyframes gaohaozhe_cube-rotate {
+        @keyframes ghz_cube-rotate {
             from { transform: rotateX(0deg) rotateY(0deg); }
             to   { transform: rotateX(360deg) rotateY(360deg); }
         }
 
         /* ========== 动画二：翻转卡片 ========== */
-        .gaohaozhe_flip-scene {
+        .ghz_flip-scene {
             perspective: 900px;
             width: 220px;
             height: 150px;
         }
 
-        .gaohaozhe_flip-card {
+        .ghz_flip-card {
             position: relative;
             width: 100%;
             height: 100%;
@@ -165,11 +166,11 @@
             transition: transform 0.9s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
 
-        .gaohaozhe_flip-scene:hover .gaohaozhe_flip-card {
+        .ghz_flip-scene:hover .ghz_flip-card {
             transform: rotateY(180deg);
         }
 
-        .gaohaozhe_flip-face {
+        .ghz_flip-face {
             position: absolute;
             inset: 0;
             backface-visibility: hidden;
@@ -183,24 +184,24 @@
             box-shadow: 0 12px 26px rgba(32, 67, 140, 0.28);
         }
 
-        .gaohaozhe_flip-face--front {
+        .ghz_flip-face--front {
             background: linear-gradient(135deg, var(--lvmohan-primary), var(--lvmohan-primary-deep));
             font-size: 17px;
         }
 
-        .gaohaozhe_flip-face--back {
+        .ghz_flip-face--back {
             transform: rotateY(180deg);
             background: linear-gradient(135deg, #ffb703, #f48c06);
             font-size: 15px;
         }
 
-        .gaohaozhe_flip-face small {
+        .ghz_flip-face small {
             font-size: 12px;
             opacity: 0.9;
         }
 
         /* ========== 动画三：环形旋转木马 ========== */
-        .gaohaozhe_carousel-scene {
+        .ghz_carousel-scene {
             perspective: 1000px;
             width: 100%;
             height: 100%;
@@ -209,19 +210,19 @@
             justify-content: center;
         }
 
-        .gaohaozhe_carousel-ring {
+        .ghz_carousel-ring {
             position: relative;
             width: 150px;
             height: 150px;
             transform-style: preserve-3d;
-            animation: gaohaozhe_ring-spin 16s linear infinite;
+            animation: ghz_ring-spin 16s linear infinite;
         }
 
-        .gaohaozhe_carousel-scene:hover .gaohaozhe_carousel-ring {
+        .ghz_carousel-scene:hover .ghz_carousel-ring {
             animation-play-state: paused;
         }
 
-        .gaohaozhe_carousel-item {
+        .ghz_carousel-item {
             position: absolute;
             inset: 0;
             display: flex;
@@ -236,20 +237,20 @@
             background: linear-gradient(135deg, rgba(47, 111, 237, 0.88), rgba(86, 156, 255, 0.78));
         }
 
-        .gaohaozhe_carousel-item:nth-child(1) { transform: rotateY(0deg) translateZ(210px); }
-        .gaohaozhe_carousel-item:nth-child(2) { transform: rotateY(60deg) translateZ(210px); background: linear-gradient(135deg, #e63946, #d62828); }
-        .gaohaozhe_carousel-item:nth-child(3) { transform: rotateY(120deg) translateZ(210px); background: linear-gradient(135deg, #2a9d8f, #21867a); }
-        .gaohaozhe_carousel-item:nth-child(4) { transform: rotateY(180deg) translateZ(210px); background: linear-gradient(135deg, #ffb703, #f48c06); }
-        .gaohaozhe_carousel-item:nth-child(5) { transform: rotateY(240deg) translateZ(210px); background: linear-gradient(135deg, #9b5de5, #7b2cbf); }
-        .gaohaozhe_carousel-item:nth-child(6) { transform: rotateY(300deg) translateZ(210px); background: linear-gradient(135deg, #118ab2, #073b4c); }
+        .ghz_carousel-item:nth-child(1) { transform: rotateY(0deg) translateZ(210px); }
+        .ghz_carousel-item:nth-child(2) { transform: rotateY(60deg) translateZ(210px); background: linear-gradient(135deg, #e63946, #d62828); }
+        .ghz_carousel-item:nth-child(3) { transform: rotateY(120deg) translateZ(210px); background: linear-gradient(135deg, #2a9d8f, #21867a); }
+        .ghz_carousel-item:nth-child(4) { transform: rotateY(180deg) translateZ(210px); background: linear-gradient(135deg, #ffb703, #f48c06); }
+        .ghz_carousel-item:nth-child(5) { transform: rotateY(240deg) translateZ(210px); background: linear-gradient(135deg, #9b5de5, #7b2cbf); }
+        .ghz_carousel-item:nth-child(6) { transform: rotateY(300deg) translateZ(210px); background: linear-gradient(135deg, #118ab2, #073b4c); }
 
-        @keyframes gaohaozhe_ring-spin {
+        @keyframes ghz_ring-spin {
             from { transform: rotateY(0deg); }
             to   { transform: rotateY(360deg); }
         }
 
         /* ========== 动画四：旋转圆柱体 ========== */
-        .gaohaozhe_cylinder-scene {
+        .ghz_cylinder-scene {
             perspective: 1000px;
             width: 100%;
             height: 100%;
@@ -258,15 +259,15 @@
             justify-content: center;
         }
 
-        .gaohaozhe_cylinder {
+        .ghz_cylinder {
             position: relative;
             width: 160px;
             height: 170px;
             transform-style: preserve-3d;
-            animation: gaohaozhe_cylinder-spin 11s linear infinite;
+            animation: ghz_cylinder-spin 11s linear infinite;
         }
 
-        .gaohaozhe_cylinder-side {
+        .ghz_cylinder-side {
             position: absolute;
             width: 72px;
             height: 170px;
@@ -276,18 +277,18 @@
             border: 1px solid rgba(255, 255, 255, 0.65);
         }
 
-        .gaohaozhe_cylinder-side:nth-child(1)  { transform: rotateY(0deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(2)  { transform: rotateY(36deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(3)  { transform: rotateY(72deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(4)  { transform: rotateY(108deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(5)  { transform: rotateY(144deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(6)  { transform: rotateY(180deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(7)  { transform: rotateY(216deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(8)  { transform: rotateY(252deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(9)  { transform: rotateY(288deg) translateZ(110px); }
-        .gaohaozhe_cylinder-side:nth-child(10) { transform: rotateY(324deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(1)  { transform: rotateY(0deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(2)  { transform: rotateY(36deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(3)  { transform: rotateY(72deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(4)  { transform: rotateY(108deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(5)  { transform: rotateY(144deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(6)  { transform: rotateY(180deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(7)  { transform: rotateY(216deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(8)  { transform: rotateY(252deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(9)  { transform: rotateY(288deg) translateZ(110px); }
+        .ghz_cylinder-side:nth-child(10) { transform: rotateY(324deg) translateZ(110px); }
 
-        .gaohaozhe_cylinder-lid {
+        .ghz_cylinder-lid {
             position: absolute;
             width: 220px;
             height: 220px;
@@ -298,16 +299,16 @@
             border: 2px solid rgba(255, 255, 255, 0.8);
         }
 
-        .gaohaozhe_cylinder-lid--top    { transform: rotateX(90deg) translateZ(85px); }
-        .gaohaozhe_cylinder-lid--bottom { transform: rotateX(-90deg) translateZ(85px); }
+        .ghz_cylinder-lid--top    { transform: rotateX(90deg) translateZ(85px); }
+        .ghz_cylinder-lid--bottom { transform: rotateX(-90deg) translateZ(85px); }
 
-        @keyframes gaohaozhe_cylinder-spin {
+        @keyframes ghz_cylinder-spin {
             from { transform: rotateY(0deg) rotateX(-12deg); }
             to   { transform: rotateY(360deg) rotateX(-12deg); }
         }
 
         /* ========== 动画五：3D 开门 ========== */
-        .gaohaozhe_door-scene {
+        .ghz_door-scene {
             perspective: 900px;
             width: 100%;
             height: 100%;
@@ -316,7 +317,7 @@
             justify-content: center;
         }
 
-        .gaohaozhe_door-frame {
+        .ghz_door-frame {
             position: relative;
             width: 150px;
             height: 205px;
@@ -326,14 +327,14 @@
             box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
         }
 
-        .gaohaozhe_door-room {
+        .ghz_door-room {
             position: absolute;
             inset: 10px 10px 0 10px;
             background: radial-gradient(circle at 50% 40%, #ffe9a8, #ffd166 65%, #e9a23b);
             border-radius: 4px 4px 0 0;
         }
 
-        .gaohaozhe_door-panel {
+        .ghz_door-panel {
             position: absolute;
             inset: 10px 10px 0 10px;
             transform-origin: left center;
@@ -346,11 +347,11 @@
             backface-visibility: visible;
         }
 
-        .gaohaozhe_door-scene:hover .gaohaozhe_door-panel {
+        .ghz_door-scene:hover .ghz_door-panel {
             transform: rotateY(-118deg);
         }
 
-        .gaohaozhe_door-knob {
+        .ghz_door-knob {
             position: absolute;
             right: 12px;
             top: 50%;
@@ -362,22 +363,22 @@
         }
 
         /* ========== 动画六：立方体拆解 ========== */
-        .gaohaozhe_explode-scene {
+        .ghz_explode-scene {
             perspective: 900px;
             width: 160px;
             height: 160px;
         }
 
-        .gaohaozhe_explode-cube {
+        .ghz_explode-cube {
             position: relative;
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
             transform: rotateX(-24deg) rotateY(34deg);
-            animation: gaohaozhe_explode-float 5s ease-in-out infinite;
+            animation: ghz_explode-float 5s ease-in-out infinite;
         }
 
-        .gaohaozhe_explode-face {
+        .ghz_explode-face {
             position: absolute;
             width: 110px;
             height: 110px;
@@ -394,27 +395,27 @@
             font-size: 13px;
         }
 
-        .gaohaozhe_explode-face--front  { transform: translateZ(55px); }
-        .gaohaozhe_explode-face--back   { transform: rotateY(180deg) translateZ(55px); }
-        .gaohaozhe_explode-face--right  { transform: rotateY(90deg) translateZ(55px); background: rgba(47, 111, 237, 0.8); }
-        .gaohaozhe_explode-face--left   { transform: rotateY(-90deg) translateZ(55px); background: rgba(47, 111, 237, 0.8); }
-        .gaohaozhe_explode-face--top    { transform: rotateX(90deg) translateZ(55px); background: rgba(255, 183, 3, 0.85); }
-        .gaohaozhe_explode-face--bottom { transform: rotateX(-90deg) translateZ(55px); background: rgba(255, 183, 3, 0.85); }
+        .ghz_explode-face--front  { transform: translateZ(55px); }
+        .ghz_explode-face--back   { transform: rotateY(180deg) translateZ(55px); }
+        .ghz_explode-face--right  { transform: rotateY(90deg) translateZ(55px); background: rgba(47, 111, 237, 0.8); }
+        .ghz_explode-face--left   { transform: rotateY(-90deg) translateZ(55px); background: rgba(47, 111, 237, 0.8); }
+        .ghz_explode-face--top    { transform: rotateX(90deg) translateZ(55px); background: rgba(255, 183, 3, 0.85); }
+        .ghz_explode-face--bottom { transform: rotateX(-90deg) translateZ(55px); background: rgba(255, 183, 3, 0.85); }
 
-        .gaohaozhe_explode-scene:hover .gaohaozhe_explode-face--front  { transform: translateZ(150px); }
-        .gaohaozhe_explode-scene:hover .gaohaozhe_explode-face--back   { transform: rotateY(180deg) translateZ(150px); }
-        .gaohaozhe_explode-scene:hover .gaohaozhe_explode-face--right  { transform: rotateY(90deg) translateZ(150px); }
-        .gaohaozhe_explode-scene:hover .gaohaozhe_explode-face--left   { transform: rotateY(-90deg) translateZ(150px); }
-        .gaohaozhe_explode-scene:hover .gaohaozhe_explode-face--top    { transform: rotateX(90deg) translateZ(150px); }
-        .gaohaozhe_explode-scene:hover .gaohaozhe_explode-face--bottom { transform: rotateX(-90deg) translateZ(150px); }
+        .ghz_explode-scene:hover .ghz_explode-face--front  { transform: translateZ(150px); }
+        .ghz_explode-scene:hover .ghz_explode-face--back   { transform: rotateY(180deg) translateZ(150px); }
+        .ghz_explode-scene:hover .ghz_explode-face--right  { transform: rotateY(90deg) translateZ(150px); }
+        .ghz_explode-scene:hover .ghz_explode-face--left   { transform: rotateY(-90deg) translateZ(150px); }
+        .ghz_explode-scene:hover .ghz_explode-face--top    { transform: rotateX(90deg) translateZ(150px); }
+        .ghz_explode-scene:hover .ghz_explode-face--bottom { transform: rotateX(-90deg) translateZ(150px); }
 
-        @keyframes gaohaozhe_explode-float {
+        @keyframes ghz_explode-float {
             0%, 100% { transform: rotateX(-24deg) rotateY(34deg) translateY(0); }
             50%      { transform: rotateX(-24deg) rotateY(58deg) translateY(-10px); }
         }
 
         /* ========== 动画七：翻页书 ========== */
-        .gaohaozhe_book-scene {
+        .ghz_book-scene {
             perspective: 1200px;
             width: 100%;
             height: 100%;
@@ -423,7 +424,7 @@
             justify-content: center;
         }
 
-        .gaohaozhe_book {
+        .ghz_book {
             position: relative;
             width: 250px;
             height: 165px;
@@ -431,7 +432,7 @@
             transform-style: preserve-3d;
         }
 
-        .gaohaozhe_book-cover {
+        .ghz_book-cover {
             position: absolute;
             inset: 0;
             background: linear-gradient(135deg, #1d3557, #173050);
@@ -440,14 +441,14 @@
             transform: translateZ(-6px);
         }
 
-        .gaohaozhe_book-inner {
+        .ghz_book-inner {
             position: absolute;
             inset: 6px;
             background: #f6f1e3;
             border-radius: 4px 10px 10px 4px;
         }
 
-        .gaohaozhe_book-page {
+        .ghz_book-page {
             position: absolute;
             inset: 6px;
             transform-origin: left center;
@@ -455,11 +456,11 @@
             transition: transform 1.4s cubic-bezier(0.4, 0.1, 0.2, 1);
         }
 
-        .gaohaozhe_book-scene:hover .gaohaozhe_book-page {
+        .ghz_book-scene:hover .ghz_book-page {
             transform: rotateY(-172deg);
         }
 
-        .gaohaozhe_book-face {
+        .ghz_book-face {
             position: absolute;
             inset: 0;
             backface-visibility: hidden;
@@ -471,20 +472,20 @@
             box-shadow: 4px 6px 16px rgba(0, 0, 0, 0.18);
         }
 
-        .gaohaozhe_book-face--back {
+        .ghz_book-face--back {
             transform: rotateY(180deg);
             background: linear-gradient(270deg, #fffdf6, #f0e9d8);
             text-align: right;
         }
 
-        .gaohaozhe_book-face strong {
+        .ghz_book-face strong {
             display: block;
             margin-bottom: 6px;
             color: var(--lvmohan-primary-deep);
             font-size: 15px;
         }
 
-        .gaohaozhe_footer {
+        .ghz_footer {
             margin-top: 30px;
             text-align: center;
             font-size: 13px;
@@ -493,142 +494,142 @@
     </style>
 </head>
 <body>
-    <div class="gaohaozhe_container">
-        <header class="gaohaozhe_header">
+    <div class="ghz_container">
+        <header class="ghz_header">
             <h1>11-2 CSS3 3D 动画</h1>
             <p>课堂实践 · 展示 7 种 CSS3 3D 动画效果：依赖 <code>perspective</code>、<code>transform-style: preserve-3d</code>、<code>transform</code> 与 <code>@keyframes</code>。悬停类效果请将鼠标移入对应演示区。</p>
         </header>
 
-        <main class="gaohaozhe_grid">
-            <section class="gaohaozhe_card">
+        <main class="ghz_grid">
+            <section class="ghz_card">
                 <h2>① 旋转立方体</h2>
                 <p>六个面绕 X / Y 轴持续旋转（keyframes 自动播放）</p>
-                <div class="gaohaozhe_stage">
-                    <div class="gaohaozhe_cube-scene">
-                        <div class="gaohaozhe_cube">
-                            <div class="gaohaozhe_cube-face gaohaozhe_cube-face--front">前</div>
-                            <div class="gaohaozhe_cube-face gaohaozhe_cube-face--back">后</div>
-                            <div class="gaohaozhe_cube-face gaohaozhe_cube-face--left">左</div>
-                            <div class="gaohaozhe_cube-face gaohaozhe_cube-face--right">右</div>
-                            <div class="gaohaozhe_cube-face gaohaozhe_cube-face--top">顶</div>
-                            <div class="gaohaozhe_cube-face gaohaozhe_cube-face--bottom">底</div>
+                <div class="ghz_stage">
+                    <div class="ghz_cube-scene">
+                        <div class="ghz_cube">
+                            <div class="ghz_cube-face ghz_cube-face--front">前</div>
+                            <div class="ghz_cube-face ghz_cube-face--back">后</div>
+                            <div class="ghz_cube-face ghz_cube-face--left">左</div>
+                            <div class="ghz_cube-face ghz_cube-face--right">右</div>
+                            <div class="ghz_cube-face ghz_cube-face--top">顶</div>
+                            <div class="ghz_cube-face ghz_cube-face--bottom">底</div>
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：rotateX + rotateY 360°，9 秒线性循环</div>
+                <div class="ghz_hint">动画：rotateX + rotateY 360°，9 秒线性循环</div>
             </section>
 
-            <section class="gaohaozhe_card">
+            <section class="ghz_card">
                 <h2>② 翻转卡片</h2>
                 <p>鼠标悬停时沿 Y 轴翻转 180°，背面通过 backface-visibility 隐藏</p>
-                <div class="gaohaozhe_stage">
-                    <div class="gaohaozhe_flip-scene">
-                        <div class="gaohaozhe_flip-card">
-                            <div class="gaohaozhe_flip-face gaohaozhe_flip-face--front">
+                <div class="ghz_stage">
+                    <div class="ghz_flip-scene">
+                        <div class="ghz_flip-card">
+                            <div class="ghz_flip-face ghz_flip-face--front">
                                 正面
                                 <small>把鼠标移上来</small>
                             </div>
-                            <div class="gaohaozhe_flip-face gaohaozhe_flip-face--back">
+                            <div class="ghz_flip-face ghz_flip-face--back">
                                 背面
                                 <small>rotateY(180deg)</small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：hover 触发 transition，0.9s 缓动翻转</div>
+                <div class="ghz_hint">动画：hover 触发 transition，0.9s 缓动翻转</div>
             </section>
 
-            <section class="gaohaozhe_card">
+            <section class="ghz_card">
                 <h2>③ 环形旋转木马</h2>
                 <p>6 个面板每 60° 一块排成环形，整体旋转，悬停暂停</p>
-                <div class="gaohaozhe_stage">
-                    <div class="gaohaozhe_carousel-scene">
-                        <div class="gaohaozhe_carousel-ring">
-                            <div class="gaohaozhe_carousel-item">1</div>
-                            <div class="gaohaozhe_carousel-item">2</div>
-                            <div class="gaohaozhe_carousel-item">3</div>
-                            <div class="gaohaozhe_carousel-item">4</div>
-                            <div class="gaohaozhe_carousel-item">5</div>
-                            <div class="gaohaozhe_carousel-item">6</div>
+                <div class="ghz_stage">
+                    <div class="ghz_carousel-scene">
+                        <div class="ghz_carousel-ring">
+                            <div class="ghz_carousel-item">1</div>
+                            <div class="ghz_carousel-item">2</div>
+                            <div class="ghz_carousel-item">3</div>
+                            <div class="ghz_carousel-item">4</div>
+                            <div class="ghz_carousel-item">5</div>
+                            <div class="ghz_carousel-item">6</div>
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：rotateY(360°) 16s 循环，hover 时 animation-play-state: paused</div>
+                <div class="ghz_hint">动画：rotateY(360°) 16s 循环，hover 时 animation-play-state: paused</div>
             </section>
 
-            <section class="gaohaozhe_card">
+            <section class="ghz_card">
                 <h2>④ 旋转圆柱体</h2>
                 <p>10 个侧面围成一圈，上下两个圆形盖子</p>
-                <div class="gaohaozhe_stage">
-                    <div class="gaohaozhe_cylinder-scene">
-                        <div class="gaohaozhe_cylinder">
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-side"></div>
-                            <div class="gaohaozhe_cylinder-lid gaohaozhe_cylinder-lid--top"></div>
-                            <div class="gaohaozhe_cylinder-lid gaohaozhe_cylinder-lid--bottom"></div>
+                <div class="ghz_stage">
+                    <div class="ghz_cylinder-scene">
+                        <div class="ghz_cylinder">
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-side"></div>
+                            <div class="ghz_cylinder-lid ghz_cylinder-lid--top"></div>
+                            <div class="ghz_cylinder-lid ghz_cylinder-lid--bottom"></div>
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：每面 rotateY(n×36°) translateZ(110px)，整体绕 Y 轴旋转</div>
+                <div class="ghz_hint">动画：每面 rotateY(n×36°) translateZ(110px)，整体绕 Y 轴旋转</div>
             </section>
 
-            <section class="gaohaozhe_card">
+            <section class="ghz_card">
                 <h2>⑤ 3D 开门</h2>
                 <p>以左侧为轴心（transform-origin），悬停打开门板</p>
-                <div class="gaohaozhe_stage">
-                    <div class="gaohaozhe_door-scene">
-                        <div class="gaohaozhe_door-frame">
-                            <div class="gaohaozhe_door-room"></div>
-                            <div class="gaohaozhe_door-panel">
-                                <span class="gaohaozhe_door-knob"></span>
+                <div class="ghz_stage">
+                    <div class="ghz_door-scene">
+                        <div class="ghz_door-frame">
+                            <div class="ghz_door-room"></div>
+                            <div class="ghz_door-panel">
+                                <span class="ghz_door-knob"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：hover 时 rotateY(-118°)，transform-origin: left center</div>
+                <div class="ghz_hint">动画：hover 时 rotateY(-118°)，transform-origin: left center</div>
             </section>
 
-            <section class="gaohaozhe_card">
+            <section class="ghz_card">
                 <h2>⑥ 立方体拆解</h2>
                 <p>静止时为完整立方体，悬停后六个面沿各自法线方向飞出</p>
-                <div class="gaohaozhe_stage">
-                    <div class="gaohaozhe_explode-scene">
-                        <div class="gaohaozhe_explode-cube">
-                            <div class="gaohaozhe_explode-face gaohaozhe_explode-face--front">前</div>
-                            <div class="gaohaozhe_explode-face gaohaozhe_explode-face--back">后</div>
-                            <div class="gaohaozhe_explode-face gaohaozhe_explode-face--left">左</div>
-                            <div class="gaohaozhe_explode-face gaohaozhe_explode-face--right">右</div>
-                            <div class="gaohaozhe_explode-face gaohaozhe_explode-face--top">顶</div>
-                            <div class="gaohaozhe_explode-face gaohaozhe_explode-face--bottom">底</div>
+                <div class="ghz_stage">
+                    <div class="ghz_explode-scene">
+                        <div class="ghz_explode-cube">
+                            <div class="ghz_explode-face ghz_explode-face--front">前</div>
+                            <div class="ghz_explode-face ghz_explode-face--back">后</div>
+                            <div class="ghz_explode-face ghz_explode-face--left">左</div>
+                            <div class="ghz_explode-face ghz_explode-face--right">右</div>
+                            <div class="ghz_explode-face ghz_explode-face--top">顶</div>
+                            <div class="ghz_explode-face ghz_explode-face--bottom">底</div>
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：transition 改变 translateZ（55px → 150px），带轻微过冲缓动</div>
+                <div class="ghz_hint">动画：transition 改变 translateZ（55px → 150px），带轻微过冲缓动</div>
             </section>
 
-            <section class="gaohaozhe_card">
+            <section class="ghz_card">
                 <h2>⑦ 翻页书（附加）</h2>
                 <p>书页以装订线为轴翻转，翻过之后显示页面背面</p>
-                <div class="gaohaozhe_book-scene">
-                    <div class="gaohaozhe_book">
-                        <div class="gaohaozhe_book-cover"></div>
-                        <div class="gaohaozhe_book-inner"></div>
-                        <div class="gaohaozhe_book-page">
-                            <div class="gaohaozhe_book-face">
+                <div class="ghz_book-scene">
+                    <div class="ghz_book">
+                        <div class="ghz_book-cover"></div>
+                        <div class="ghz_book-inner"></div>
+                        <div class="ghz_book-page">
+                            <div class="ghz_book-face">
                                 <strong>CSS3 3D</strong>
                                 transform-style: preserve-3d<br>
                                 perspective: 1200px<br>
                                 transform-origin: left center
                             </div>
-                            <div class="gaohaozhe_book-face gaohaozhe_book-face--back">
+                            <div class="ghz_book-face ghz_book-face--back">
                                 <strong>翻到背面</strong>
                                 backface-visibility: hidden<br>
                                 rotateY(-172deg)
@@ -636,11 +637,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="gaohaozhe_hint">动画：hover 时书页 rotateY 翻转 1.4s，1.4 秒后可再次悬停复原</div>
+                <div class="ghz_hint">动画：hover 时书页 rotateY 翻转 1.4s，1.4 秒后可再次悬停复原</div>
             </section>
         </main>
 
-        <footer class="gaohaozhe_footer">
+        <footer class="ghz_footer">
             高浩哲 · 《高级网页设计》课堂实践 · 11-2 · 仅使用 CSS，无 JavaScript
         </footer>
     </div>

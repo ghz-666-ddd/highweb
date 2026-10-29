@@ -1,44 +1,45 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：标题栏排版三种 flex 布局 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .title{
+        .ghz_title{
             width: 500px;
             height: 33px;
             line-height: 33px;
             margin: 50px;
         }
-        .title h2{
+        .ghz_title h2{
             font-size: 14px;
             padding-left: 10px;
         }
-        .title a{
+        .ghz_title a{
             font-size: 12px;
             color: #a54848;
             text-decoration: none;
             margin-left: 6px;
 
         }
-        .title:first-child{
+        .ghz_title:first-child{
             display:flex;
             justify-content: space-between;
             border: 1px solid #c52222;
         }
-        .title:nth-child(2){
+        .ghz_title:nth-child(2){
             display:flex;
             border-top: 1px solid #c52222;
         }
-        .title:nth-child(2) h2{
+        .ghz_title:nth-child(2) h2{
             flex-grow: 1;
         }
-        .title:nth-child(3){
+        .ghz_title:nth-child(3){
             position: relative;
             border-bottom: 1px solid #c52222;
         }
-        .title:nth-child(3) a{
+        .ghz_title:nth-child(3) a{
             position: absolute;
             right: 10px;
             top: 0;
@@ -46,17 +47,17 @@
     </style>
 </head>
 <body>
-    <div class="title">
+    <div class="ghz_title">
         <h2>高浩哲</h2>
         <a href="#">更多</a>
     </div>
     
-    <div class="title">
+    <div class="ghz_title">
         <h2>高浩哲</h2>
         <a href="#">更多</a>
     </div>
     
-    <div class="title">
+    <div class="ghz_title">
         <h2>高浩哲</h2>
         <a href="#">更多</a>
     </div>

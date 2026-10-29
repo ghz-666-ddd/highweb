@@ -1,17 +1,18 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：CSS3 选择器与悬停特效 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .main {
+        .ghz_main {
             background-color: #f2f3f4;
             display: flex;
             flex-wrap: wrap;
             margin: 10px;
         }
-        .box {
+        .ghz_box {
             width: 150px;
             height: 150px;
             margin: 10px;
@@ -26,47 +27,47 @@
             /*width和height包含padding和border*/
             box-sizing: border-box;
         }
-        .box:first-child:hover {
+        .ghz_box:first-child:hover {
             background-color: #000;
             color: #fff;
             font-size: 100px;
             border-width: 30px;
         }
-        .box:nth-child(2):hover {
+        .ghz_box:nth-child(2):hover {
             box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
         }
-        .box:nth-child(3):hover {
+        .ghz_box:nth-child(3):hover {
             text-shadow: 100px 0px 20px rgba(0, 0, 0, 0.5);
         }
-        .box:nth-of-type(4):hover {
+        .ghz_box:nth-of-type(4):hover {
             border-radius: 50%;
         }
-        .box:nth-of-type(5) {
+        .ghz_box:nth-of-type(5) {
             /*线性渐变*/
             background: linear-gradient(#000, #fff);
         }
-        .box:nth-of-type(6) {
+        .ghz_box:nth-of-type(6) {
             /*径向渐变*/
             background: radial-gradient(#fff, #000);
         }
         /*相邻兄弟选择器*/
-        .box:nth-of-type(6)+.box:hover {
+        .ghz_box:nth-of-type(6)+.ghz_box:hover {
             transform: scale(1.5);
         }
-        .box:nth-of-type(8):hover {
+        .ghz_box:nth-of-type(8):hover {
             transform:translateX(-100px);
         }
-        .box:nth-of-type(9):hover {
+        .ghz_box:nth-of-type(9):hover {
             transform:rotateX(-180deg);
         }
-        .box:nth-of-type(10):hover {
+        .ghz_box:nth-of-type(10):hover {
             transform:skewX(-45deg);
         }
-        .box:nth-last-child(2):hover::before {
+        .ghz_box:nth-last-child(2):hover::before {
             content: "#";
             color: red;
         }
-        .box:nth-last-child(1):hover::after {
+        .ghz_box:nth-last-child(1):hover::after {
             content: "高浩哲";
             color: #fff;
             font-size: 6px;
@@ -83,11 +84,11 @@
             /*圆角矩形*/
             border-radius: 10px;
         }
-        .box:nth-of-type(3n):hover {
+        .ghz_box:nth-of-type(3n):hover {
             border: 3px solid red;
         }
         /*鼠标在偶数个盒子上时有变化，变化效果自定义*/
-        .box:nth-of-type(2n):hover {
+        .ghz_box:nth-of-type(2n):hover {
             /*背景颜色变化*/
             background-color: #e81010;
 
@@ -95,19 +96,19 @@
     </style>
 </head>
 <body>
-    <div class="main">
-        <dic class="box">1</dic>
-        <dic class="box">2</dic>
-        <dic class="box">3</dic>
-        <dic class="box">4</dic>
-        <dic class="box">5</dic>
-        <dic class="box">6</dic>
-        <dic class="box">7</dic>
-        <dic class="box">8</dic>
-        <dic class="box">9</dic>
-        <dic class="box">10</dic>
-        <dic class="box">11</dic>
-        <dic class="box">12</dic>
+    <div class="ghz_main">
+        <dic class="ghz_box">1</dic>
+        <dic class="ghz_box">2</dic>
+        <dic class="ghz_box">3</dic>
+        <dic class="ghz_box">4</dic>
+        <dic class="ghz_box">5</dic>
+        <dic class="ghz_box">6</dic>
+        <dic class="ghz_box">7</dic>
+        <dic class="ghz_box">8</dic>
+        <dic class="ghz_box">9</dic>
+        <dic class="ghz_box">10</dic>
+        <dic class="ghz_box">11</dic>
+        <dic class="ghz_box">12</dic>
     </div>
 </body>
 </html>

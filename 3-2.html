@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：CSS 选择器层叠样式表 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,13 +11,13 @@
             font-size:50px;
         }
         /* 标签选择器 */
-        #box{
+        #ghz_box{
             width: 600px; 
             height: 500px;
             background-color: #ccc;
         }
         /* id选择器，以#开头 */
-        .n1{
+        .ghz_n1{
             color: blue;
         }
         /* 扩展2 h2黑底白字 */
@@ -25,21 +26,21 @@
             color: white;
         }
         /* 扩展3 选择器文字白色 */
-        .white-text{
+        .ghz_white-text{
             color:#fff;
         }
         /* 扩展1 名字每个字单独颜色 */
-        .char1{
+        .ghz_char1{
             color:blue;
         }
-        .char2{
+        .ghz_char2{
             color:red;
         }
-        .char3{
+        .ghz_char3{
             color:green;
         }
         /* 新增：宽300高300盒子 */
-        .box-new{
+        .ghz_box-new{
             width: 300px;
             height: 300px;
             background-color: orange;
@@ -48,19 +49,19 @@
 </head>
 <body>
     <h2>层叠样式表 css </h2>
-    <div id="box">
-        <p>css<span class="white-text">选择器</span></p>
+    <div id="ghz_box">
+        <p>css<span class="ghz_white-text">选择器</span></p>
         <!-- 扩展1：名字每个字不同颜色，在同一行 -->
         <p>
-            <span class="char1">高</span>
-            <span class="char2">浩</span>
-            <span class="char3">哲</span>
+            <span class="ghz_char1">高</span>
+            <span class="ghz_char2">浩</span>
+            <span class="ghz_char3">哲</span>
         </p>
         <p>css属性</p>
     </div>    
 
     <!-- 新增300*300盒子 -->
-    <div class="box-new"></div>
+    <div class="ghz_box-new"></div>
 
  <!-- 扩展1：名字的每个字不同颜色，在同一行 -->
 <!-- 扩展2：h2黑底白字 -->

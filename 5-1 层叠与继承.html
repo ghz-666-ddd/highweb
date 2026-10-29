@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：CSS 层叠与继承优先级练习 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,22 +10,22 @@
             color: red;
             font-size: 100px;
         }
-        .text{
+        .ghz_text{
             color: green;
         }
-        #text{
+        #ghz_text{
             color: purple;
         }
-        .box p{
+        .ghz_box p{
             color: orange;
         }
-        #box #text{
+        #ghz_box #ghz_text{
             color: silver;
         }
-        .text{
+        .ghz_text{
             color: yellow!important;
         }
-        #box {
+        #ghz_box {
             width: 1500px;
             height: 400px;
             background-color:gray;
@@ -40,8 +41,8 @@
 </head>
 <body>
     <h2>层叠与继承</h2>
-    <div id="box" class="box">
-        <p id="text"class="text">104高浩哲</p>
+    <div id="ghz_box" class="ghz_box">
+        <p id="ghz_text"class="ghz_text">104高浩哲</p>
         <p>层叠与继承</p>
     </div>
 </body>

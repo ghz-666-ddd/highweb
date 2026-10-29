@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：JavaScript 六种基本数据类型演示 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14-2 JavaScript 六种基本数据类型</title>
+    <style>
+        :root {
+            --ghz_bg-1: #f4f7ff;
+            --ghz_bg-2: #eef8ff;
+            --ghz_card: rgba(255, 255, 255, 0.88);
+            --ghz_primary: #2f6fed;
+            --ghz_primary-deep: #1747b9;
+            --ghz_accent: #ffb703;
+            --ghz_text: #1d2a39;
+            --ghz_muted: #5f6f82;
+            --ghz_shadow: 0 16px 40px rgba(32, 67, 140, 0.16);
+            --ghz_border: rgba(47, 111, 237, 0.14);
+            --yl-num: #2f6fed;
+            --yl-str: #e63946;
+            --yl-bool: #2a9d8f;
+            --yl-undef: #9b5de5;
+            --yl-null: #1d3557;
+            --yl-obj: #f48c06;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_text);
+            background:
+                radial-gradient(circle at top left, rgba(90, 146, 255, 0.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(255, 183, 3, 0.16), transparent 30%),
+                linear-gradient(135deg, var(--ghz_bg-1), var(--ghz_bg-2));
+            min-height: 100vh;
+            padding: 40px 0 60px;
+        }
+
+        .ghz_container {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .ghz_header {
+            background: linear-gradient(135deg, rgba(47, 111, 237, 0.94), rgba(86, 156, 255, 0.9));
+            color: #fff;
+            border-radius: 24px;
+            padding: 32px 36px;
+            box-shadow: var(--ghz_shadow);
+            margin-bottom: 30px;
+        }
+
+        .ghz_header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .ghz_header p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .ghz_run-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .ghz_btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .ghz_btn-primary {
+            background: linear-gradient(135deg, var(--ghz_primary), var(--ghz_primary-deep));
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(23, 71, 185, 0.35);
+        }
+
+        .ghz_btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .ghz_btn-ghost {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--ghz_primary-deep);
+            border: 1px solid var(--ghz_border);
+        }
+
+        .ghz_btn-ghost:hover {
+            transform: translateY(-2px);
+        }
+
+        .ghz_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .ghz_type-card {
+            background: var(--ghz_card);
+            border: 1px solid var(--ghz_border);
+            border-radius: 20px;
+            padding: 22px 24px 26px;
+            box-shadow: var(--ghz_shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ghz_type-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .ghz_type-card[data-type="number"]::before  { background: linear-gradient(90deg, var(--ghz_num), #6fa3ff); }
+        .ghz_type-card[data-type="string"]::before  { background: linear-gradient(90deg, var(--ghz_str), #ff7b8c); }
+        .ghz_type-card[data-type="boolean"]::before { background: linear-gradient(90deg, var(--ghz_bool), #5ec4b6); }
+        .ghz_type-card[data-type="undefined"]::before { background: linear-gradient(90deg, var(--ghz_undef), #c79bff); }
+        .ghz_type-card[data-type="null"]::before    { background: linear-gradient(90deg, var(--ghz_null), #486b9a); }
+        .ghz_type-card[data-type="object"]::before  { background: linear-gradient(90deg, var(--ghz_obj), #ffbb6a); }
+
+        .ghz_type-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .ghz_type-card[data-type="number"]  .ghz_type-label { background: var(--ghz_num); }
+        .ghz_type-card[data-type="string"]  .ghz_type-label { background: var(--ghz_str); }
+        .ghz_type-card[data-type="boolean"] .ghz_type-label { background: var(--ghz_bool); }
+        .ghz_type-card[data-type="undefined"] .ghz_type-label { background: var(--ghz_undef); }
+        .ghz_type-card[data-type="null"]    .ghz_type-label { background: var(--ghz_null); }
+        .ghz_type-card[data-type="object"]  .ghz_type-label { background: var(--ghz_obj); }
+
+        .ghz_type-card h2 {
+            margin: 0 0 12px;
+            font-size: 20px;
+            color: var(--ghz_text);
+        }
+
+        .ghz_desc {
+            margin: 0 0 16px;
+            font-size: 13px;
+            color: var(--ghz_muted);
+            line-height: 1.7;
+        }
+
+        .ghz_code-box {
+            background: #1d2a39;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #e6f1ff;
+            margin-bottom: 14px;
+            overflow-x: auto;
+        }
+
+        .ghz_code-kw   { color: #c79bff; }
+        .ghz_code-num  { color: #ffbb6a; }
+        .ghz_code-str  { color: #9be37a; }
+        .ghz_code-cmt  { color: #708094; font-style: italic; }
+
+        .ghz_result-box {
+            background: linear-gradient(135deg, #f8fbff, #eef4ff);
+            border-left: 4px solid var(--ghz_primary);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            min-height: 52px;
+        }
+
+        .ghz_result-line {
+            display: block;
+        }
+
+        .ghz_result-tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 4px;
+            background: var(--ghz_primary-deep);
+            color: #fff;
+            font-size: 11px;
+            margin-right: 6px;
+        }
+
+        .ghz_footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--ghz_muted);
+        }
+
+        @media (max-width: 640px) {
+            .ghz_header { padding: 24px 20px; border-radius: 20px; }
+            .ghz_header h1 { font-size: 22px; }
+            .ghz_container { width: min(100% - 20px, 1180px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_container">
+        <header class="ghz_header">
+            <h1>14-2 JavaScript 六种基本数据类型</h1>
+            <p>JavaScript 的六种基本（原始）数据类型：<strong>Number</strong>（数字）、<strong>String</strong>（字符串）、<strong>Boolean</strong>（布尔）、<strong>Undefined</strong>（未定义）、<strong>Null</strong>（空值）、<strong>Object</strong>（对象，含数组与 null）。点击"运行全部"或单张卡片查看 <code>typeof</code> 结果。</p>
+        </header>
+
+        <div class="ghz_run-bar">
+            <button class="ghz_btn ghz_btn-primary" onclick="ghz_runAll()">运行全部类型</button>
+            <button class="ghz_btn ghz_btn-ghost" onclick="ghz_clearAll()">清空结果</button>
+        </div>
+
+        <main class="ghz_grid">
+            <!-- Number -->
+            <section class="ghz_type-card" data-type="number">
+                <span class="ghz_type-label">NUMBER</span>
+                <h2>Number 数字型</h2>
+                <p class="ghz_desc">整数、小数、科学计数法，还有特殊值 <code>Infinity</code> 与 <code>NaN</code>。</p>
+                <div class="ghz_code-box"><span class="ghz_code-kw">var</span> ghz_num1 = <span class="ghz_code-num">42</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_num2 = <span class="ghz_code-num">3.14159</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_num3 = <span class="ghz_code-num">1.5e10</span>;</div>
+                <div class="ghz_result-box" id="ghz_result_number">// 结果将在此显示</div>
+                <button class="ghz_btn ghz_btn-primary" style="margin-top:12px" onclick="ghz_runNumber()">运行此类型</button>
+            </section>
+
+            <!-- String -->
+            <section class="ghz_type-card" data-type="string">
+                <span class="ghz_type-label">STRING</span>
+                <h2>String 字符串型</h2>
+                <p class="ghz_desc">由引号包裹的一串字符，支持单引号、双引号和 ES6 反引号。</p>
+                <div class="ghz_code-box"><span class="ghz_code-kw">var</span> ghz_str1 = <span class="ghz_code-str">"高浩哲"</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_str2 = <span class="ghz_code-str">'JavaScript'</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_str3 = <span class="ghz_code-str">`Hello ${ghz_str1}`</span>;</div>
+                <div class="ghz_result-box" id="ghz_result_string">// 结果将在此显示</div>
+                <button class="ghz_btn ghz_btn-primary" style="margin-top:12px" onclick="ghz_runString()">运行此类型</button>
+            </section>
+
+            <!-- Boolean -->
+            <section class="ghz_type-card" data-type="boolean">
+                <span class="ghz_type-label">BOOLEAN</span>
+                <h2>Boolean 布尔型</h2>
+                <p class="ghz_desc">只有 <code>true</code> 与 <code>false</code> 两个值，常用于条件判断。</p>
+                <div class="ghz_code-box"><span class="ghz_code-kw">var</span> ghz_isStudent = <span class="ghz_code-kw">true</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_hasLicense = <span class="ghz_code-kw">false</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_cmp = <span class="ghz_code-num">5</span> > <span class="ghz_code-num">3</span>;</div>
+                <div class="ghz_result-box" id="ghz_result_boolean">// 结果将在此显示</div>
+                <button class="ghz_btn ghz_btn-primary" style="margin-top:12px" onclick="ghz_runBoolean()">运行此类型</button>
+            </section>
+
+            <!-- Undefined -->
+            <section class="ghz_type-card" data-type="undefined">
+                <span class="ghz_type-label">UNDEFINED</span>
+                <h2>Undefined 未定义</h2>
+                <p class="ghz_desc">变量声明后未赋值，或函数没有 return 语句。typeof 结果就是 <code>"undefined"</code>。</p>
+                <div class="ghz_code-box"><span class="ghz_code-kw">var</span> ghz_unassigned;<br>
+<span class="ghz_code-kw">var</span> ghz_ret = <span class="ghz_code-kw">function</span>(){}();<br>
+<span class="ghz_code-cmt">// 调用无 return 的函数</span></div>
+                <div class="ghz_result-box" id="ghz_result_undefined">// 结果将在此显示</div>
+                <button class="ghz_btn ghz_btn-primary" style="margin-top:12px" onclick="ghz_runUndefined()">运行此类型</button>
+            </section>
+
+            <!-- Null -->
+            <section class="ghz_type-card" data-type="null">
+                <span class="ghz_type-label">NULL</span>
+                <h2>Null 空值</h2>
+                <p class="ghz_desc">表示"什么都没有"。历史遗留 bug：<code>typeof null</code> 却返回 <code>"object"</code>。</p>
+                <div class="ghz_code-box"><span class="ghz_code-kw">var</span> ghz_empty = <span class="ghz_code-kw">null</span>;<br>
+<span class="ghz_code-kw">var</span> ghz_check = (ghz_empty === <span class="ghz_code-kw">null</span>);<br>
+<span class="ghz_code-cmt">// 用 === 判断 null</span></div>
+                <div class="ghz_result-box" id="ghz_result_null">// 结果将在此显示</div>
+                <button class="ghz_btn ghz_btn-primary" style="margin-top:12px" onclick="ghz_runNull()">运行此类型</button>
+            </section>
+
+            <!-- Object -->
+            <section class="ghz_type-card" data-type="object">
+                <span class="ghz_type-label">OBJECT</span>
+                <h2>Object 对象型</h2>
+                <p class="ghz_desc">包含普通对象、数组、函数等，是最复杂的类型。<code>typeof []</code> 也是 <code>"object"</code>。</p>
+                <div class="ghz_code-box"><span class="ghz_code-kw">var</span> ghz_person = { name:<span class="ghz_code-str">"高浩哲"</span>, age:<span class="ghz_code-num">20</span> };<br>
+<span class="ghz_code-kw">var</span> ghz_arr = [<span class="ghz_code-num">1</span>,<span class="ghz_code-num">2</span>,<span class="ghz_code-num">3</span>];<br>
+<span class="ghz_code-kw">var</span> ghz_fn = <span class="ghz_code-kw">function</span>(){};</div>
+                <div class="ghz_result-box" id="ghz_result_object">// 结果将在此显示</div>
+                <button class="ghz_btn ghz_btn-primary" style="margin-top:12px" onclick="ghz_runObject()">运行此类型</button>
+            </section>
+        </main>
+
+        <footer class="ghz_footer">高浩哲 · 《高级网页设计》课堂实践 · 14-2 · JavaScript 六种基本数据类型</footer>
+    </div>
+
+    <script>
+        function ghz_show(id, lines) {
+            var box = document.getElementById(id);
+            var html = '';
+            for (var i = 0; i < lines.length; i++) {
+                html += '<span class="ghz_result-line">' + lines[i] + '</span>';
+            }
+            box.innerHTML = html;
+        }
+
+        function ghz_runNumber() {
+            var ghz_num1 = 42;
+            var ghz_num2 = 3.14159;
+            var ghz_num3 = 1.5e10;
+            ghz_show('ghz_result_number', [
+                '<span class="ghz_result-tag">typeof</span> ghz_num1 = ' + typeof ghz_num1 + '  (' + ghz_num1 + ')',
+                '<span class="ghz_result-tag">typeof</span> ghz_num2 = ' + typeof ghz_num2 + '  (' + ghz_num2 + ')',
+                '<span class="ghz_result-tag">typeof</span> ghz_num3 = ' + typeof ghz_num3 + '  (' + ghz_num3.toExponential(2) + ')'
+            ]);
+        }
+
+        function ghz_runString() {
+            var ghz_str1 = "高浩哲";
+            var ghz_str2 = 'JavaScript';
+            var ghz_str3 = 'Hello ' + ghz_str1;
+            ghz_show('ghz_result_string', [
+                '<span class="ghz_result-tag">typeof</span> ghz_str1 = ' + typeof ghz_str1 + '  ("' + ghz_str1 + '")',
+                '<span class="ghz_result-tag">typeof</span> ghz_str2 = ' + typeof ghz_str2 + '  ("' + ghz_str2 + '")',
+                '<span class="ghz_result-tag">typeof</span> ghz_str3 = ' + typeof ghz_str3 + '  ("' + ghz_str3 + '")',
+                '<span class="ghz_result-tag">length</span> ghz_str2.length = ' + ghz_str2.length
+            ]);
+        }
+
+        function ghz_runBoolean() {
+            var ghz_isStudent = true;
+            var ghz_hasLicense = false;
+            var ghz_cmp = 5 > 3;
+            ghz_show('ghz_result_boolean', [
+                '<span class="ghz_result-tag">typeof</span> ghz_isStudent = ' + typeof ghz_isStudent + '  (' + ghz_isStudent + ')',
+                '<span class="ghz_result-tag">typeof</span> ghz_hasLicense = ' + typeof ghz_hasLicense + '  (' + ghz_hasLicense + ')',
+                '<span class="ghz_result-tag">typeof</span> (5>3) = ' + typeof ghz_cmp + '  (' + ghz_cmp + ')'
+            ]);
+        }
+
+        function ghz_runUndefined() {
+            var ghz_unassigned;
+            var ghz_ret = (function(){})();
+            ghz_show('ghz_result_undefined', [
+                '<span class="ghz_result-tag">typeof</span> ghz_unassigned = ' + typeof ghz_unassigned + '  (值: ' + ghz_unassigned + ')',
+                '<span class="ghz_result-tag">typeof</span> ghz_ret = ' + typeof ghz_ret + '  (值: ' + ghz_ret + ')',
+                '<span class="ghz_result-tag">注意</span>未赋值变量的 typeof 不会报错'
+            ]);
+        }
+
+        function ghz_runNull() {
+            var ghz_empty = null;
+            var ghz_check = (ghz_empty === null);
+            ghz_show('ghz_result_null', [
+                '<span class="ghz_result-tag">typeof</span> ghz_empty = ' + typeof ghz_empty + '  (值: null)',
+                '<span class="ghz_result-tag">=== null?</span> ' + ghz_check,
+                '<span class="ghz_result-tag">bug</span> typeof null 居然是 "object" —— 历史遗留问题'
+            ]);
+        }
+
+        function ghz_runObject() {
+            var ghz_person = { name: "高浩哲", age: 20 };
+            var ghz_arr = [1, 2, 3];
+            var ghz_fn = function(){};
+            ghz_show('ghz_result_object', [
+                '<span class="ghz_result-tag">typeof</span> ghz_person = ' + typeof ghz_person,
+                '<span class="ghz_result-tag">typeof</span> ghz_arr = ' + typeof ghz_arr + '  (Array.isArray: ' + Array.isArray(ghz_arr) + ')',
+                '<span class="ghz_result-tag">typeof</span> ghz_fn = ' + typeof ghz_fn,
+                '<span class="ghz_result-tag">person.name</span> = ' + ghz_person.name
+            ]);
+        }
+
+        function ghz_runAll() {
+            ghz_runNumber();
+            ghz_runString();
+            ghz_runBoolean();
+            ghz_runUndefined();
+            ghz_runNull();
+            ghz_runObject();
+        }
+
+        function ghz_clearAll() {
+            var boxes = document.querySelectorAll('.ghz_result-box');
+            for (var i = 0; i < boxes.length; i++) {
+                boxes[i].innerHTML = '// 结果已清空';
+            }
+        }
+    </script>
+</body>
+</html>

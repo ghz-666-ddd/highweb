@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：课程作品导航首页 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -6,16 +7,16 @@
     <title>高浩哲的《高级网页设计》课堂实践</title>
     <style>
         :root {
-            --bg-1: #f4f7ff;
-            --bg-2: #eef8ff;
-            --card: rgba(255,255,255,0.82);
-            --primary: #2f6fed;
-            --primary-deep: #1747b9;
-            --accent: #ffb703;
-            --text: #1d2a39;
-            --muted: #5f6f82;
-            --shadow: 0 18px 45px rgba(32, 67, 140, 0.18);
-            --border: rgba(47, 111, 237, 0.12);
+            --yl_bg-1: #f4f7ff;
+            --yl_bg-2: #eef8ff;
+            --yl_card: rgba(255,255,255,0.82);
+            --yl_primary: #2f6fed;
+            --yl_primary-deep: #1747b9;
+            --yl_accent: #ffb703;
+            --yl_text: #1d2a39;
+            --yl_muted: #5f6f82;
+            --yl_shadow: 0 18px 45px rgba(32, 67, 140, 0.18);
+            --yl_border: rgba(47, 111, 237, 0.12);
         }
 
         * {
@@ -25,53 +26,53 @@
         body {
             margin: 0;
             font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
-            color: var(--text);
+            color: var(--yl_text);
             background:
                 radial-gradient(circle at top left, rgba(90, 146, 255, 0.18), transparent 26%),
                 radial-gradient(circle at bottom right, rgba(255, 183, 3, 0.15), transparent 28%),
-                linear-gradient(135deg, var(--bg-1), var(--bg-2));
+                linear-gradient(135deg, var(--yl_bg-1), var(--yl_bg-2));
             min-height: 100vh;
         }
 
-        .container {
+        .yl_container {
             width: min(1180px, calc(100% - 32px));
             margin: 0 auto;
             padding: 48px 0 60px;
         }
 
-        .hero {
+        .yl_hero {
             background: linear-gradient(135deg, rgba(47, 111, 237, 0.94), rgba(86, 156, 255, 0.92));
             color: #fff;
             border-radius: 28px;
             padding: 36px 38px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--yl_shadow);
             position: relative;
             overflow: hidden;
         }
 
-        .hero::before,
-        .hero::after {
+        .yl_hero::before,
+        .yl_hero::after {
             content: "";
             position: absolute;
             border-radius: 50%;
             background: rgba(255,255,255,0.12);
         }
 
-        .hero::before {
+        .yl_hero::before {
             width: 220px;
             height: 220px;
             top: -72px;
             right: -40px;
         }
 
-        .hero::after {
+        .yl_hero::after {
             width: 180px;
             height: 180px;
             left: -40px;
             bottom: -60px;
         }
 
-        .hero h1 {
+        .yl_hero h1 {
             margin: 0;
             font-size: clamp(2rem, 3vw, 3rem);
             letter-spacing: 2px;
@@ -79,7 +80,7 @@
             z-index: 1;
         }
 
-        .hero p {
+        .yl_hero p {
             margin: 14px 0 0;
             font-size: 1.08rem;
             color: rgba(255,255,255,0.88);
@@ -87,31 +88,31 @@
             z-index: 1;
         }
 
-        .section {
+        .yl_section {
             margin-top: 32px;
         }
 
-        .section-title {
+        .yl_section-title {
             font-size: 1.7rem;
             margin: 0 0 18px;
-            color: var(--primary-deep);
+            color: var(--yl_primary-deep);
             font-weight: 700;
         }
 
-        .grid {
+        .yl_grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 22px;
         }
 
-        .card {
+        .yl_card {
             display: block;
-            background: var(--card);
-            border: 1px solid var(--border);
+            background: var(--yl_card);
+            border: 1px solid var(--yl_border);
             border-radius: 20px;
             padding: 22px 20px;
             text-decoration: none;
-            color: var(--text);
+            color: var(--yl_text);
             box-shadow: 0 10px 28px rgba(31, 72, 149, 0.08);
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             min-height: 170px;
@@ -119,26 +120,26 @@
             overflow: hidden;
         }
 
-        .card:hover {
+        .yl_card:hover {
             transform: translateY(-6px);
             box-shadow: 0 18px 36px rgba(32, 67, 140, 0.15);
             border-color: rgba(47, 111, 237, 0.3);
         }
 
-        .card::before {
+        .yl_card::before {
             content: "";
             position: absolute;
             inset: 0 auto auto 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: linear-gradient(90deg, var(--yl_primary), var(--yl_accent));
         }
 
-        .tag {
+        .yl_tag {
             display: inline-block;
             padding: 6px 10px;
             background: rgba(47, 111, 237, 0.09);
-            color: var(--primary-deep);
+            color: var(--yl_primary-deep);
             border-radius: 999px;
             font-size: 0.74rem;
             font-weight: 700;
@@ -146,147 +147,159 @@
             margin-bottom: 14px;
         }
 
-        .card h3 {
+        .yl_card h3 {
             margin: 0 0 12px;
             font-size: 1.3rem;
-            color: var(--text);
+            color: var(--yl_text);
         }
 
-        .card p {
+        .yl_card p {
             margin: 0;
             line-height: 1.7;
-            color: var(--muted);
+            color: var(--yl_muted);
             font-size: 0.96rem;
         }
 
-        .prompt-box {
+        .yl_prompt-box {
             margin-top: 34px;
             background: rgba(255,255,255,0.75);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
+            border: 1px solid var(--yl_border);
+            box-shadow: var(--yl_shadow);
             border-radius: 20px;
             padding: 26px 24px;
         }
 
-        .prompt-box h2 {
+        .yl_prompt-box h2 {
             margin: 0 0 14px;
-            color: var(--primary-deep);
+            color: var(--yl_primary-deep);
             font-size: 1.5rem;
         }
 
-        .prompt-box blockquote {
+        .yl_prompt-box blockquote {
             margin: 0;
             padding: 18px 20px;
             background: linear-gradient(135deg, #f8fbff, #eef4ff);
-            border-left: 6px solid var(--accent);
+            border-left: 6px solid var(--yl_accent);
             border-radius: 12px;
             font-size: 1rem;
             line-height: 1.8;
-            color: var(--text);
+            color: var(--yl_text);
         }
 
         @media (max-width: 640px) {
-            .container {
+            .yl_container {
                 width: min(100% - 20px, 1180px);
                 padding-top: 24px;
             }
 
-            .hero {
+            .yl_hero {
                 padding: 28px 20px;
                 border-radius: 20px;
             }
 
-            .card {
+            .yl_card {
                 min-height: 150px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="hero">
+    <div class="yl_container">
+        <header class="yl_hero">
             <h1>高浩哲的《高级网页设计》课堂实践</h1>
             <p>本页面汇总了本目录下所有网页作品，展示 HTML 与 CSS 实践成果。</p>
         </header>
 
-        <main class="section">
-            <h2 class="section-title">课程作品导航</h2>
-            <div class="grid">
-                <a class="card" href="./1.html">
-                    <span class="tag">作品 1</span>
+        <main class="yl_section">
+            <h2 class="yl_section-title">课程作品导航</h2>
+            <div class="yl_grid">
+                <a class="yl_card" href="./1.html">
+                    <span class="yl_tag">作品 1</span>
                     <h3>1.html</h3>
                     <p>HTML 基础元素、列表、段落、文本样式与练习页面。</p>
                 </a>
 
-                <a class="card" href="./2-2.html">
-                    <span class="tag">作品 2</span>
+                <a class="yl_card" href="./2-2.html">
+                    <span class="yl_tag">作品 2</span>
                     <h3>2-2.html</h3>
                     <p>超链接、图片引用、图像展示与表格布局的综合练习。</p>
                 </a>
 
-                <a class="card" href="./3-1.html">
-                    <span class="tag">作品 3</span>
+                <a class="yl_card" href="./3-1.html">
+                    <span class="yl_tag">作品 3</span>
                     <h3>3-1.html</h3>
                     <p>HTML 表单元素、输入控件、选择器与常见交互组件。</p>
                 </a>
 
-                <a class="card" href="./3-2.html">
-                    <span class="tag">作品 4</span>
+                <a class="yl_card" href="./3-2.html">
+                    <span class="yl_tag">作品 4</span>
                     <h3>3-2.html</h3>
                     <p>CSS 选择器、样式层叠、标签与 ID 选择器应用实例。</p>
                 </a>
 
-                <a class="card" href="./4-1 css2.html">
-                    <span class="tag">作品 5</span>
+                <a class="yl_card" href="./4-1 css2.html">
+                    <span class="yl_tag">作品 5</span>
                     <h3>4-1 css2.html</h3>
                     <p>CSS 进阶：群组选择器、后代选择器、继承与样式细节处理。</p>
                 </a>
 
-                <a class="card" href="./5-1 层叠与继承.html">
-                    <span class="tag">作品 6</span>
+                <a class="yl_card" href="./5-1 层叠与继承.html">
+                    <span class="yl_tag">作品 6</span>
                     <h3>5-1 层叠与继承.html</h3>
                     <p>CSS 层叠与继承：id、class、标签选择器的优先级与 !important。</p>
                 </a>
 
-                <a class="card" href="./5-2 盒模型.html">
-                    <span class="tag">作品 7</span>
+                <a class="yl_card" href="./5-2 盒模型.html">
+                    <span class="yl_tag">作品 7</span>
                     <h3>5-2 盒模型.html</h3>
                     <p>盒模型：border、padding、margin 及实线、虚线、点线边框效果。</p>
                 </a>
 
-                <a class="card" href="./6-1 flex.html">
-                    <span class="tag">作品 8</span>
+                <a class="yl_card" href="./6-1 flex.html">
+                    <span class="yl_tag">作品 8</span>
                     <h3>6-1 flex.html</h3>
                     <p>Flex 弹性布局：盒子居中、垂直排列、两行两列与通栏组合四种效果。</p>
                 </a>
 
-                <a class="card" href="./6-2.html">
-                    <span class="tag">作品 9</span>
+                <a class="yl_card" href="./6-2.html">
+                    <span class="yl_tag">作品 9</span>
                     <h3>6-2.html</h3>
                     <p>标题栏排版：用 flex 与绝对定位实现三种“标题 + 更多链接”布局。</p>
                 </a>
 
-                <a class="card" href="./8-1.css3选择器.html">
-                    <span class="tag">作品 10</span>
+                <a class="yl_card" href="./8-1.css3选择器.html">
+                    <span class="yl_tag">作品 10</span>
                     <h3>8-1.css3选择器.html</h3>
                     <p>CSS3 选择器与悬停特效：nth-child、渐变、transform、伪元素应用。</p>
                 </a>
 
-                <a class="card" href="./11-1.html">
-                    <span class="tag">作品 11</span>
+                <a class="yl_card" href="./11-1.html">
+                    <span class="yl_tag">作品 11</span>
                     <h3>11-1.html</h3>
                     <p>Web 前端长度单位：px、%、em、rem、vw/vh 等单位的可视化演示。</p>
                 </a>
 
-                <a class="card" href="./11-2.html">
-                    <span class="tag">作品 12</span>
+                <a class="yl_card" href="./11-2.html">
+                    <span class="yl_tag">作品 12</span>
                     <h3>11-2.html</h3>
                     <p>CSS3 3D 动画：旋转立方体、翻转卡片、旋转木马、圆柱体等七种效果。</p>
+                </a>
+
+                <a class="yl_card" href="./14-1.html">
+                    <span class="yl_tag">作品 13</span>
+                    <h3>14-1.html</h3>
+                    <p>JavaScript 基础练习：document.write、alert、prompt、confirm。</p>
+                </a>
+
+                <a class="yl_card" href="./14-2.html">
+                    <span class="yl_tag">作品 14</span>
+                    <h3>14-2.html</h3>
+                    <p>JavaScript 六种基本数据类型：Number、String、Boolean、Undefined、Null、Object 演示。</p>
                 </a>
             </div>
         </main>
 
-        <section class="prompt-box">
+        <section class="yl_prompt-box">
             <h2>本提示词</h2>
             <blockquote>
                 “创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为高浩哲的《高级网页设计》课堂实践，美化页面，页面中包括本提示词。”

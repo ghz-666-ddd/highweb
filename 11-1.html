@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-22，功能：Web 前端长度单位可视化演示 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -37,13 +38,13 @@
             min-height: 100vh;
         }
 
-        .gaohaozhe_container {
+        .ghz_container {
             width: min(1180px, calc(100% - 32px));
             margin: 0 auto;
             padding: 44px 0 60px;
         }
 
-        .gaohaozhe_header {
+        .ghz_header {
             background: linear-gradient(135deg, rgba(47, 111, 237, 0.94), rgba(86, 156, 255, 0.9));
             color: #fff;
             border-radius: 24px;
@@ -52,18 +53,18 @@
             margin-bottom: 26px;
         }
 
-        .gaohaozhe_header h1 {
+        .ghz_header h1 {
             margin: 0 0 8px;
             font-size: 28px;
         }
 
-        .gaohaozhe_header p {
+        .ghz_header p {
             margin: 0;
             opacity: 0.92;
             font-size: 15px;
         }
 
-        .gaohaozhe_section {
+        .ghz_section {
             background: var(--lvmohan-card);
             border: 1px solid var(--lvmohan-border);
             border-radius: 20px;
@@ -72,19 +73,19 @@
             margin-bottom: 24px;
         }
 
-        .gaohaozhe_section h2 {
+        .ghz_section h2 {
             margin: 0 0 6px;
             font-size: 20px;
             color: var(--lvmohan-primary-deep);
         }
 
-        .gaohaozhe_section > p {
+        .ghz_section > p {
             margin: 0 0 16px;
             font-size: 14px;
             color: var(--lvmohan-muted);
         }
 
-        .gaohaozhe_code {
+        .ghz_code {
             display: block;
             background: #10233f;
             color: #9fd3ff;
@@ -96,7 +97,7 @@
             overflow-x: auto;
         }
 
-        .gaohaozhe_note {
+        .ghz_note {
             font-size: 13px;
             color: var(--lvmohan-muted);
             background: rgba(47, 111, 237, 0.07);
@@ -106,29 +107,29 @@
             margin-top: 14px;
         }
 
-        .gaohaozhe_table {
+        .ghz_table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
         }
 
-        .gaohaozhe_table th,
-        .gaohaozhe_table td {
+        .ghz_table th,
+        .ghz_table td {
             border: 1px solid var(--lvmohan-border);
             padding: 9px 12px;
             text-align: left;
         }
 
-        .gaohaozhe_table th {
+        .ghz_table th {
             background: rgba(47, 111, 237, 0.1);
             color: var(--lvmohan-primary-deep);
         }
 
-        .gaohaozhe_table tr:nth-child(even) td {
+        .ghz_table tr:nth-child(even) td {
             background: rgba(47, 111, 237, 0.04);
         }
 
-        .gaohaozhe_demo-row {
+        .ghz_demo-row {
             display: flex;
             flex-wrap: wrap;
             gap: 16px;
@@ -136,7 +137,7 @@
             margin-top: 14px;
         }
 
-        .gaohaozhe_box {
+        .ghz_box {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -147,20 +148,20 @@
             box-shadow: 0 8px 18px rgba(32, 67, 140, 0.22);
         }
 
-        .gaohaozhe_box--accent {
+        .ghz_box--accent {
             background: linear-gradient(135deg, #ffb703, #f48c06);
             color: #5c3d00;
         }
 
-        .gaohaozhe_box--teal {
+        .ghz_box--teal {
             background: linear-gradient(135deg, #2a9d8f, #21867a);
         }
 
-        .gaohaozhe_box--red {
+        .ghz_box--red {
             background: linear-gradient(135deg, #e63946, #c1121f);
         }
 
-        .gaohaozhe_unit-label {
+        .ghz_unit-label {
             font-size: 12px;
             color: var(--lvmohan-muted);
             text-align: center;
@@ -168,13 +169,13 @@
         }
 
         /* 绝对单位演示 */
-        .gaohaozhe_abs-96px  { width: 96px;  height: 64px; }
-        .gaohaozhe_abs-1in   { width: 1in;   height: 64px; }
-        .gaohaozhe_abs-72pt  { width: 72pt;  height: 64px; }
-        .gaohaozhe_abs-2_54cm{ width: 2.54cm; height: 64px; }
+        .ghz_abs-96px  { width: 96px;  height: 64px; }
+        .ghz_abs-1in   { width: 1in;   height: 64px; }
+        .ghz_abs-72pt  { width: 72pt;  height: 64px; }
+        .ghz_abs-2_54cm{ width: 2.54cm; height: 64px; }
 
         /* 百分比演示 */
-        .gaohaozhe_pct-parent {
+        .ghz_pct-parent {
             width: 100%;
             max-width: 520px;
             background: rgba(47, 111, 237, 0.08);
@@ -183,7 +184,7 @@
             padding: 14px;
         }
 
-        .gaohaozhe_pct-child {
+        .ghz_pct-child {
             height: 34px;
             margin-bottom: 10px;
             border-radius: 6px;
@@ -194,16 +195,16 @@
             font-size: 13px;
         }
 
-        .gaohaozhe_pct-child:last-child {
+        .ghz_pct-child:last-child {
             margin-bottom: 0;
         }
 
-        .gaohaozhe_pct-25 { width: 25%; background: linear-gradient(135deg, #2a9d8f, #21867a); }
-        .gaohaozhe_pct-50 { width: 50%; background: linear-gradient(135deg, var(--lvmohan-primary), var(--lvmohan-primary-deep)); }
-        .gaohaozhe_pct-100{ width: 100%; background: linear-gradient(135deg, #ffb703, #f48c06); color: #5c3d00; }
+        .ghz_pct-25 { width: 25%; background: linear-gradient(135deg, #2a9d8f, #21867a); }
+        .ghz_pct-50 { width: 50%; background: linear-gradient(135deg, var(--lvmohan-primary), var(--lvmohan-primary-deep)); }
+        .ghz_pct-100{ width: 100%; background: linear-gradient(135deg, #ffb703, #f48c06); color: #5c3d00; }
 
         /* em 演示 */
-        .gaohaozhe_em-outer {
+        .ghz_em-outer {
             font-size: 20px;
             background: rgba(47, 111, 237, 0.07);
             border-radius: 12px;
@@ -211,7 +212,7 @@
             max-width: 560px;
         }
 
-        .gaohaozhe_em-mid {
+        .ghz_em-mid {
             font-size: 1.2em;
             width: 10em;
             height: 40px;
@@ -224,7 +225,7 @@
             margin-bottom: 10px;
         }
 
-        .gaohaozhe_em-inner {
+        .ghz_em-inner {
             width: 10em;
             height: 40px;
             background: linear-gradient(135deg, #2a9d8f, #21867a);
@@ -237,14 +238,14 @@
         }
 
         /* rem 演示 */
-        .gaohaozhe_rem-row {
+        .ghz_rem-row {
             display: flex;
             flex-wrap: wrap;
             gap: 14px;
             align-items: flex-end;
         }
 
-        .gaohaozhe_rem-box {
+        .ghz_rem-box {
             background: linear-gradient(135deg, var(--lvmohan-primary), var(--lvmohan-primary-deep));
             color: #fff;
             border-radius: 8px;
@@ -255,18 +256,18 @@
             font-size: 12px;
         }
 
-        .gaohaozhe_rem-1 { width: 4rem;  height: 4rem; }
-        .gaohaozhe_rem-2 { width: 8rem;  height: 8rem; background: linear-gradient(135deg, #2a9d8f, #21867a); }
-        .gaohaozhe_rem-4 { width: 16rem; height: 6rem; background: linear-gradient(135deg, #ffb703, #f48c06); color: #5c3d00; }
+        .ghz_rem-1 { width: 4rem;  height: 4rem; }
+        .ghz_rem-2 { width: 8rem;  height: 8rem; background: linear-gradient(135deg, #2a9d8f, #21867a); }
+        .ghz_rem-4 { width: 16rem; height: 6rem; background: linear-gradient(135deg, #ffb703, #f48c06); color: #5c3d00; }
 
         /* 视口单位演示 */
-        .gaohaozhe_vw-bar-row {
+        .ghz_vw-bar-row {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .gaohaozhe_vw-bar {
+        .ghz_vw-bar {
             height: 30px;
             background: linear-gradient(90deg, var(--lvmohan-primary), #569cff);
             color: #fff;
@@ -277,12 +278,12 @@
             border-radius: 0 6px 6px 0;
         }
 
-        .gaohaozhe_vw-bar--10  { width: 10vw; }
-        .gaohaozhe_vw-bar--25  { width: 25vw; }
-        .gaohaozhe_vw-bar--50  { width: 50vw; }
-        .gaohaozhe_vw-bar--100 { width: 100vw; border-radius: 6px; }
+        .ghz_vw-bar--10  { width: 10vw; }
+        .ghz_vw-bar--25  { width: 25vw; }
+        .ghz_vw-bar--50  { width: 50vw; }
+        .ghz_vw-bar--100 { width: 100vw; border-radius: 6px; }
 
-        .gaohaozhe_vh-box {
+        .ghz_vh-box {
             width: 100%;
             max-width: 520px;
             height: 25vh;
@@ -297,7 +298,7 @@
             margin-top: 14px;
         }
 
-        .gaohaozhe_viewport-readout {
+        .ghz_viewport-readout {
             display: inline-block;
             background: #10233f;
             color: #9fd3ff;
@@ -309,7 +310,7 @@
         }
 
         /* ex / ch 演示 */
-        .gaohaozhe_metric-line {
+        .ghz_metric-line {
             background: rgba(47, 111, 237, 0.07);
             border-radius: 12px;
             padding: 14px;
@@ -319,8 +320,8 @@
             color: var(--lvmohan-text);
         }
 
-        .gaohaozhe_ex-box,
-        .gaohaozhe_ch-box {
+        .ghz_ex-box,
+        .ghz_ch-box {
             display: inline-block;
             height: 1.6em;
             vertical-align: bottom;
@@ -329,10 +330,10 @@
             border-radius: 4px;
         }
 
-        .gaohaozhe_ex-box { width: 10ex; }
-        .gaohaozhe_ch-box { width: 10ch; }
+        .ghz_ex-box { width: 10ex; }
+        .ghz_ch-box { width: 10ch; }
 
-        .gaohaozhe_footer {
+        .ghz_footer {
             margin-top: 30px;
             text-align: center;
             font-size: 13px;
@@ -341,17 +342,17 @@
     </style>
 </head>
 <body>
-    <div class="gaohaozhe_container">
-        <header class="gaohaozhe_header">
+    <div class="ghz_container">
+        <header class="ghz_header">
             <h1>11-1 Web 前端的长度单位</h1>
             <p>课堂实践 · 常用 CSS 长度单位分为绝对单位与相对单位两大类；本页用可视化方块逐一演示它们的实际大小与参照关系。</p>
         </header>
 
         <!-- 单位总览 -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>单位总览</h2>
             <p>CSS 中表示长度的常用单位一览。</p>
-            <table class="gaohaozhe_table">
+            <table class="ghz_table">
                 <thead>
                     <tr>
                         <th>单位</th>
@@ -376,117 +377,117 @@
         </section>
 
         <!-- 绝对单位 -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>一、绝对单位（px / in / pt / cm）</h2>
             <p>绝对单位大小固定，与屏幕和父元素无关；Web 开发中最常用的是 px。</p>
-            <span class="gaohaozhe_code">width: 96px;  width: 1in;  width: 72pt;  width: 2.54cm;</span>
-            <div class="gaohaozhe_demo-row">
+            <span class="ghz_code">width: 96px;  width: 1in;  width: 72pt;  width: 2.54cm;</span>
+            <div class="ghz_demo-row">
                 <div>
-                    <div class="gaohaozhe_box gaohaozhe_abs-96px">96px</div>
-                    <div class="gaohaozhe_unit-label">96 像素</div>
+                    <div class="ghz_box ghz_abs-96px">96px</div>
+                    <div class="ghz_unit-label">96 像素</div>
                 </div>
                 <div>
-                    <div class="gaohaozhe_box gaohaozhe_box--accent gaohaozhe_abs-1in">1in</div>
-                    <div class="gaohaozhe_unit-label">1 英寸</div>
+                    <div class="ghz_box ghz_box--accent ghz_abs-1in">1in</div>
+                    <div class="ghz_unit-label">1 英寸</div>
                 </div>
                 <div>
-                    <div class="gaohaozhe_box gaohaozhe_box--teal gaohaozhe_abs-72pt">72pt</div>
-                    <div class="gaohaozhe_unit-label">72 点</div>
+                    <div class="ghz_box ghz_box--teal ghz_abs-72pt">72pt</div>
+                    <div class="ghz_unit-label">72 点</div>
                 </div>
                 <div>
-                    <div class="gaohaozhe_box gaohaozhe_box--red gaohaozhe_abs-2_54cm">2.54cm</div>
-                    <div class="gaohaozhe_unit-label">2.54 厘米</div>
+                    <div class="ghz_box ghz_box--red ghz_abs-2_54cm">2.54cm</div>
+                    <div class="ghz_unit-label">2.54 厘米</div>
                 </div>
             </div>
-            <div class="gaohaozhe_note">换算关系：96px = 1in = 2.54cm = 72pt。浏览器默认按 96DPI 渲染，所以上面四个方块在标准设置下宽度相同。</div>
+            <div class="ghz_note">换算关系：96px = 1in = 2.54cm = 72pt。浏览器默认按 96DPI 渲染，所以上面四个方块在标准设置下宽度相同。</div>
         </section>
 
         <!-- 百分比 -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>二、百分比（%）</h2>
             <p>相对父元素的宽度（或对应属性）计算，常用于流式布局。</p>
-            <span class="gaohaozhe_code">.gaohaozhe_pct-25  { width: 25%; }<br>.gaohaozhe_pct-50  { width: 50%; }<br>.gaohaozhe_pct-100 { width: 100%; }</span>
-            <div class="gaohaozhe_pct-parent">
-                <div class="gaohaozhe_pct-child gaohaozhe_pct-25">width: 25%</div>
-                <div class="gaohaozhe_pct-child gaohaozhe_pct-50">width: 50%</div>
-                <div class="gaohaozhe_pct-child gaohaozhe_pct-100">width: 100%</div>
+            <span class="ghz_code">.ghz_pct-25  { width: 25%; }<br>.ghz_pct-50  { width: 50%; }<br>.ghz_pct-100 { width: 100%; }</span>
+            <div class="ghz_pct-parent">
+                <div class="ghz_pct-child ghz_pct-25">width: 25%</div>
+                <div class="ghz_pct-child ghz_pct-50">width: 50%</div>
+                <div class="ghz_pct-child ghz_pct-100">width: 100%</div>
             </div>
-            <div class="gaohaozhe_note">虚线框是父元素：子元素的 25%、50% 都以父元素宽度为基准，父元素变宽，子元素跟着变宽。</div>
+            <div class="ghz_note">虚线框是父元素：子元素的 25%、50% 都以父元素宽度为基准，父元素变宽，子元素跟着变宽。</div>
         </section>
 
         <!-- em -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>三、em</h2>
             <p>相对<strong>父元素</strong>的 font-size 计算：父级字号越大，同样的 10em 越长。</p>
-            <span class="gaohaozhe_code">.gaohaozhe_em-outer { font-size: 20px; }<br>.gaohaozhe_em-mid   { font-size: 1.2em; width: 10em; }<br>.gaohaozhe_em-inner { font-size: 1.2em; width: 10em; }</span>
-            <div class="gaohaozhe_em-outer">
-                <div class="gaohaozhe_em-mid">父级 20px → 1.2em = 24px，10em = 240px</div>
-                <div class="gaohaozhe_em-inner">再嵌一层 1.2em = 28.8px，10em = 288px</div>
+            <span class="ghz_code">.ghz_em-outer { font-size: 20px; }<br>.ghz_em-mid   { font-size: 1.2em; width: 10em; }<br>.ghz_em-inner { font-size: 1.2em; width: 10em; }</span>
+            <div class="ghz_em-outer">
+                <div class="ghz_em-mid">父级 20px → 1.2em = 24px，10em = 240px</div>
+                <div class="ghz_em-inner">再嵌一层 1.2em = 28.8px，10em = 288px</div>
             </div>
-            <div class="gaohaozhe_note">em 会层层嵌套放大：内层宽度 = 内层字号 × 10，因此两个方块长度不同。</div>
+            <div class="ghz_note">em 会层层嵌套放大：内层宽度 = 内层字号 × 10，因此两个方块长度不同。</div>
         </section>
 
         <!-- rem -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>四、rem（root em）</h2>
             <p>只相对根元素 <code>html</code> 的 font-size 计算，不受父级字号影响，便于统一控制。</p>
-            <span class="gaohaozhe_code">html { font-size: 16px; }<br>.gaohaozhe_rem-1 { width: 4rem;  height: 4rem; }<br>.gaohaozhe_rem-2 { width: 8rem;  height: 8rem; }<br>.gaohaozhe_rem-4 { width: 16rem; }</span>
-            <div class="gaohaozhe_rem-row">
-                <div class="gaohaozhe_rem-box gaohaozhe_rem-1">4rem</div>
-                <div class="gaohaozhe_rem-box gaohaozhe_rem-2">8rem</div>
-                <div class="gaohaozhe_rem-box gaohaozhe_rem-4">16rem</div>
+            <span class="ghz_code">html { font-size: 16px; }<br>.ghz_rem-1 { width: 4rem;  height: 4rem; }<br>.ghz_rem-2 { width: 8rem;  height: 8rem; }<br>.ghz_rem-4 { width: 16rem; }</span>
+            <div class="ghz_rem-row">
+                <div class="ghz_rem-box ghz_rem-1">4rem</div>
+                <div class="ghz_rem-box ghz_rem-2">8rem</div>
+                <div class="ghz_rem-box ghz_rem-4">16rem</div>
             </div>
-            <div class="gaohaozhe_note">1rem = 根字号 16px：4rem = 64px、8rem = 128px、16rem = 256px。修改 html 的 font-size 可一次性缩放全站。</div>
+            <div class="ghz_note">1rem = 根字号 16px：4rem = 64px、8rem = 128px、16rem = 256px。修改 html 的 font-size 可一次性缩放全站。</div>
         </section>
 
         <!-- 视口单位 -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>五、视口单位（vw / vh / vmin / vmax）</h2>
             <p>相对浏览器视口（可见区域）计算，1vw = 视口宽度的 1%，1vh = 视口高度的 1%。</p>
-            <span class="gaohaozhe_code">.gaohaozhe_vw-bar--10  { width: 10vw; }<br>.gaohaozhe_vw-bar--50  { width: 50vw; }<br>.gaohaozhe_vw-bar--100 { width: 100vw; }</span>
-            <div class="gaohaozhe_vw-bar-row" style="overflow: hidden;">
-                <div class="gaohaozhe_vw-bar gaohaozhe_vw-bar--10">10vw</div>
-                <div class="gaohaozhe_vw-bar gaohaozhe_vw-bar--25">25vw</div>
-                <div class="gaohaozhe_vw-bar gaohaozhe_vw-bar--50">50vw</div>
-                <div class="gaohaozhe_vw-bar gaohaozhe_vw-bar--100">100vw = 整个视口宽度</div>
+            <span class="ghz_code">.ghz_vw-bar--10  { width: 10vw; }<br>.ghz_vw-bar--50  { width: 50vw; }<br>.ghz_vw-bar--100 { width: 100vw; }</span>
+            <div class="ghz_vw-bar-row" style="overflow: hidden;">
+                <div class="ghz_vw-bar ghz_vw-bar--10">10vw</div>
+                <div class="ghz_vw-bar ghz_vw-bar--25">25vw</div>
+                <div class="ghz_vw-bar ghz_vw-bar--50">50vw</div>
+                <div class="ghz_vw-bar ghz_vw-bar--100">100vw = 整个视口宽度</div>
             </div>
-            <div class="gaohaozhe_vh-box">height: 25vh（视口高度的 1/4）</div>
+            <div class="ghz_vh-box">height: 25vh（视口高度的 1/4）</div>
             <div>
-                <span class="gaohaozhe_viewport-readout" id="gaohaozhe_viewport_text">正在读取视口尺寸…</span>
+                <span class="ghz_viewport-readout" id="ghz_viewport_text">正在读取视口尺寸…</span>
             </div>
-            <div class="gaohaozhe_note">vmin = 视口宽高中较短的一边的 1%，vmax = 较长一边的 1%。拖动浏览器窗口大小可看到方块与数字实时变化。</div>
+            <div class="ghz_note">vmin = 视口宽高中较短的一边的 1%，vmax = 较长一边的 1%。拖动浏览器窗口大小可看到方块与数字实时变化。</div>
         </section>
 
         <!-- ex / ch -->
-        <section class="gaohaozhe_section">
+        <section class="ghz_section">
             <h2>六、字体度量单位（ex / ch）</h2>
             <p>相对当前字体的字形尺寸：ex 参照小写 x 的高度，ch 参照数字 0 的宽度。</p>
-            <span class="gaohaozhe_code">.gaohaozhe_ex-box { width: 10ex; }<br>.gaohaozhe_ch-box { width: 10ch; }</span>
-            <div class="gaohaozhe_metric-line">
-                x x x x x x x x x x → <span class="gaohaozhe_ex-box"></span><br>
-                0 0 0 0 0 0 0 0 0 0 → <span class="gaohaozhe_ch-box"></span>
+            <span class="ghz_code">.ghz_ex-box { width: 10ex; }<br>.ghz_ch-box { width: 10ch; }</span>
+            <div class="ghz_metric-line">
+                x x x x x x x x x x → <span class="ghz_ex-box"></span><br>
+                0 0 0 0 0 0 0 0 0 0 → <span class="ghz_ch-box"></span>
             </div>
-            <div class="gaohaozhe_note">蓝色方框分别是 10ex 与 10ch 的宽度，它们随字体、字号变化，适合用于与文本对齐的微调场景。</div>
+            <div class="ghz_note">蓝色方框分别是 10ex 与 10ch 的宽度，它们随字体、字号变化，适合用于与文本对齐的微调场景。</div>
         </section>
 
-        <footer class="gaohaozhe_footer">
-            高浩哲 · 《高级网页设计》课堂实践 · 11-1 · 窗口尺寸读数使用少量 JavaScript（gaohaozhe_ 前缀变量）
+        <footer class="ghz_footer">
+            高浩哲 · 《高级网页设计》课堂实践 · 11-1 · 窗口尺寸读数使用少量 JavaScript（ghz_ 前缀变量）
         </footer>
     </div>
 
     <script>
-        var gaohaozhe_viewportText = document.getElementById("gaohaozhe_viewport_text");
+        var ghz_viewportText = document.getElementById("ghz_viewport_text");
 
-        function gaohaozhe_updateViewport() {
-            var gaohaozhe_viewW = window.innerWidth;
-            var gaohaozhe_viewH = window.innerHeight;
-            gaohaozhe_viewText.textContent =
-                "视口：" + gaohaozhe_viewW + " × " + gaohaozhe_viewH + " px" +
-                "（1vw = " + (gaohaozhe_viewW / 100).toFixed(2) + "px，1vh = " + (gaohaozhe_viewH / 100).toFixed(2) + "px）";
+        function ghz_updateViewport() {
+            var ghz_viewW = window.innerWidth;
+            var ghz_viewH = window.innerHeight;
+            ghz_viewText.textContent =
+                "视口：" + ghz_viewW + " × " + ghz_viewH + " px" +
+                "（1vw = " + (ghz_viewW / 100).toFixed(2) + "px，1vh = " + (ghz_viewH / 100).toFixed(2) + "px）";
         }
 
-        gaohaozhe_updateViewport();
-        window.addEventListener("resize", gaohaozhe_updateViewport);
+        ghz_updateViewport();
+        window.addEventListener("resize", ghz_updateViewport);
     </script>
 </body>
 </html>
