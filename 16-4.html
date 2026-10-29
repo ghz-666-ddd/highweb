@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-29，功能：16-4 文学社科书城页，含主编推荐、可切换 tab 的书单与订阅榜 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-4 文学社科 · 高浩哲</title>
+    <style>
+        :root {
+            --ghz_green: #8ec63f;
+            --ghz_green-deep: #5f8a12;
+            --ghz_text: #333;
+            --ghz_muted: #8f8f8f;
+            --ghz_price: #f0821e;
+            --ghz_line: #e6e6e6;
+            --ghz_bg: #f1f1f1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 26px 16px 40px;
+            background: var(--ghz_bg);
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_text);
+        }
+
+        .ghz_page {
+            width: min(1100px, 100%);
+            margin: 0 auto;
+        }
+
+        .ghz_title {
+            margin: 0 0 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #5e6a3c;
+        }
+
+        /* 面板上下两条细装饰线 */
+        .ghz_panel {
+            background: #fff;
+            border: 1px solid #e2e2e2;
+            border-top: 3px solid #b9cc55;
+            border-bottom: 3px solid #b9cc55;
+            display: grid;
+            grid-template-columns: 226px minmax(0, 1fr) 246px;
+            gap: 0;
+            padding: 18px 6px 22px;
+        }
+
+        /* ---------- 左侧：主编推荐 ---------- */
+        .ghz_aside {
+            padding: 0 20px 0 22px;
+        }
+
+        .ghz_aside-title {
+            margin: 0 0 18px;
+            text-align: center;
+            font-size: 0.98rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .ghz_aside-title span {
+            display: inline-block;
+            padding-bottom: 7px;
+            border-bottom: 2px solid var(--ghz_green);
+        }
+
+        .ghz_feature-cover {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 7 / 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 2px;
+            background: linear-gradient(140deg, #e9e9e9, #c4c4c4);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+        }
+
+        .ghz_feature-cover::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+        }
+
+        /* 图标占位：font 目录暂无 iconfont，暂用内联 SVG，待接入 iconfont */
+        .ghz_badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 9px 4px 6px;
+            background: var(--ghz_green);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .ghz_badge svg {
+            width: 11px;
+            height: 11px;
+            fill: #fff;
+        }
+
+        .ghz_feature-title {
+            writing-mode: vertical-rl;
+            font-family: "KaiTi", "STKaiti", "Microsoft YaHei", serif;
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: 5px;
+            color: #1f1f1f;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .ghz_feature-sub {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            font-size: 0.66rem;
+            color: #555;
+            letter-spacing: 2px;
+        }
+
+        .ghz_feature-name {
+            margin: 14px 0 0;
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        .ghz_feature-desc {
+            margin: 10px 0 0;
+            font-size: 0.76rem;
+            line-height: 1.9;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_feature-list {
+            margin: 16px 0 0;
+            padding: 12px 0 0;
+            border-top: 1px dashed #dedede;
+            list-style: none;
+            font-size: 0.74rem;
+            line-height: 2.05;
+            color: #6b6b6b;
+        }
+
+        .ghz_feature-list li {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+        }
+
+        .ghz_feature-list li::before {
+            content: "";
+            width: 4px;
+            height: 4px;
+            flex: none;
+            transform: translateY(-2px);
+            background: #b0b0b0;
+        }
+
+        /* ---------- 中间：tab + 书单 ---------- */
+        .ghz_main {
+            padding: 0 22px;
+        }
+
+        .ghz_tabs {
+            display: flex;
+            gap: 30px;
+            padding: 2px 0 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .ghz_tab {
+            position: relative;
+            top: 1px;
+            margin: 0;
+            padding: 0 2px 12px;
+            border: 0;
+            background: none;
+            font-family: inherit;
+            font-size: 0.92rem;
+            color: #666;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: color 0.18s ease;
+        }
+
+        .ghz_tab:hover {
+            color: #333;
+        }
+
+        .ghz_tab--active {
+            color: #222;
+            font-weight: 700;
+        }
+
+        .ghz_tab--active::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 3px;
+            background: var(--ghz_green);
+        }
+
+        .ghz_tab:focus-visible {
+            outline: 2px dashed var(--ghz_green);
+            outline-offset: 2px;
+        }
+
+        .ghz_books {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px 18px;
+            padding: 22px 4px 4px 0;
+        }
+
+        .ghz_book {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .ghz_cover {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 2px;
+            background: #eee;
+            box-shadow: 0 2px 7px rgba(0, 0, 0, 0.13);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .ghz_book:hover .ghz_cover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .ghz_cover::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border: 1px solid var(--ghz_frame, rgba(255, 255, 255, 0.28));
+        }
+
+        .ghz_cover__title {
+            writing-mode: vertical-rl;
+            max-height: 88%;
+            overflow: hidden;
+            font-family: "KaiTi", "STKaiti", "Microsoft YaHei", serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--ghz_ink, #fff);
+            text-align: center;
+        }
+
+        .ghz_cover__seal {
+            position: absolute;
+            right: 9px;
+            bottom: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            border-radius: 2px;
+            background: #b32020;
+            color: #fff;
+            font-size: 0.55rem;
+        }
+
+        .ghz_cover--red {
+            background: linear-gradient(155deg, #86201d, #4b0f0e);
+            --ghz_ink: #f6e9dd;
+            --ghz_frame: rgba(255, 255, 255, 0.24);
+        }
+
+        .ghz_cover--cream {
+            background: linear-gradient(155deg, #f8f1e4, #ebe0cd);
+            --ghz_ink: #8a2b22;
+            --ghz_frame: rgba(120, 80, 50, 0.22);
+        }
+
+        .ghz_cover--kraft {
+            background: linear-gradient(155deg, #cdb694, #b79d7a);
+            --ghz_ink: #3a2a1c;
+            --ghz_frame: rgba(60, 40, 20, 0.25);
+        }
+
+        .ghz_cover--black {
+            background: linear-gradient(155deg, #2b2b2b, #101010);
+            --ghz_ink: #ededed;
+            --ghz_frame: rgba(255, 255, 255, 0.18);
+        }
+
+        .ghz_cover--navy {
+            background: linear-gradient(155deg, #2c4763, #17283a);
+            --ghz_ink: #eef4fa;
+            --ghz_frame: rgba(255, 255, 255, 0.22);
+        }
+
+        .ghz_cover--light {
+            background: linear-gradient(155deg, #f2f5ea, #e2e8d6);
+            --ghz_ink: #4a5a3a;
+            --ghz_frame: rgba(70, 90, 50, 0.2);
+        }
+
+        .ghz_cover--green {
+            background: linear-gradient(155deg, #6b8a36, #3c5120);
+            --ghz_ink: #f4f8e8;
+            --ghz_frame: rgba(255, 255, 255, 0.22);
+        }
+
+        .ghz_cover--white {
+            background: linear-gradient(155deg, #ffffff, #ececec);
+            --ghz_ink: #3a3a3a;
+            --ghz_frame: rgba(0, 0, 0, 0.16);
+        }
+
+        .ghz_book-name {
+            margin: 9px 0 0;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #3d3d3d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ghz_book-price {
+            margin: 5px 0 0;
+            font-size: 0.8rem;
+            color: var(--ghz_price);
+            letter-spacing: 0.5px;
+        }
+
+        /* ---------- 右侧：订阅榜 ---------- */
+        .ghz_rank {
+            padding: 0 20px 0 24px;
+            border-left: 1px dashed #dcdcdc;
+        }
+
+        .ghz_rank-title {
+            margin: 0 0 20px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .ghz_rank-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .ghz_rank-list li {
+            display: flex;
+            gap: 9px;
+            align-items: baseline;
+            padding: 7px 0;
+            font-size: 0.79rem;
+            line-height: 1.55;
+            color: #4a4a4a;
+        }
+
+        .ghz_rank-num {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #c2c2c2;
+            font-size: 0.66rem;
+            color: #8a8a8a;
+            transform: translateY(1px);
+        }
+
+        .ghz_rank-list li:first-child .ghz_rank-num {
+            border-color: var(--ghz_green-deep);
+            color: var(--ghz_green-deep);
+        }
+
+        .ghz_rank-text {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .ghz_footer {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #a0a0a0;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 960px) {
+            .ghz_panel {
+                grid-template-columns: 200px minmax(0, 1fr);
+            }
+
+            .ghz_rank {
+                grid-column: 1 / -1;
+                margin-top: 20px;
+                padding: 18px 22px 0;
+                border-left: 0;
+                border-top: 1px dashed #dcdcdc;
+            }
+
+            .ghz_rank-list {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 16px;
+            }
+        }
+
+        @media (max-width: 620px) {
+            body {
+                padding: 16px 8px 28px;
+            }
+
+            .ghz_panel {
+                grid-template-columns: 1fr;
+                padding-bottom: 18px;
+            }
+
+            .ghz_aside {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .ghz_feature-cover {
+                aspect-ratio: 4 / 5;
+            }
+
+            .ghz_main {
+                padding: 0 16px;
+            }
+
+            .ghz_tabs {
+                gap: 18px;
+            }
+
+            .ghz_books {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px 14px;
+            }
+
+            .ghz_rank-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_page">
+        <h1 class="ghz_title">文学社科</h1>
+
+        <div class="ghz_panel">
+            <!-- 主编推荐 -->
+            <aside class="ghz_aside">
+                <h2 class="ghz_aside-title"><span>主编推荐</span></h2>
+
+                <div class="ghz_feature-cover">
+                    <span class="ghz_badge">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4 6.2 20.5l1.1-6.5L2.6 9.4l6.5-.9z"/></svg>
+                        力荐
+                    </span>
+                    <span class="ghz_feature-title">虚实之间</span>
+                    <span class="ghz_feature-sub">芮成钢 著</span>
+                </div>
+
+                <h3 class="ghz_feature-name">芮成钢：《虚实之间》</h3>
+                <p class="ghz_feature-desc">有十年记者生涯对东西方文化的洞悉，又有与奥巴马等政要零距离接触…</p>
+
+                <ul class="ghz_feature-list">
+                    <li>兄弟我在义乌的发财史</li>
+                    <li>读佛即是拜佛：唐僧传</li>
+                    <li>二战苏联陆军单兵装备</li>
+                </ul>
+            </aside>
+
+            <!-- 书单 -->
+            <main class="ghz_main">
+                <div class="ghz_tabs" role="tablist" aria-label="图书分类">
+                    <button class="ghz_tab ghz_tab--active" type="button" role="tab" aria-selected="true" data-ghz-tab="0">流行小说</button>
+                    <button class="ghz_tab" type="button" role="tab" aria-selected="false" data-ghz-tab="1">社科历史</button>
+                    <button class="ghz_tab" type="button" role="tab" aria-selected="false" data-ghz-tab="2">文学艺术</button>
+                </div>
+                <div class="ghz_books" id="ghz_books"></div>
+            </main>
+
+            <!-- 订阅榜 -->
+            <aside class="ghz_rank">
+                <h2 class="ghz_rank-title" id="ghz_rank-title">流行小说订阅榜</h2>
+                <ol class="ghz_rank-list" id="ghz_rank-list"></ol>
+            </aside>
+        </div>
+
+        <p class="ghz_footer">高浩哲 · 《高级网页设计》练习 16-4 · 文学社科书城页</p>
+    </div>
+
+    <script>
+        // 三个 tab 的书单与订阅榜数据
+        var ghz_tabsData = [
+            {
+                ghz_name: '流行小说',
+                ghz_books: [
+                    { ghz_title: '省长的女婿', ghz_price: '5.98', ghz_cover: 'red' },
+                    { ghz_title: '辛夷坞：致青春', ghz_price: '5.00', ghz_cover: 'cream' },
+                    { ghz_title: '越位', ghz_price: '2.99', ghz_cover: 'light' },
+                    { ghz_title: '扫黑', ghz_price: '6.40', ghz_cover: 'black' },
+                    { ghz_title: '我的帝王生涯', ghz_price: '4.00', ghz_cover: 'white' },
+                    { ghz_title: '南水北调书记', ghz_price: '5.98', ghz_cover: 'kraft' },
+                    { ghz_title: '1/14 第一季', ghz_price: '4.00', ghz_cover: 'black' },
+                    { ghz_title: '辛夷坞：原来', ghz_price: '4.50', ghz_cover: 'white' }
+                ],
+                ghz_rank: [
+                    '山西煤老板（全文）',
+                    '你不可不知的人性（全二…',
+                    '到爱的距离',
+                    '梅雨的季节（全文）',
+                    '大清相国（全文）',
+                    '借势（全文）',
+                    '省委班子 2（全文）',
+                    '静水流深（全文）',
+                    '生死疲劳（全文）',
+                    '金瓶梅（全文）'
+                ]
+            },
+            {
+                ghz_name: '社科历史',
+                ghz_books: [
+                    { ghz_title: '曾国藩（全三册）', ghz_price: '9.80', ghz_cover: 'navy' },
+                    { ghz_title: '万历十五年', ghz_price: '3.99', ghz_cover: 'cream' },
+                    { ghz_title: '大秦帝国', ghz_price: '6.50', ghz_cover: 'black' },
+                    { ghz_title: '国富论', ghz_price: '5.20', ghz_cover: 'navy' },
+                    { ghz_title: '明朝那些事儿', ghz_price: '4.80', ghz_cover: 'red' },
+                    { ghz_title: '人类简史', ghz_price: '4.99', ghz_cover: 'white' },
+                    { ghz_title: '枪炮、病菌与钢铁', ghz_price: '5.60', ghz_cover: 'kraft' },
+                    { ghz_title: '中国历代政治得失', ghz_price: '3.50', ghz_cover: 'green' }
+                ],
+                ghz_rank: [
+                    '曾国藩（全文）',
+                    '万历十五年',
+                    '大秦帝国（全文）',
+                    '国富论（全二）',
+                    '明朝那些事儿（全文）',
+                    '人类简史',
+                    '枪炮、病菌与钢铁',
+                    '中国历代政治得失',
+                    '旧制度与大革命（全文）',
+                    '罗马人的故事（全文）'
+                ]
+            },
+            {
+                ghz_name: '文学艺术',
+                ghz_books: [
+                    { ghz_title: '平凡的世界', ghz_price: '5.50', ghz_cover: 'kraft' },
+                    { ghz_title: '活着', ghz_price: '4.20', ghz_cover: 'black' },
+                    { ghz_title: '百年孤独', ghz_price: '4.80', ghz_cover: 'green' },
+                    { ghz_title: '边城', ghz_price: '3.60', ghz_cover: 'cream' },
+                    { ghz_title: '梵高传', ghz_price: '5.90', ghz_cover: 'navy' },
+                    { ghz_title: '艺术的故事', ghz_price: '6.80', ghz_cover: 'white' },
+                    { ghz_title: '美的历程', ghz_price: '4.50', ghz_cover: 'light' },
+                    { ghz_title: '红楼梦', ghz_price: '6.00', ghz_cover: 'red' }
+                ],
+                ghz_rank: [
+                    '平凡的世界（全文）',
+                    '活着（全文）',
+                    '百年孤独',
+                    '边城',
+                    '梵高传',
+                    '艺术的故事',
+                    '美的历程',
+                    '红楼梦（全二）',
+                    '围城',
+                    '目送'
+                ]
+            }
+        ];
+
+        var ghz_booksBox = document.getElementById('ghz_books');
+        var ghz_rankList = document.getElementById('ghz_rank-list');
+        var ghz_rankTitle = document.getElementById('ghz_rank-title');
+        var ghz_tabButtons = document.querySelectorAll('.ghz_tab');
+
+        // 渲染某一 tab 的书单
+        function ghz_renderBooks(ghz_index) {
+            var ghz_data = ghz_tabsData[ghz_index];
+            var ghz_html = '';
+
+            for (var ghz_i = 0; ghz_i < ghz_data.ghz_books.length; ghz_i++) {
+                var ghz_book = ghz_data.ghz_books[ghz_i];
+                ghz_html +=
+                    '<a class="ghz_book" href="#" onclick="return false;">' +
+                        '<div class="ghz_cover ghz_cover--' + ghz_book.ghz_cover + '">' +
+                            '<span class="ghz_cover__title">' + ghz_book.ghz_title + '</span>' +
+                            '<span class="ghz_cover__seal">书</span>' +
+                        '</div>' +
+                        '<p class="ghz_book-name">' + ghz_book.ghz_title + '</p>' +
+                        '<p class="ghz_book-price">￥ ' + ghz_book.ghz_price + '</p>' +
+                    '</a>';
+            }
+
+            ghz_booksBox.innerHTML = ghz_html;
+        }
+
+        // 渲染某一 tab 的订阅榜
+        function ghz_renderRank(ghz_index) {
+            var ghz_data = ghz_tabsData[ghz_index];
+            var ghz_html = '';
+
+            for (var ghz_i = 0; ghz_i < ghz_data.ghz_rank.length; ghz_i++) {
+                ghz_html +=
+                    '<li>' +
+                        '<span class="ghz_rank-num">' + (ghz_i + 1) + '</span>' +
+                        '<span class="ghz_rank-text">' + ghz_data.ghz_rank[ghz_i] + '</span>' +
+                    '</li>';
+            }
+
+            ghz_rankList.innerHTML = ghz_html;
+            ghz_rankTitle.textContent = ghz_data.ghz_name + '订阅榜';
+        }
+
+        // 切换 tab
+        function ghz_switchTab(ghz_index) {
+            for (var ghz_i = 0; ghz_i < ghz_tabButtons.length; ghz_i++) {
+                var ghz_active = ghz_i === ghz_index;
+                ghz_tabButtons[ghz_i].classList.toggle('ghz_tab--active', ghz_active);
+                ghz_tabButtons[ghz_i].setAttribute('aria-selected', ghz_active ? 'true' : 'false');
+            }
+
+            ghz_renderBooks(ghz_index);
+            ghz_renderRank(ghz_index);
+        }
+
+        for (var ghz_j = 0; ghz_j < ghz_tabButtons.length; ghz_j++) {
+            ghz_tabButtons[ghz_j].addEventListener('click', function () {
+                ghz_switchTab(Number(this.getAttribute('data-ghz-tab')));
+            });
+        }
+
+        ghz_switchTab(0);
+    </script>
+</body>
+</html>

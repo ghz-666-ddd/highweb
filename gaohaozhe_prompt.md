@@ -83,3 +83,13 @@ logged
 
 创建技能skill:提交到GitHub，将本项目commit并push到 https://github.com/ghz-666-ddd/highweb.git 已设置公钥
 
+
+## 2026-10-29 14:40:40 +08 | model: DeepSeek-V4.1-Flash
+
+完成16-4.html，使用的图标在font目录里选，完成的网页尽可能的和给定的图片相似，要有tab功能，点击有反应可以切换，尽量做的和图片相似，美观一点
+
+
+## 2026-10-29 14:43:49 +08 | model: DeepSeek-V4.1-Flash
+
+上传github
+
