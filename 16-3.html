@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-10-29，功能：16-3 霸王茶姬产品系列页面，左侧分类菜单与右侧产品卡片 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-3 产品系列 · 高浩哲</title>
+    <style>
+        :root {
+            --ghz_navy: #26344b;
+            --ghz_navy-soft: #3d4a5f;
+            --ghz_text: #4a4a4a;
+            --ghz_muted: #6f6f6f;
+            --ghz_red: #b3202a;
+            --ghz_bg: #f7f7f7;
+            --ghz_line: #ececec;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--ghz_bg);
+            font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---------------- 顶部导航 ---------------- */
+        .ghz_header {
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .ghz_header-inner {
+            display: flex;
+            align-items: center;
+            gap: 34px;
+            width: min(1400px, 100%);
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 58px;
+        }
+
+        .ghz_logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex: none;
+        }
+
+        /* 图标占位：font 目录暂无 iconfont，暂用内联 SVG，待接入 iconfont */
+        .ghz_logo-mark {
+            width: 34px;
+            height: 34px;
+            flex: none;
+        }
+
+        .ghz_logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+            color: var(--ghz_red);
+        }
+
+        .ghz_logo-en {
+            font-size: 0.86rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .ghz_logo-cn {
+            margin-top: 3px;
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+        }
+
+        .ghz_nav {
+            display: flex;
+            align-items: center;
+            gap: 42px;
+            margin-left: 26px;
+            flex: 1;
+        }
+
+        .ghz_nav a {
+            position: relative;
+            padding: 8px 0;
+            color: #3f3f3f;
+            font-size: 0.9rem;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color 0.18s ease;
+        }
+
+        .ghz_nav a:hover {
+            color: var(--ghz_red);
+        }
+
+        .ghz_lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 0;
+            border: 0;
+            background: none;
+            color: #555;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.18s ease;
+        }
+
+        .ghz_lang:hover {
+            color: var(--ghz_red);
+        }
+
+        .ghz_lang svg {
+            width: 17px;
+            height: 17px;
+            fill: none;
+            stroke: #8a8a8a;
+            stroke-width: 1.4;
+        }
+
+        /* ---------------- 主体 ---------------- */
+        .ghz_main {
+            width: min(1000px, 100%);
+            margin: 0 auto;
+            padding: 42px 24px 70px;
+        }
+
+        .ghz_heading {
+            margin: 0 0 34px;
+            font-family: "Source Han Serif SC", "Songti SC", "SimSun", serif;
+            font-size: 1.72rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--ghz_navy);
+        }
+
+        .ghz_content {
+            display: grid;
+            grid-template-columns: 190px minmax(0, 1fr);
+            gap: 56px;
+            align-items: start;
+        }
+
+        .ghz_menu {
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+            padding-top: 4px;
+        }
+
+        .ghz_menu-item {
+            position: relative;
+            display: inline-block;
+            width: fit-content;
+            padding: 0 0 6px;
+            border: 0;
+            background: none;
+            font-family: inherit;
+            font-size: 0.96rem;
+            letter-spacing: 1px;
+            color: #5c5c5c;
+            text-align: left;
+            cursor: pointer;
+            transition: color 0.18s ease;
+        }
+
+        .ghz_menu-item:hover {
+            color: var(--ghz_red);
+        }
+
+        .ghz_menu-item--active {
+            color: var(--ghz_navy);
+            font-weight: 700;
+        }
+
+        .ghz_menu-item--active::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3px;
+            background: var(--ghz_navy);
+        }
+
+        .ghz_list {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        .ghz_card {
+            display: flex;
+            align-items: stretch;
+            overflow: hidden;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.07);
+        }
+
+        .ghz_card-media {
+            flex: none;
+            width: 280px;
+            overflow: hidden;
+            background: #dfe5e0;
+        }
+
+        .ghz_card-media img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 46%;
+        }
+
+        .ghz_card-body {
+            padding: 28px 34px 26px;
+            min-width: 0;
+        }
+
+        .ghz_card-title {
+            margin: 0 0 14px;
+            font-family: "Source Han Serif SC", "Songti SC", "SimSun", serif;
+            font-size: 1.42rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--ghz_navy);
+        }
+
+        .ghz_card-body p {
+            margin: 0;
+            font-size: 0.84rem;
+            line-height: 2.05;
+            letter-spacing: 0.4px;
+            color: #555;
+        }
+
+        .ghz_card-body p + p {
+            margin-top: 1px;
+        }
+
+        .ghz_phone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            margin-top: 22px;
+            padding: 0;
+            border: 1px solid #d8d8d8;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.18s ease, background 0.18s ease;
+        }
+
+        .ghz_phone:hover {
+            border-color: var(--ghz_red);
+            background: #fffafa;
+        }
+
+        .ghz_phone svg {
+            width: 17px;
+            height: 17px;
+            fill: none;
+            stroke: #777;
+            stroke-width: 1.6;
+        }
+
+        /* 页面右下角返回顶部按钮 */
+        .ghz_top {
+            position: fixed;
+            right: 26px;
+            bottom: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.14);
+            color: #666;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .ghz_footer {
+            padding: 0 24px 34px;
+            text-align: center;
+            font-size: 0.74rem;
+            letter-spacing: 1px;
+            color: #a5a5a5;
+        }
+
+        @media (max-width: 980px) {
+            .ghz_header-inner {
+                gap: 20px;
+                padding: 0 20px;
+            }
+
+            .ghz_nav {
+                gap: 22px;
+                margin-left: 6px;
+                overflow-x: auto;
+            }
+
+            .ghz_content {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+
+            .ghz_menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 16px 24px;
+            }
+
+            .ghz_card-media {
+                width: 230px;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .ghz_nav {
+                display: none;
+            }
+
+            .ghz_header-inner {
+                justify-content: space-between;
+            }
+
+            .ghz_main {
+                padding: 28px 14px 50px;
+            }
+
+            .ghz_heading {
+                margin-bottom: 24px;
+                font-size: 1.4rem;
+            }
+
+            .ghz_card {
+                flex-direction: column;
+            }
+
+            .ghz_card-media {
+                width: 100%;
+                height: 190px;
+            }
+
+            .ghz_card-body {
+                padding: 20px 18px 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="ghz_header">
+        <div class="ghz_header-inner">
+            <a class="ghz_logo" href="#">
+                <svg class="ghz_logo-mark" viewBox="0 0 40 40" aria-hidden="true">
+                    <circle cx="20" cy="20" r="19" fill="#b3202a"/>
+                    <path d="M9 20c4-6 18-6 22 0-4 6-18 6-22 0z" fill="#fff" opacity="0.95"/>
+                    <circle cx="20" cy="20" r="5.6" fill="#b3202a"/>
+                    <path d="M20 5.5v3.2M20 31.3v3.2" stroke="#fff" stroke-width="1.6"/>
+                </svg>
+                <span class="ghz_logo-text">
+                    <span class="ghz_logo-en">CHAGEE</span>
+                    <span class="ghz_logo-cn">霸王茶姬</span>
+                </span>
+            </a>
+
+            <nav class="ghz_nav">
+                <a href="#">关于我们</a>
+                <a href="#">关于产品</a>
+                <a href="#">全球布局</a>
+                <a href="#">新闻媒体</a>
+                <a href="#">食品安全</a>
+                <a href="#">联系我们</a>
+            </nav>
+
+            <button class="ghz_lang" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <ellipse cx="12" cy="12" rx="4" ry="9"/>
+                    <path d="M3.6 9h16.8M3.6 15h16.8"/>
+                </svg>
+                简体中文
+            </button>
+        </div>
+    </header>
+
+    <main class="ghz_main">
+        <h1 class="ghz_heading">产品系列</h1>
+
+        <div class="ghz_content">
+            <aside class="ghz_menu">
+                <button class="ghz_menu-item ghz_menu-item--active" type="button" aria-current="true">原叶鲜奶茶</button>
+                <button class="ghz_menu-item" type="button">雪顶冰</button>
+                <button class="ghz_menu-item" type="button">远山鲜沏篇</button>
+                <button class="ghz_menu-item" type="button">极萃·茶拿铁</button>
+                <button class="ghz_menu-item" type="button">极萃·茶冰川</button>
+                <button class="ghz_menu-item" type="button">东方冰茶</button>
+            </aside>
+
+            <div class="ghz_list">
+                <article class="ghz_card">
+                    <div class="ghz_card-media">
+                        <img src="./naicha1.png" alt="伯牙绝弦 产品图">
+                    </div>
+                    <div class="ghz_card-body">
+                        <h2 class="ghz_card-title">伯牙绝弦</h2>
+                        <p>霸王茶姬经典款&amp;畅销款，一年销售1亿+杯。</p>
+                        <p>原叶茶胚经过三到五次的横县双瓣茉莉窨制的茉莉雪芽，芽叶细嫩，口感清新自然，搭配优质牛乳，层次丰富，回味悠长，不做作。</p>
+                    </div>
+                </article>
+
+                <article class="ghz_card">
+                    <div class="ghz_card-media">
+                        <img src="./naicha1.png" alt="青沫观音 产品图">
+                    </div>
+                    <div class="ghz_card-body">
+                        <h2 class="ghz_card-title">青沫观音</h2>
+                        <p>茶底采用优质铁观音，香气清新，回甘纯正，后感顺滑，有清淡的兰花香。</p>
+                        <button class="ghz_phone" type="button" aria-label="联系我们">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M7 3h3l1.6 4-2 1.6a12 12 0 0 0 5.8 5.8l1.6-2 4 1.6v3c0 1.1-.9 2-2 2A16 16 0 0 1 5 5c0-1.1.9-2 2-2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <button class="ghz_top" type="button" aria-label="返回顶部" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">&gt;</button>
+
+    <p class="ghz_footer">高浩哲 · 《高级网页设计》练习 16-3 · 霸王茶姬产品系列页</p>
+</body>
+</html>
