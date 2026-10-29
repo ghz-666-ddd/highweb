@@ -1,0 +1,7 @@
+# 本地工具缓存与项目记忆，无需上传
+.workbuddy/
+
+.opencode/
+.trae/
+.DS_Store
+Thumbs.db
