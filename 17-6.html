@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-02，功能：17-6 用 Promise 与 async/await 演示包饺子异步流程，setTimeout 模拟每一步耗时 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17-6 包饺子异步流程 · 高浩哲</title>
+<style>
+:root{--ghz_bg:#f5f7fb;--ghz_card:#fff;--ghz_ink:#1b2438;--ghz_muted:#6b7690;--ghz_line:#e4e8f2;--ghz_primary:#d2603a;--ghz_primary-deep:#b03f1e;--ghz_green:#1f9d74;--ghz_gray:#c3cada;}
+*{box-sizing:border-box}
+body{margin:0;padding:26px 16px 44px;font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--ghz_ink);background:radial-gradient(circle at top right,rgba(210,96,58,.12),transparent 30%),radial-gradient(circle at bottom left,rgba(31,157,116,.1),transparent 28%),var(--ghz_bg)}
+.ghz_page{width:min(1000px,100%);margin:0 auto}
+.ghz_hero{position:relative;overflow:hidden;padding:30px 34px;border-radius:24px;color:#fff;background:linear-gradient(135deg,#b03f1e,#d2603a 55%,#e8a33f);box-shadow:0 20px 44px rgba(176,63,30,.22)}
+.ghz_hero::after{content:"🥟";position:absolute;right:28px;top:8px;font-size:5.6rem;opacity:.22;transform:rotate(-12deg)}
+.ghz_hero-tag{display:inline-block;padding:5px 12px;border:1px solid rgba(255,255,255,.45);border-radius:999px;font-size:.74rem;letter-spacing:2px}
+.ghz_hero h1{position:relative;z-index:1;margin:14px 0 0;font-size:clamp(1.55rem,3.2vw,2.25rem);letter-spacing:1.2px}
+.ghz_hero p{position:relative;z-index:1;margin:11px 0 0;max-width:680px;font-size:.93rem;line-height:1.85;color:rgba(255,255,255,.9)}
+.ghz_toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:20px;padding:15px 18px;border:1px solid var(--ghz_line);border-radius:16px;background:var(--ghz_card);box-shadow:0 10px 26px rgba(28,45,90,.07)}
+.ghz_btn{padding:9px 18px;border:1px solid rgba(210,96,58,.4);border-radius:999px;background:#fff;color:var(--ghz_primary-deep);font-family:inherit;font-size:.82rem;cursor:pointer;transition:background .16s,color .16s,transform .16s}
+.ghz_btn:hover{transform:translateY(-1px)}
+.ghz_btn:focus-visible{outline:2px dashed var(--ghz_primary);outline-offset:2px}
+.ghz_btn--main{border:0;background:linear-gradient(135deg,#d2603a,#b03f1e);color:#fff;box-shadow:0 8px 18px rgba(210,96,58,.28)}
+.ghz_btn--main:hover{background:linear-gradient(135deg,#e07a52,#a53818)}
+.ghz_btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.ghz_meta{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.ghz_meta span{padding:5px 10px;border-radius:999px;background:#f3f5fb;font-size:.73rem;color:#4a5875}
+.ghz_state{margin-top:14px;padding:11px 16px;border-radius:12px;font-size:.81rem;border:1px solid #e6eaf4;background:#f7f9fe;color:#5b6580}
+.ghz_state--run{color:#8a6216;background:rgba(239,157,53,.1);border-color:rgba(239,157,53,.32)}
+.ghz_state--ok{color:#0f7357;background:rgba(31,157,116,.1);border-color:rgba(31,157,116,.3)}
+.ghz_state--error{color:#a93232;background:rgba(214,69,69,.09);border-color:rgba(214,69,69,.3)}
+.ghz_grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:18px;margin-top:18px;align-items:start}
+.ghz_card{padding:20px 22px 22px;border:1px solid var(--ghz_line);border-radius:20px;background:var(--ghz_card);box-shadow:0 12px 30px rgba(28,45,90,.07)}
+.ghz_card-title{display:flex;align-items:center;gap:9px;margin:0 0 4px;font-size:1rem}
+.ghz_card-title::before{content:"";width:4px;height:14px;border-radius:3px;background:var(--ghz_primary)}
+.ghz_card-sub{margin:0 0 14px;font-size:.75rem;color:#93a0bd}
+.ghz_bar{height:9px;border-radius:999px;background:#edf1fa;overflow:hidden;margin-bottom:16px}
+.ghz_bar i{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#e8a33f,#d2603a);transition:width .5s ease}
+.ghz_steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ghz_step{display:flex;gap:12px;padding:12px 14px;border:1px solid #edf1f9;border-radius:12px;background:#fbfcff;transition:border-color .2s,background .2s}
+.ghz_step-num{display:flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;border-radius:50%;background:#eef1f9;color:#93a0bd;font-size:.78rem;font-weight:700}
+.ghz_step-body{flex:1;min-width:0}
+.ghz_step-name{font-size:.88rem;font-weight:700;letter-spacing:.3px}
+.ghz_step-desc{margin:4px 0 0;font-size:.73rem;line-height:1.6;color:var(--ghz_muted)}
+.ghz_step-state{flex:none;align-self:center;font-size:.72rem;color:#93a0bd;white-space:nowrap}
+.ghz_step--run{border-color:rgba(239,157,53,.45);background:rgba(239,157,53,.06)}
+.ghz_step--run .ghz_step-num{background:rgba(239,157,53,.2);color:#a36c12}
+.ghz_step--run .ghz_step-state{color:#a36c12}
+.ghz_step--done{border-color:rgba(31,157,116,.35);background:rgba(31,157,116,.05)}
+.ghz_step--done .ghz_step-num{background:rgba(31,157,116,.16);color:#0f7357}
+.ghz_step--done .ghz_step-state{color:#0f7357;font-weight:700}
+.ghz_step-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(210,96,58,.12);color:#a53818;font-size:.66rem;font-weight:400;vertical-align:middle}
+.ghz_panel{margin-top:18px;border:1px solid var(--ghz_line);border-radius:16px;overflow:hidden;background:var(--ghz_card)}
+.ghz_panel summary{display:flex;align-items:center;gap:9px;padding:14px 18px;cursor:pointer;list-style:none;font-size:.85rem;font-weight:700;color:var(--ghz_primary-deep)}
+.ghz_panel summary::-webkit-details-marker{display:none}
+.ghz_panel summary::before{content:"＋";display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:rgba(210,96,58,.1);font-size:.72rem}
+.ghz_panel[open] summary::before{content:"−"}
+.ghz_panel summary em{margin-left:auto;font-style:normal;font-weight:400;font-size:.72rem;color:#93a0bd}
+.ghz_code{margin:0;padding:16px 18px;background:#1c2233;color:#d9def0;font-family:Consolas,"Courier New",monospace;font-size:.77rem;line-height:1.85;overflow-x:auto;max-height:400px}
+.ghz_code .ghz_cm{color:#7d8aa8}.ghz_code .ghz_kw{color:#ff9db6}.ghz_code .ghz_fn{color:#7fd0ff}.ghz_code .ghz_lt{color:#a8e6a1}
+.ghz_log{list-style:none;margin:0;padding:8px 14px 14px;max-height:340px;overflow:auto}
+.ghz_log li{padding:7px 6px;border-bottom:1px dashed #eef1f9;font-size:.77rem;line-height:1.65;color:#4b5670;display:flex;gap:8px}
+.ghz_log li:last-child{border-bottom:0}
+.ghz_log time{flex:none;font-family:Consolas,monospace;color:#93a0bd}
+.ghz_log li:first-child{color:#a53818;font-weight:600}
+.ghz_hint{margin:10px 0 0;padding:10px 12px;border-left:3px solid #e8a33f;border-radius:6px;background:rgba(232,163,63,.08);font-size:.76rem;line-height:1.75;color:#8a6216}
+.ghz_footer{margin-top:22px;text-align:center;font-size:.76rem;letter-spacing:1px;color:#9aa2b8}
+@media (max-width:820px){.ghz_grid{grid-template-columns:1fr}}
+@media (max-width:560px){body{padding:16px 10px 30px}.ghz_hero{padding:24px 20px;border-radius:20px}.ghz_card{padding:16px 14px 18px}.ghz_meta{margin-left:0}.ghz_btn{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+<div class="ghz_page">
+<header class="ghz_hero">
+<span class="ghz_hero-tag">LESSON 17 · PROMISE / ASYNC</span>
+<h1>包饺子的异步流程</h1>
+<p>先买原料、再取原料，原料到手后「和面」与「和馅」同时开工，两件事都完成后才开始包饺子，包好就开吃。每一步都用 Promise 包装 setTimeout 模拟耗时，再用 async / await 串起整个流程，用 Promise.all 让两个步骤并行。</p>
+</header>
+
+<div class="ghz_toolbar">
+<button class="ghz_btn ghz_btn--main" type="button" id="ghz_start">开始包饺子</button>
+<button class="ghz_btn" type="button" id="ghz_reset">重置流程</button>
+<div class="ghz_meta">
+<span id="ghz_meta-state">状态：待开始</span>
+<span id="ghz_meta-time">总耗时：—</span>
+</div>
+</div>
+
+<div class="ghz_state" id="ghz_state">点击「开始包饺子」，按顺序执行买原料 → 取原料 → 和面与和馅（同时）→ 包饺子 → 吃饺子。</div>
+
+<div class="ghz_grid">
+<!-- 流程 -->
+<section class="ghz_card">
+<h2 class="ghz_card-title">制作流程</h2>
+<p class="ghz_card-sub">橙色 = 进行中，绿色 = 已完成；和面与和馅并行执行</p>
+<div class="ghz_bar"><i id="ghz_bar-fill"></i></div>
+<ol class="ghz_steps" id="ghz_steps"></ol>
+<p class="ghz_hint">总耗时约 17 秒：买原料 6s → 取原料 2s → 和面 5s / 和馅 3s（同时进行，只算 5s）→ 包饺子 4s → 吃饺子 2s。</p>
+</section>
+
+<!-- 日志 + 代码 -->
+<div>
+<section class="ghz_card">
+<h2 class="ghz_card-title">执行日志</h2>
+<p class="ghz_card-sub">带时间戳，可看出和面与和馅同时进行</p>
+<ul class="ghz_log" id="ghz_log"><li><time>00:00.00</time><span>等待开始…</span></li></ul>
+</section>
+
+<details class="ghz_panel">
+<summary>Promise + async / await 代码<em>setTimeout 模拟耗时</em></summary>
+<pre class="ghz_code"><span class="ghz_cm">// 把 setTimeout 包装成返回 Promise 的延时函数</span>
+<span class="ghz_kw">function</span> <span class="ghz_fn">ghz_sleep</span>(ghz_ms) {
+    <span class="ghz_kw">return new</span> <span class="ghz_fn">Promise</span>(<span class="ghz_kw">function</span> (ghz_resolve) {
+        <span class="ghz_fn">setTimeout</span>(ghz_resolve, ghz_ms);
+    });
+}
+
+<span class="ghz_kw">async function</span> <span class="ghz_fn">ghz_cook</span>() {
+    <span class="ghz_kw">await</span> <span class="ghz_fn">ghz_sleep</span>(<span class="ghz_lt">6000</span>);  <span class="ghz_cm">// 买原料</span>
+    <span class="ghz_kw">await</span> <span class="ghz_fn">ghz_sleep</span>(<span class="ghz_lt">2000</span>);  <span class="ghz_cm">// 取原料</span>
+
+    <span class="ghz_cm">// 和面、和馅同时进行，等两个都完成</span>
+    <span class="ghz_kw">await</span> Promise.<span class="ghz_fn">all</span>([
+        <span class="ghz_fn">ghz_sleep</span>(<span class="ghz_lt">5000</span>),  <span class="ghz_cm">// 和面</span>
+        <span class="ghz_fn">ghz_sleep</span>(<span class="ghz_lt">3000</span>)   <span class="ghz_cm">// 和馅</span>
+    ]);
+
+    <span class="ghz_kw">await</span> <span class="ghz_fn">ghz_sleep</span>(<span class="ghz_lt">4000</span>);  <span class="ghz_cm">// 包饺子</span>
+    <span class="ghz_kw">await</span> <span class="ghz_fn">ghz_sleep</span>(<span class="ghz_lt">2000</span>);  <span class="ghz_cm">// 吃饺子</span>
+}</pre>
+</details>
+</div>
+</div>
+
+<p class="ghz_footer">高浩哲 · 《高级网页设计》练习 17-6 · 包饺子异步流程</p>
+</div>
+
+<script>
+// ============ 流程数据 ============
+var ghz_stepsData = [
+    { ghz_id: 'buy',     ghz_name: '买原料', ghz_desc: '去菜市场买面粉、猪肉、白菜和调料', ghz_ms: 6000, ghz_tag: '' },
+    { ghz_id: 'take',    ghz_name: '取原料', ghz_desc: '把买回来的原料取到案板上备用',     ghz_ms: 2000, ghz_tag: '' },
+    { ghz_id: 'knead',   ghz_name: '和面',   ghz_desc: '面粉加水，反复揉成光滑面团',       ghz_ms: 5000, ghz_tag: '与和馅同时' },
+    { ghz_id: 'filling', ghz_name: '和馅',   ghz_desc: '猪肉白菜剁碎，调味后搅匀',         ghz_ms: 3000, ghz_tag: '与和面同时' },
+    { ghz_id: 'wrap',    ghz_name: '包饺子', ghz_desc: '面团擀皮，包入馅料捏出褶子',         ghz_ms: 4000, ghz_tag: '' },
+    { ghz_id: 'eat',     ghz_name: '吃饺子', ghz_desc: '下锅煮熟，蘸醋开吃',                 ghz_ms: 2000, ghz_tag: '' }
+];
+
+var ghz_startBtn = document.getElementById('ghz_start');
+var ghz_resetBtn = document.getElementById('ghz_reset');
+var ghz_stepsBox = document.getElementById('ghz_steps');
+var ghz_logBox = document.getElementById('ghz_log');
+var ghz_barFill = document.getElementById('ghz_bar-fill');
+var ghz_state = document.getElementById('ghz_state');
+var ghz_metaState = document.getElementById('ghz_meta-state');
+var ghz_metaTime = document.getElementById('ghz_meta-time');
+
+var ghz_runId = 0;        // 运行标识，重置后旧流程的回调会被忽略
+var ghz_doneCount = 0;    // 已完成步骤数
+var ghz_startTime = 0;
+var ghz_ticker = null;
+var ghz_deadlines = {};   // 每一步的结束时刻，用于显示剩余秒数
+
+// ============ 渲染初始步骤 ============
+function ghz_renderSteps() {
+    var ghz_html = '';
+
+    for (var ghz_i = 0; ghz_i < ghz_stepsData.length; ghz_i++) {
+        var ghz_s = ghz_stepsData[ghz_i];
+        ghz_html +=
+            '<li class="ghz_step" id="ghz_step-' + ghz_s.ghz_id + '">' +
+                '<span class="ghz_step-num">' + (ghz_i + 1) + '</span>' +
+                '<div class="ghz_step-body">' +
+                    '<div class="ghz_step-name">' + ghz_s.ghz_name +
+                        (ghz_s.ghz_tag ? '<span class="ghz_step-tag">' + ghz_s.ghz_tag + '</span>' : '') +
+                    '</div>' +
+                    '<p class="ghz_step-desc">' + ghz_s.ghz_desc + ' · 预计 ' + (ghz_s.ghz_ms / 1000) + ' 秒</p>' +
+                '</div>' +
+                '<span class="ghz_step-state">等待</span>' +
+            '</li>';
+    }
+
+    ghz_stepsBox.innerHTML = ghz_html;
+}
+
+function ghz_getStep(ghz_id) {
+    for (var ghz_i = 0; ghz_i < ghz_stepsData.length; ghz_i++) {
+        if (ghz_stepsData[ghz_i].ghz_id === ghz_id) return ghz_stepsData[ghz_i];
+    }
+    return null;
+}
+
+// 修改某一步的状态：wait / run / done
+function ghz_setStepState(ghz_id, ghz_stateName, ghz_text) {
+    var ghz_item = document.getElementById('ghz_step-' + ghz_id);
+    if (!ghz_item) return;
+
+    ghz_item.className = 'ghz_step' + (ghz_stateName === 'run' ? ' ghz_step--run' : '') +
+        (ghz_stateName === 'done' ? ' ghz_step--done' : '');
+    ghz_item.querySelector('.ghz_step-state').textContent = ghz_text;
+}
+
+// ============ 时间与日志 ============
+function ghz_format(ghz_ms) {
+    var ghz_minute = Math.floor(ghz_ms / 60000);
+    var ghz_second = Math.floor((ghz_ms % 60000) / 1000);
+    var ghz_centi = Math.floor((ghz_ms % 1000) / 100);
+
+    return (ghz_minute < 10 ? '0' : '') + ghz_minute + ':' +
+           (ghz_second < 10 ? '0' : '') + ghz_second + '.' + ghz_centi;
+}
+
+function ghz_log(ghz_text) {
+    var ghz_now = Date.now() - ghz_startTime;
+    var ghz_li = document.createElement('li');
+    ghz_li.innerHTML = '<time>' + ghz_format(ghz_now) + '</time><span>' + ghz_text + '</span>';
+    ghz_logBox.insertBefore(ghz_li, ghz_logBox.firstChild);
+}
+
+function ghz_updateProgress() {
+    ghz_barFill.style.width = (ghz_doneCount / ghz_stepsData.length * 100) + '%';
+}
+
+// ============ Promise 包装 setTimeout ============
+function ghz_sleep(ghz_ms) {
+    return new Promise(function (ghz_resolve) {
+        setTimeout(ghz_resolve, ghz_ms);
+    });
+}
+
+// 执行一步：标记进行中 → 等待 → 标记完成
+async function ghz_runStep(ghz_id, ghz_ms, ghz_run) {
+    var ghz_step = ghz_getStep(ghz_id);
+
+    ghz_setStepState(ghz_id, 'run', '进行中…');
+    ghz_deadlines[ghz_id] = Date.now() + ghz_ms;
+    ghz_log('开始' + ghz_step.ghz_name + '（预计 ' + (ghz_ms / 1000) + ' 秒）');
+
+    await ghz_sleep(ghz_ms);
+
+    // 若中途点了重置，丢弃这次结果
+    if (ghz_run !== ghz_runId) return;
+
+    delete ghz_deadlines[ghz_id];
+    ghz_setStepState(ghz_id, 'done', '已完成 ' + (ghz_ms / 1000) + 's');
+    ghz_log(ghz_step.ghz_name + '完成（用时 ' + (ghz_ms / 1000) + ' 秒）');
+
+    ghz_doneCount++;
+    ghz_updateProgress();
+}
+
+// 秒表：每 100ms 刷新总耗时与进行中的剩余时间
+function ghz_startTicker() {
+    ghz_ticker = setInterval(function () {
+        var ghz_elapsed = Date.now() - ghz_startTime;
+        ghz_metaTime.textContent = '总耗时：' + ghz_format(ghz_elapsed);
+
+        for (var ghz_i = 0; ghz_i < ghz_stepsData.length; ghz_i++) {
+            var ghz_id = ghz_stepsData[ghz_i].ghz_id;
+            if (!ghz_deadlines[ghz_id]) continue;
+
+            var ghz_remain = ghz_deadlines[ghz_id] - Date.now();
+            if (ghz_remain < 0) ghz_remain = 0;
+
+            ghz_setStepState(ghz_id, 'run', '进行中 · 剩 ' + (ghz_remain / 1000).toFixed(1) + ' 秒');
+        }
+    }, 100);
+}
+
+// ============ 主流程：async / await ============
+async function ghz_cook() {
+    var ghz_run = ghz_runId;
+
+    ghz_startTime = Date.now();
+    ghz_startTicker();
+    ghz_log('开始制作，计时启动');
+
+    await ghz_runStep('buy', 6000, ghz_run);        // 买原料
+    if (ghz_run !== ghz_runId) return;
+
+    await ghz_runStep('take', 2000, ghz_run);       // 取原料
+    if (ghz_run !== ghz_runId) return;
+
+    // 和面与和馅同时进行，两个都完成后才继续
+    ghz_log('原料已就位，和面与和馅同时开始');
+    await Promise.all([
+        ghz_runStep('knead', 5000, ghz_run),
+        ghz_runStep('filling', 3000, ghz_run)
+    ]);
+    if (ghz_run !== ghz_runId) return;
+
+    await ghz_runStep('wrap', 4000, ghz_run);       // 包饺子
+    if (ghz_run !== ghz_runId) return;
+
+    await ghz_runStep('eat', 2000, ghz_run);        // 吃饺子
+    if (ghz_run !== ghz_runId) return;
+
+    // 收尾
+    clearInterval(ghz_ticker);
+    ghz_ticker = null;
+
+    var ghz_total = Date.now() - ghz_startTime;
+    ghz_metaTime.textContent = '总耗时：' + ghz_format(ghz_total);
+    ghz_metaState.textContent = '状态：已完成';
+    ghz_barFill.style.width = '100%';
+
+    ghz_state.className = 'ghz_state ghz_state--ok';
+    ghz_state.textContent = '🥟 饺子吃完了！整个流程用时 ' + (ghz_total / 1000).toFixed(1) + ' 秒，其中和面与和馅是同时进行的。';
+    ghz_log('全部完成，饺子吃完了 🥟');
+
+    ghz_startBtn.disabled = false;
+    ghz_startBtn.textContent = '再做一次';
+}
+
+// ============ 开始 / 重置 ============
+ghz_startBtn.addEventListener('click', function () {
+    ghz_resetFlow();
+    ghz_runId++;
+    ghz_startBtn.disabled = true;
+    ghz_startBtn.textContent = '制作中…';
+    ghz_logBox.innerHTML = '';
+
+    ghz_metaState.textContent = '状态：制作中';
+    ghz_metaTime.textContent = '总耗时：00:00.0';
+    ghz_state.className = 'ghz_state ghz_state--run';
+    ghz_state.textContent = '正在按顺序执行：买原料 → 取原料 → 和面 / 和馅（同时）→ 包饺子 → 吃饺子。';
+
+    ghz_cook();
+});
+
+ghz_resetBtn.addEventListener('click', function () {
+    ghz_resetFlow();
+    ghz_runId++;
+
+    ghz_startBtn.disabled = false;
+    ghz_startBtn.textContent = '开始包饺子';
+    ghz_metaState.textContent = '状态：待开始';
+    ghz_metaTime.textContent = '总耗时：—';
+    ghz_state.className = 'ghz_state';
+    ghz_state.textContent = '已重置。点击「开始包饺子」重新演示整个异步流程。';
+    ghz_logBox.innerHTML = '<li><time>00:00.0</time><span>已重置，等待开始…</span></li>';
+});
+
+function ghz_resetFlow() {
+    clearInterval(ghz_ticker);
+    ghz_ticker = null;
+    ghz_deadlines = {};
+    ghz_doneCount = 0;
+    ghz_barFill.style.width = '0';
+    ghz_renderSteps();
+}
+
+ghz_renderSteps();
+ghz_updateProgress();
+</script>
+</body>
+</html>

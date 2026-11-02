@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-02，功能：17-3 商品列表页，用 fetch 获取 dummyjson 商品列表并跳转详情 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-3 商品列表 · 高浩哲</title>
+    <style>
+        :root {
+            --ghz_bg: #f4f7fb;
+            --ghz_card: #ffffff;
+            --ghz_ink: #16203a;
+            --ghz_muted: #68738c;
+            --ghz_line: #e3e8f2;
+            --ghz_primary: #2f6bd6;
+            --ghz_primary-deep: #1d47a2;
+            --ghz_amber: #ef9d35;
+            --ghz_red: #d64545;
+            --ghz_green: #16996f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 28px 16px 46px;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_ink);
+            background:
+                radial-gradient(circle at top left, rgba(47, 107, 214, 0.13), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(239, 157, 53, 0.12), transparent 28%),
+                var(--ghz_bg);
+        }
+
+        .ghz_page {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .ghz_hero {
+            position: relative;
+            overflow: hidden;
+            padding: 32px 34px;
+            border-radius: 24px;
+            color: #fff;
+            background: linear-gradient(135deg, #1d47a2, #2f6bd6 58%, #2b9fb5);
+            box-shadow: 0 20px 42px rgba(29, 71, 162, 0.22);
+        }
+
+        .ghz_hero::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: -70px;
+            bottom: -130px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .ghz_hero-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 999px;
+            font-size: 0.74rem;
+            letter-spacing: 2px;
+        }
+
+        .ghz_hero h1 {
+            position: relative;
+            z-index: 1;
+            margin: 15px 0 0;
+            font-size: clamp(1.55rem, 3.2vw, 2.3rem);
+            letter-spacing: 1.2px;
+        }
+
+        .ghz_hero p {
+            position: relative;
+            z-index: 1;
+            margin: 12px 0 0;
+            max-width: 680px;
+            font-size: 0.94rem;
+            line-height: 1.85;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        /* ---------- 工具条 ---------- */
+        .ghz_toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 22px;
+            padding: 16px 18px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 16px;
+            background: var(--ghz_card);
+            box-shadow: 0 10px 26px rgba(28, 45, 90, 0.07);
+        }
+
+        .ghz_api {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            font-size: 0.78rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_api b {
+            flex: none;
+            padding: 3px 7px;
+            border-radius: 6px;
+            background: rgba(22, 153, 111, 0.14);
+            color: #0f7357;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+        }
+
+        .ghz_api code {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-family: Consolas, "Courier New", monospace;
+            color: #34405c;
+        }
+
+        .ghz_meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .ghz_meta span {
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #f2f5fd;
+            font-size: 0.73rem;
+            color: #4a5875;
+        }
+
+        .ghz_btn {
+            padding: 8px 16px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--ghz_primary), var(--ghz_primary-deep));
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(47, 107, 214, 0.28);
+            transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+        }
+
+        .ghz_btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(47, 107, 214, 0.34);
+        }
+
+        .ghz_btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .ghz_btn:focus-visible {
+            outline: 2px dashed var(--ghz_primary);
+            outline-offset: 3px;
+        }
+
+        /* ---------- 状态条 ---------- */
+        .ghz_state {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid transparent;
+        }
+
+        .ghz_state::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            flex: none;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .ghz_state--loading {
+            color: #8a6216;
+            background: rgba(239, 157, 53, 0.1);
+            border-color: rgba(239, 157, 53, 0.32);
+        }
+
+        .ghz_state--ok {
+            color: #0f7357;
+            background: rgba(22, 153, 111, 0.1);
+            border-color: rgba(22, 153, 111, 0.3);
+        }
+
+        .ghz_state--error {
+            color: #a93232;
+            background: rgba(214, 69, 69, 0.09);
+            border-color: rgba(214, 69, 69, 0.3);
+        }
+
+        /* ---------- 商品卡片 ---------- */
+        .ghz_list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .ghz_item {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--ghz_line);
+            border-radius: 18px;
+            background: var(--ghz_card);
+            color: inherit;
+            text-decoration: none;
+            box-shadow: 0 10px 24px rgba(28, 45, 90, 0.07);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .ghz_item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 34px rgba(28, 45, 90, 0.16);
+        }
+
+        .ghz_thumb {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background: linear-gradient(150deg, #eef2fb, #dde6f6);
+        }
+
+        .ghz_thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.35s ease;
+        }
+
+        .ghz_item:hover .ghz_thumb img {
+            transform: scale(1.07);
+        }
+
+        .ghz_cat {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: rgba(22, 32, 58, 0.72);
+            color: #fff;
+            font-size: 0.68rem;
+            letter-spacing: 0.5px;
+        }
+
+        .ghz_body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 14px 15px 16px;
+        }
+
+        .ghz_item-title {
+            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            min-height: 2.76em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .ghz_item-desc {
+            margin: 7px 0 0;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: var(--ghz_muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .ghz_item-foot {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 12px;
+        }
+
+        .ghz_price {
+            font-size: 1.06rem;
+            font-weight: 700;
+            color: #c2691a;
+            letter-spacing: 0.5px;
+        }
+
+        .ghz_rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.73rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_rating svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--ghz_amber);
+        }
+
+        .ghz_detail-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 11px;
+            padding-top: 10px;
+            border-top: 1px dashed #e6eaf4;
+            font-size: 0.74rem;
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_detail-link svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+            transition: transform 0.18s ease;
+        }
+
+        .ghz_item:hover .ghz_detail-link svg {
+            transform: translateX(4px);
+        }
+
+        /* ---------- 骨架屏 / 错误态 ---------- */
+        .ghz_skeleton {
+            height: 330px;
+            border-radius: 18px;
+            border: 1px solid var(--ghz_line);
+            background: linear-gradient(100deg, #f2f5fb 20%, #e8edf8 40%, #f2f5fb 60%);
+            background-size: 200% 100%;
+            animation: ghz_shimmer 1.3s linear infinite;
+        }
+
+        @keyframes ghz_shimmer {
+            from { background-position: 180% 0; }
+            to { background-position: -20% 0; }
+        }
+
+        .ghz_empty {
+            grid-column: 1 / -1;
+            padding: 40px 20px;
+            text-align: center;
+            border: 1px dashed #d7ddea;
+            border-radius: 16px;
+            background: #fbfcff;
+            color: var(--ghz_muted);
+            font-size: 0.86rem;
+            line-height: 1.9;
+        }
+
+        .ghz_empty strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--ghz_red);
+            font-size: 0.95rem;
+        }
+
+        /* ---------- 原始数据 ---------- */
+        .ghz_panel {
+            margin-top: 22px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--ghz_card);
+        }
+
+        .ghz_panel summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 18px;
+            cursor: pointer;
+            list-style: none;
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_panel summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .ghz_panel summary::before {
+            content: "＋";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: rgba(47, 107, 214, 0.1);
+            font-size: 0.72rem;
+        }
+
+        .ghz_panel[open] summary::before {
+            content: "−";
+        }
+
+        .ghz_panel summary em {
+            margin-left: auto;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 0.74rem;
+            color: #93a0bd;
+        }
+
+        .ghz_raw {
+            margin: 0;
+            padding: 16px 18px;
+            max-height: 360px;
+            overflow: auto;
+            background: #12192a;
+            color: #cfd7ea;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.78rem;
+            line-height: 1.7;
+        }
+
+        .ghz_key { color: #8bd0ff; }
+        .ghz_str { color: #a8e6a1; }
+        .ghz_num { color: #ffb86c; }
+        .ghz_bool { color: #ff8fb1; }
+        .ghz_null { color: #b39ddb; }
+
+        .ghz_footer {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 0.76rem;
+            letter-spacing: 1px;
+            color: #9aa2b8;
+        }
+
+        @media (max-width: 960px) {
+            .ghz_list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .ghz_list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            body {
+                padding: 16px 10px 30px;
+            }
+
+            .ghz_hero {
+                padding: 24px 20px;
+                border-radius: 20px;
+            }
+
+            .ghz_toolbar {
+                padding: 13px 14px;
+            }
+
+            .ghz_meta {
+                margin-left: 0;
+            }
+
+            .ghz_list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_page">
+        <header class="ghz_hero">
+            <span class="ghz_hero-tag">LESSON 17 · LIST</span>
+            <h1>商品列表</h1>
+            <p>页面加载后用 fetch 请求商品列表接口，把返回的 JSON 解析成 8 张商品卡片。点击任意卡片会带着商品 ID 跳转到详情页，由详情页再按 ID 请求单个商品数据。</p>
+        </header>
+
+        <!-- 请求工具条 -->
+        <div class="ghz_toolbar">
+            <div class="ghz_api">
+                <b>GET</b>
+                <code id="ghz_api-url"></code>
+            </div>
+            <div class="ghz_meta">
+                <span id="ghz_meta-status">状态：等待请求</span>
+                <span id="ghz_meta-time">耗时：—</span>
+                <span id="ghz_meta-count">商品：—</span>
+            </div>
+            <button class="ghz_btn" type="button" id="ghz_reload">重新请求</button>
+        </div>
+
+        <div class="ghz_state ghz_state--loading" id="ghz_state">正在请求列表数据…</div>
+
+        <!-- 商品列表 -->
+        <section class="ghz_list" id="ghz_list" aria-live="polite"></section>
+
+        <!-- 接口原始数据 -->
+        <details class="ghz_panel">
+            <summary>接口返回的原始 JSON<em>前 8 条商品</em></summary>
+            <pre class="ghz_raw" id="ghz_raw">尚无数据</pre>
+        </details>
+
+        <p class="ghz_footer">高浩哲 · 《高级网页设计》练习 17-3 · 商品列表页</p>
+    </div>
+
+    <script>
+        // 列表接口：默认返回前 8 条商品，支持跨域
+        var ghz_apiUrl = 'https://dummyjson.com/products?limit=8';
+
+        var ghz_state = document.getElementById('ghz_state');
+        var ghz_list = document.getElementById('ghz_list');
+        var ghz_raw = document.getElementById('ghz_raw');
+        var ghz_reloadBtn = document.getElementById('ghz_reload');
+        var ghz_metaStatus = document.getElementById('ghz_meta-status');
+        var ghz_metaTime = document.getElementById('ghz_meta-time');
+        var ghz_metaCount = document.getElementById('ghz_meta-count');
+
+        document.getElementById('ghz_api-url').textContent = ghz_apiUrl;
+
+        function ghz_escape(ghz_text) {
+            return String(ghz_text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function ghz_highlight(ghz_text) {
+            var ghz_escaped = ghz_text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            return ghz_escaped.replace(
+                /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+                function (ghz_match) {
+                    var ghz_cls = 'ghz_num';
+                    if (/^"/.test(ghz_match)) {
+                        ghz_cls = /:$/.test(ghz_match) ? 'ghz_key' : 'ghz_str';
+                    } else if (/true|false/.test(ghz_match)) {
+                        ghz_cls = 'ghz_bool';
+                    } else if (/null/.test(ghz_match)) {
+                        ghz_cls = 'ghz_null';
+                    }
+                    return '<span class="' + ghz_cls + '">' + ghz_match + '</span>';
+                }
+            );
+        }
+
+        function ghz_setState(ghz_text, ghz_kind) {
+            ghz_state.textContent = ghz_text;
+            ghz_state.className = 'ghz_state ghz_state--' + ghz_kind;
+        }
+
+        function ghz_showSkeleton() {
+            var ghz_html = '';
+            for (var ghz_i = 0; ghz_i < 8; ghz_i++) {
+                ghz_html += '<div class="ghz_skeleton"></div>';
+            }
+            ghz_list.innerHTML = ghz_html;
+        }
+
+        // 渲染商品卡片，卡片整体链接到详情页并携带 id 参数
+        function ghz_render(ghz_products) {
+            var ghz_html = '';
+
+            for (var ghz_i = 0; ghz_i < ghz_products.length; ghz_i++) {
+                var ghz_p = ghz_products[ghz_i];
+
+                ghz_html +=
+                    '<a class="ghz_item" href="./17-3-detail.html?id=' + ghz_p.id + '">' +
+                        '<div class="ghz_thumb">' +
+                            '<img src="' + ghz_escape(ghz_p.thumbnail) + '" alt="' + ghz_escape(ghz_p.title) + '" loading="lazy" onerror="this.style.opacity=0">' +
+                            '<span class="ghz_cat">' + ghz_escape(ghz_p.category) + '</span>' +
+                        '</div>' +
+                        '<div class="ghz_body">' +
+                            '<h2 class="ghz_item-title">' + ghz_escape(ghz_p.title) + '</h2>' +
+                            '<p class="ghz_item-desc">' + ghz_escape(ghz_p.description) + '</p>' +
+                            '<div class="ghz_item-foot">' +
+                                '<span class="ghz_price">$ ' + Number(ghz_p.price).toFixed(2) + '</span>' +
+                                '<span class="ghz_rating">' +
+                                    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4 6.2 20.5l1.1-6.5L2.6 9.4l6.5-.9z"/></svg>' +
+                                    ghz_p.rating.toFixed(2) +
+                                '</span>' +
+                            '</div>' +
+                            '<div class="ghz_detail-link">查看详情（ID ' + ghz_p.id + '）' +
+                                '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 5.3l1.4 1.4L10.1 11H19v2h-8.9l4.6 4.3-1.4 1.4L7 12l6.3-6.7z"/></svg>' +
+                            '</div>' +
+                        '</div>' +
+                    '</a>';
+            }
+
+            ghz_list.innerHTML = ghz_html;
+        }
+
+        // 核心：fetch 请求列表接口
+        async function ghz_loadData() {
+            ghz_reloadBtn.disabled = true;
+            ghz_showSkeleton();
+            ghz_setState('正在请求列表数据…', 'loading');
+            ghz_metaStatus.textContent = '状态：请求中';
+            ghz_metaTime.textContent = '耗时：—';
+            ghz_metaCount.textContent = '商品：—';
+
+            var ghz_start = Date.now();
+
+            try {
+                var ghz_response = await fetch(ghz_apiUrl);
+                var ghz_cost = Date.now() - ghz_start;
+
+                if (!ghz_response.ok) {
+                    throw new Error('HTTP ' + ghz_response.status);
+                }
+
+                var ghz_data = await ghz_response.json();
+                var ghz_products = ghz_data.products;
+
+                ghz_render(ghz_products);
+                ghz_raw.innerHTML = ghz_highlight(JSON.stringify(ghz_data, null, 2));
+
+                ghz_setState(
+                    '请求成功：HTTP ' + ghz_response.status + '，共返回 ' + ghz_data.total + ' 条数据，本页展示 ' + ghz_products.length + ' 条',
+                    'ok'
+                );
+                ghz_metaStatus.textContent = '状态：成功 ' + ghz_response.status;
+                ghz_metaTime.textContent = '耗时：' + ghz_cost + ' ms';
+                ghz_metaCount.textContent = '商品：' + ghz_products.length + ' 条';
+            } catch (ghz_error) {
+                var ghz_failCost = Date.now() - ghz_start;
+
+                ghz_list.innerHTML =
+                    '<div class="ghz_empty">' +
+                        '<strong>请求失败：' + ghz_escape(ghz_error.message) + '</strong>' +
+                        '请检查网络连接后点击「重新请求」，或按 F12 在控制台查看跨域报错信息。' +
+                    '</div>';
+                ghz_raw.textContent = '请求失败，暂无数据';
+
+                ghz_setState('请求失败：' + ghz_error.message, 'error');
+                ghz_metaStatus.textContent = '状态：失败';
+                ghz_metaTime.textContent = '耗时：' + ghz_failCost + ' ms';
+                ghz_metaCount.textContent = '商品：0 条';
+            } finally {
+                ghz_reloadBtn.disabled = false;
+            }
+        }
+
+        ghz_reloadBtn.addEventListener('click', ghz_loadData);
+        ghz_loadData();
+    </script>
+</body>
+</html>

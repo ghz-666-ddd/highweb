@@ -103,3 +103,58 @@ logged
 
 上传github
 
+
+
+## 2026-11-02 11:11:36 +08 | model: DeepSeek-V4.1-Flash
+
+我的姓名是高浩哲，学号是24005240104.我需要根据指导书完成高级网页设计课程的三级项目，并且完成项目报告。我的三级项目的选题是：仰望官网-仰望u9，其网址是`https://www.yangwangauto.com/u9-detail-page.html`。
+
+
+## 2026-11-02 11:44:45 +08 | model: DeepSeek-V4.1-Flash
+
+我需要跟这个网页做的一模一样，任何东西都用他的
+
+## 2026-11-02 13:13:22 +08 | model: DeepSeek-V4.1-Flash
+
+友好的超跑驾乘空间这块有点问题，排版有问题，而且还需要放到图片上有放大的效果
+
+## 2026-11-02 13:31:04 +08 | model: DeepSeek-V4.1-Flash
+
+上传github
+
+
+
+## 2026-11-02 13:42:44 +08 | model: DeepSeek-V4.1-Flash
+
+1、完成17-1.html，展示json。
+2、完成17-2.html 获取一个接口的数据并展示。接口可以跨域访问。使用fetch和原生代码实现。
+
+
+## 2026-11-02 13:47:32 +08 | model: DeepSeek-V4.1-Flash
+
+1、完成17-1.html，展示json。
+2、完成17-2.html 获取`https://dog.ceo/api/breed/hound/images/random/3`接口的数据并展示。接口可以跨域访问。使用fetch和原生代码实现。
+
+
+## 2026-11-02 13:53:25 +08 | model: DeepSeek-V4.1-Flash
+
+3、完成17-3.html 和17-3-detail.html,显示列表和列表详情，数据来源于接口，使用fetch
+列表：`https://dummyjson.com/products?limit=8`，默认商品列表。
+详情：`https://dummyjson.com/products/1`，根据ID获取单个商品。
+
+
+## 2026-11-02 14:23:55 +08 | model: DeepSeek-V4.1-Flash
+
+完成17-4.html，对远程数据接口进行测试，支持get、post等，显示返回的数据和错误提示信息，
+示例post接口：`https://jsonplaceholder.typicode.com/posts`。
+
+
+## 2026-11-02 14:42:17 +08 | model: DeepSeek-V4.1-Flash
+
+5、完成17-5.html ，展示javascript的两种定时器。
+6、完成17-6.html，使用promise和async完成异步操作的演示包饺子的流程。先买原料，取原料，买完原料之后同时和面、和馅，两个活动都完成之后包饺子，包完饺子吃饺子。使用settimeout模拟每一个流程，如买原料6s。在页面上显示流程。
+
+
+## 2026-11-02 14:53:39 +08 | model: DeepSeek-V4.1-Flash
+
+上传到github

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-02，功能：17-1 JSON 数据展示，含语法说明、可展开 JSON 树与 JSON.parse / JSON.stringify 演示 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-1 JSON 数据展示 · 高浩哲</title>
+    <style>
+        :root {
+            --ghz_bg: #f4f6fb;
+            --ghz_card: #ffffff;
+            --ghz_ink: #1d2436;
+            --ghz_muted: #6b7690;
+            --ghz_line: #e4e8f2;
+            --ghz_primary: #4b5bd6;
+            --ghz_primary-deep: #2f3ba8;
+            --ghz_cyan: #0fa3a3;
+            --ghz_amber: #e3902a;
+            --ghz_code-bg: #1c2233;
+            --ghz_radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 28px 16px 48px;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_ink);
+            background:
+                radial-gradient(circle at top right, rgba(75, 91, 214, 0.14), transparent 30%),
+                radial-gradient(circle at bottom left, rgba(15, 163, 163, 0.12), transparent 28%),
+                var(--ghz_bg);
+        }
+
+        .ghz_page {
+            width: min(1080px, 100%);
+            margin: 0 auto;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .ghz_hero {
+            position: relative;
+            overflow: hidden;
+            padding: 34px 36px;
+            border-radius: 26px;
+            color: #fff;
+            background: linear-gradient(135deg, #3d4bc4, #6a63d8 55%, #0fa3a3);
+            box-shadow: 0 20px 44px rgba(47, 60, 168, 0.22);
+        }
+
+        .ghz_hero::before {
+            content: "{ }";
+            position: absolute;
+            right: 26px;
+            top: -18px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 9rem;
+            font-weight: 700;
+            letter-spacing: -12px;
+            color: rgba(255, 255, 255, 0.12);
+            pointer-events: none;
+        }
+
+        .ghz_hero-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 999px;
+            font-size: 0.74rem;
+            letter-spacing: 2px;
+        }
+
+        .ghz_hero h1 {
+            position: relative;
+            z-index: 1;
+            margin: 16px 0 0;
+            font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+            letter-spacing: 1.5px;
+        }
+
+        .ghz_hero p {
+            position: relative;
+            z-index: 1;
+            margin: 12px 0 0;
+            max-width: 620px;
+            font-size: 0.95rem;
+            line-height: 1.85;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        /* ---------- 通用卡片 ---------- */
+        .ghz_card {
+            margin-top: 24px;
+            padding: 26px 26px 28px;
+            border: 1px solid var(--ghz_line);
+            border-radius: var(--ghz_radius);
+            background: var(--ghz_card);
+            box-shadow: 0 12px 30px rgba(34, 46, 90, 0.07);
+        }
+
+        .ghz_card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 18px;
+            font-size: 1.12rem;
+            letter-spacing: 0.5px;
+        }
+
+        .ghz_card-title span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            flex: none;
+            border-radius: 8px;
+            background: rgba(75, 91, 214, 0.12);
+            color: var(--ghz_primary-deep);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .ghz_card-title em {
+            margin-left: auto;
+            font-style: normal;
+            font-size: 0.76rem;
+            font-weight: 400;
+            color: var(--ghz_muted);
+        }
+
+        /* ---------- 语法要点 ---------- */
+        .ghz_facts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .ghz_fact {
+            padding: 16px 16px 15px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 14px;
+            background: linear-gradient(160deg, #fbfcff, #f3f5fd);
+        }
+
+        .ghz_fact h3 {
+            margin: 0 0 8px;
+            font-size: 0.9rem;
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_fact code {
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: #1c2233;
+            color: #8be0c8;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.82rem;
+        }
+
+        .ghz_fact p {
+            margin: 0;
+            font-size: 0.82rem;
+            line-height: 1.75;
+            color: var(--ghz_muted);
+        }
+
+        /* ---------- JSON 展示区 ---------- */
+        .ghz_split {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+            gap: 16px;
+        }
+
+        .ghz_pane {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--ghz_line);
+        }
+
+        .ghz_pane-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            background: #f5f7fd;
+            border-bottom: 1px solid var(--ghz_line);
+            font-size: 0.78rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_pane-head strong {
+            color: var(--ghz_ink);
+            font-size: 0.8rem;
+        }
+
+        .ghz_pre {
+            margin: 0;
+            padding: 18px 16px;
+            max-height: 430px;
+            overflow: auto;
+            background: var(--ghz_code-bg);
+            color: #d9def0;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.82rem;
+            line-height: 1.75;
+            tab-size: 2;
+        }
+
+        /* JSON 语法高亮配色 */
+        .ghz_key { color: #8bd0ff; }
+        .ghz_str { color: #a8e6a1; }
+        .ghz_num { color: #ffb86c; }
+        .ghz_bool { color: #ff8fb1; }
+        .ghz_null { color: #b39ddb; }
+
+        .ghz_btn {
+            padding: 6px 12px;
+            border: 1px solid rgba(75, 91, 214, 0.35);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--ghz_primary-deep);
+            font-family: inherit;
+            font-size: 0.76rem;
+            cursor: pointer;
+            transition: background 0.18s ease, color 0.18s ease;
+        }
+
+        .ghz_btn:hover {
+            background: var(--ghz_primary);
+            color: #fff;
+        }
+
+        .ghz_btn:focus-visible {
+            outline: 2px dashed var(--ghz_primary);
+            outline-offset: 2px;
+        }
+
+        /* ---------- JSON 树 ---------- */
+        .ghz_tree {
+            height: 430px;
+            overflow: auto;
+            padding: 14px 16px;
+            background: #fff;
+            font-size: 0.82rem;
+        }
+
+        .ghz_tree details {
+            margin-left: 2px;
+            padding-left: 12px;
+            border-left: 1px dashed #d9dfef;
+        }
+
+        .ghz_tree details > details {
+            margin-top: 4px;
+        }
+
+        .ghz_tree summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .ghz_tree summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .ghz_tree summary::before {
+            content: "+";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            flex: none;
+            border: 1px solid #c9d1e6;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_tree details[open] summary::before {
+            content: "−";
+        }
+
+        .ghz_tree summary:hover {
+            background: #f4f6fd;
+        }
+
+        .ghz_tree-node {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 5px 6px;
+            border-radius: 6px;
+        }
+
+        .ghz_tree-node:hover {
+            background: #f6f8ff;
+        }
+
+        .ghz_tree-key {
+            color: var(--ghz_primary-deep);
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        .ghz_tree-type {
+            font-size: 0.7rem;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: rgba(15, 163, 163, 0.12);
+            color: #0b7f7f;
+        }
+
+        .ghz_tree-count {
+            font-size: 0.7rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_tree-value {
+            font-family: Consolas, "Courier New", monospace;
+            word-break: break-all;
+        }
+
+        .ghz_tree-value--string { color: #2f8f4c; }
+        .ghz_tree-value--number { color: #cf7a12; }
+        .ghz_tree-value--boolean { color: #c4447a; }
+        .ghz_tree-value--null { color: #7a5cb5; }
+
+        /* ---------- parse / stringify 演示 ---------- */
+        .ghz_demo {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .ghz_steps {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+
+        .ghz_step {
+            padding: 13px 15px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 12px;
+            background: #fbfcff;
+        }
+
+        .ghz_step strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_step code {
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.78rem;
+            color: #4a5470;
+            word-break: break-all;
+        }
+
+        .ghz_out {
+            margin-top: 6px;
+            padding: 8px 10px;
+            border-left: 3px solid var(--ghz_cyan);
+            border-radius: 4px;
+            background: #f2f9f9;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.78rem;
+            color: #0b6f6f;
+            word-break: break-all;
+        }
+
+        .ghz_note {
+            margin: 18px 0 0;
+            padding: 12px 15px;
+            border-radius: 12px;
+            background: rgba(227, 144, 42, 0.09);
+            border: 1px solid rgba(227, 144, 42, 0.28);
+            font-size: 0.8rem;
+            line-height: 1.8;
+            color: #8a5a10;
+        }
+
+        .ghz_footer {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 0.76rem;
+            letter-spacing: 1px;
+            color: #9aa2b8;
+        }
+
+        @media (max-width: 820px) {
+            .ghz_split,
+            .ghz_demo {
+                grid-template-columns: 1fr;
+            }
+
+            .ghz_pre,
+            .ghz_tree {
+                max-height: 320px;
+                height: auto;
+            }
+
+            .ghz_tree {
+                height: 320px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            body {
+                padding: 16px 10px 32px;
+            }
+
+            .ghz_hero {
+                padding: 26px 22px;
+                border-radius: 20px;
+            }
+
+            .ghz_card {
+                padding: 20px 18px 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_page">
+        <header class="ghz_hero">
+            <span class="ghz_hero-tag">LESSON 17 · JSON</span>
+            <h1>JSON 数据展示</h1>
+            <p>JSON（JavaScript Object Notation）是一种轻量级的数据交换格式，用键值对描述对象、用方括号描述数组。下面用一份真实结构的 JSON 数据，演示它的写法、层次与解析方法。</p>
+        </header>
+
+        <!-- 1. 语法要点 -->
+        <section class="ghz_card">
+            <h2 class="ghz_card-title"><span>1</span>JSON 的四条基本规则</h2>
+            <div class="ghz_facts">
+                <div class="ghz_fact">
+                    <h3>键值对</h3>
+                    <code>"name": "高浩哲"</code>
+                    <p>键名必须用双引号包裹，键与值之间用冒号分隔，多个键值对用逗号分隔。</p>
+                </div>
+                <div class="ghz_fact">
+                    <h3>对象</h3>
+                    <code>{ ... }</code>
+                    <p>一对花括号表示一个对象，里面存放若干无序的键值对，可任意嵌套。</p>
+                </div>
+                <div class="ghz_fact">
+                    <h3>数组</h3>
+                    <code>[ ... ]</code>
+                    <p>一对方括号表示一个数组，元素用逗号分隔，元素可以是任意 JSON 值。</p>
+                </div>
+                <div class="ghz_fact">
+                    <h3>值类型</h3>
+                    <code>6 种</code>
+                    <p>字符串、数字、布尔值、null、对象、数组；不支持函数、undefined 与注释。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. JSON 原文 + 树状结构 -->
+        <section class="ghz_card">
+            <h2 class="ghz_card-title"><span>2</span>一份 JSON 数据<em>左：原文格式 · 右：树状结构</em></h2>
+
+            <div class="ghz_split">
+                <div class="ghz_pane">
+                    <div class="ghz_pane-head">
+                        <strong>student.json</strong>
+                        <span>字符串 · 数字 · 布尔 · null · 数组 · 嵌套对象</span>
+                    </div>
+                    <pre class="ghz_pre" id="ghz_json-raw"></pre>
+                </div>
+
+                <div class="ghz_pane">
+                    <div class="ghz_pane-head">
+                        <strong>结构视图</strong>
+                        <button class="ghz_btn" type="button" id="ghz_tree-toggle">全部收起</button>
+                    </div>
+                    <div class="ghz_tree" id="ghz_tree"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. parse / stringify -->
+        <section class="ghz_card">
+            <h2 class="ghz_card-title"><span>3</span>JSON.parse 与 JSON.stringify<em>页面加载后实时计算</em></h2>
+
+            <div class="ghz_demo">
+                <ul class="ghz_steps">
+                    <li class="ghz_step">
+                        <strong>① 原始字符串</strong>
+                        <code>var ghz_text = '{"name":"高浩哲","age":20,"isStudent":true}';</code>
+                    </li>
+                    <li class="ghz_step">
+                        <strong>② JSON.parse：字符串 → 对象</strong>
+                        <code>var ghz_obj = JSON.parse(ghz_text);</code>
+                        <div class="ghz_out" id="ghz_out-parse"></div>
+                    </li>
+                    <li class="ghz_step">
+                        <strong>③ 读取属性</strong>
+                        <code>ghz_obj.name + ' / ' + ghz_obj.age</code>
+                        <div class="ghz_out" id="ghz_out-read"></div>
+                    </li>
+                    <li class="ghz_step">
+                        <strong>④ JSON.stringify：对象 → 字符串</strong>
+                        <code>JSON.stringify(ghz_obj, null, 2)</code>
+                        <div class="ghz_out" id="ghz_out-stringify"></div>
+                    </li>
+                </ul>
+
+                <div>
+                    <div class="ghz_pane">
+                        <div class="ghz_pane-head">
+                            <strong>stringify 的格式化输出</strong>
+                            <span>缩进 2 个空格</span>
+                        </div>
+                        <pre class="ghz_pre" id="ghz_out-pretty"></pre>
+                    </div>
+                    <p class="ghz_note">记住：<b>parse</b> 把字符串变成可操作的对象，<b>stringify</b> 把对象变回字符串，两者是前后端交换数据的入口与出口。若字符串格式非法，parse 会抛出 SyntaxError，需用 try...catch 捕获。</p>
+                </div>
+            </div>
+        </section>
+
+        <p class="ghz_footer">高浩哲 · 《高级网页设计》练习 17-1 · JSON 数据展示</p>
+    </div>
+
+    <script>
+        // ============ 示例 JSON 数据 ============
+        var ghz_jsonData = {
+            "school": "高级网页设计",
+            "student": {
+                "name": "高浩哲",
+                "studentId": "24005240104",
+                "grade": 2024,
+                "isStudent": true,
+                "nickname": null
+            },
+            "course": {
+                "name": "高级网页设计",
+                "lesson": 17,
+                "topic": "JSON 数据交换",
+                "hours": 2.5,
+                "finished": false
+            },
+            "skills": ["HTML", "CSS", "JavaScript", "JSON"],
+            "scores": [92, 88, 95.5, 90]
+        };
+
+        // ============ JSON 语法高亮 ============
+        function ghz_highlight(ghz_text) {
+            var ghz_escaped = ghz_text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            return ghz_escaped.replace(
+                /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+                function (ghz_match) {
+                    var ghz_cls = 'ghz_num';
+                    if (/^"/.test(ghz_match)) {
+                        ghz_cls = /:$/.test(ghz_match) ? 'ghz_key' : 'ghz_str';
+                    } else if (/true|false/.test(ghz_match)) {
+                        ghz_cls = 'ghz_bool';
+                    } else if (/null/.test(ghz_match)) {
+                        ghz_cls = 'ghz_null';
+                    }
+                    return '<span class="' + ghz_cls + '">' + ghz_match + '</span>';
+                }
+            );
+        }
+
+        // 渲染左侧 JSON 原文
+        document.getElementById('ghz_json-raw').innerHTML =
+            ghz_highlight(JSON.stringify(ghz_jsonData, null, 2));
+
+        // ============ 生成树状结构 ============
+        function ghz_typeOf(ghz_value) {
+            if (ghz_value === null) return 'null';
+            if (Array.isArray(ghz_value)) return 'array';
+            return typeof ghz_value;
+        }
+
+        function ghz_buildTree(ghz_value, ghz_key) {
+            var ghz_type = ghz_typeOf(ghz_value);
+            var ghz_wrap = document.createElement('div');
+
+            if (ghz_type === 'object' || ghz_type === 'array') {
+                var ghz_count = ghz_type === 'array' ? ghz_value.length : Object.keys(ghz_value).length;
+                var ghz_details = document.createElement('details');
+                ghz_details.open = true;
+
+                var ghz_summary = document.createElement('summary');
+                var ghz_keySpan = document.createElement('span');
+                ghz_keySpan.className = 'ghz_tree-key';
+                ghz_keySpan.textContent = ghz_key;
+
+                var ghz_typeSpan = document.createElement('span');
+                ghz_typeSpan.className = 'ghz_tree-type';
+                ghz_typeSpan.textContent = ghz_type === 'array' ? '[ ] 数组' : '{ } 对象';
+
+                var ghz_countSpan = document.createElement('span');
+                ghz_countSpan.className = 'ghz_tree-count';
+                ghz_countSpan.textContent = ghz_count + ' 项';
+
+                ghz_summary.appendChild(ghz_keySpan);
+                ghz_summary.appendChild(ghz_typeSpan);
+                ghz_summary.appendChild(ghz_countSpan);
+                ghz_details.appendChild(ghz_summary);
+
+                var ghz_children = document.createElement('div');
+                ghz_children.className = 'ghz_tree-children';
+
+                if (ghz_type === 'array') {
+                    for (var ghz_i = 0; ghz_i < ghz_value.length; ghz_i++) {
+                        ghz_children.appendChild(ghz_buildTree(ghz_value[ghz_i], '[' + ghz_i + ']'));
+                    }
+                } else {
+                    Object.keys(ghz_value).forEach(function (ghz_childKey) {
+                        ghz_children.appendChild(ghz_buildTree(ghz_value[ghz_childKey], ghz_childKey));
+                    });
+                }
+
+                ghz_details.appendChild(ghz_children);
+                ghz_wrap.appendChild(ghz_details);
+            } else {
+                ghz_wrap.className = 'ghz_tree-node';
+
+                var ghz_keyNode = document.createElement('span');
+                ghz_keyNode.className = 'ghz_tree-key';
+                ghz_keyNode.textContent = ghz_key;
+
+                var ghz_valueNode = document.createElement('span');
+                ghz_valueNode.className = 'ghz_tree-value ghz_tree-value--' + ghz_type;
+                ghz_valueNode.textContent = ghz_type === 'string'
+                    ? '"' + ghz_value + '"'
+                    : String(ghz_value);
+
+                ghz_wrap.appendChild(ghz_keyNode);
+                ghz_wrap.appendChild(ghz_valueNode);
+            }
+
+            return ghz_wrap;
+        }
+
+        var ghz_treeBox = document.getElementById('ghz_tree');
+        ghz_treeBox.appendChild(ghz_buildTree(ghz_jsonData, 'root'));
+
+        // 全部展开 / 全部收起
+        var ghz_toggleBtn = document.getElementById('ghz_tree-toggle');
+        var ghz_treeOpen = true;
+
+        ghz_toggleBtn.addEventListener('click', function () {
+            ghz_treeOpen = !ghz_treeOpen;
+            var ghz_nodes = ghz_treeBox.querySelectorAll('details');
+
+            for (var ghz_i = 0; ghz_i < ghz_nodes.length; ghz_i++) {
+                ghz_nodes[ghz_i].open = ghz_treeOpen;
+            }
+
+            ghz_toggleBtn.textContent = ghz_treeOpen ? '全部收起' : '全部展开';
+        });
+
+        // ============ JSON.parse / JSON.stringify 演示 ============
+        var ghz_text = '{"name":"高浩哲","age":20,"isStudent":true}';
+
+        try {
+            var ghz_obj = JSON.parse(ghz_text);
+
+            document.getElementById('ghz_out-parse').textContent =
+                'typeof → ' + typeof ghz_obj + '，键：' + Object.keys(ghz_obj).join('、');
+
+            document.getElementById('ghz_out-read').textContent =
+                ghz_obj.name + ' / ' + ghz_obj.age + ' 岁 / 是否学生：' + ghz_obj.isStudent;
+
+            var ghz_pretty = JSON.stringify(ghz_obj, null, 2);
+            document.getElementById('ghz_out-stringify').textContent =
+                ghz_pretty.replace(/\n/g, ' ');
+            document.getElementById('ghz_out-pretty').innerHTML = ghz_highlight(ghz_pretty);
+        } catch (ghz_error) {
+            document.getElementById('ghz_out-parse').textContent = '解析失败：' + ghz_error.message;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-02，功能：17-4 接口测试工具，支持 GET/POST/PUT/PATCH/DELETE，展示响应数据与错误信息 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-4 接口测试工具 · 高浩哲</title>
+    <style>
+        :root {
+            --ghz_bg: #f4f7fb;
+            --ghz_card: #ffffff;
+            --ghz_ink: #16203a;
+            --ghz_muted: #68738c;
+            --ghz_line: #e3e8f2;
+            --ghz_primary: #2f6bd6;
+            --ghz_primary-deep: #1d47a2;
+            --ghz_amber: #ef9d35;
+            --ghz_red: #d64545;
+            --ghz_green: #16996f;
+            --ghz_code-bg: #12192a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 28px 16px 46px;
+            font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+            color: var(--ghz_ink);
+            background:
+                radial-gradient(circle at top left, rgba(47, 107, 214, 0.13), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(239, 157, 53, 0.12), transparent 28%),
+                var(--ghz_bg);
+        }
+
+        .ghz_page {
+            width: min(1080px, 100%);
+            margin: 0 auto;
+        }
+
+        /* ---------- 顶部 ---------- */
+        .ghz_hero {
+            position: relative;
+            overflow: hidden;
+            padding: 32px 34px;
+            border-radius: 24px;
+            color: #fff;
+            background: linear-gradient(135deg, #1d47a2, #2f6bd6 58%, #2b9fb5);
+            box-shadow: 0 20px 42px rgba(29, 71, 162, 0.22);
+        }
+
+        .ghz_hero::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: -70px;
+            bottom: -130px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .ghz_hero-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 999px;
+            font-size: 0.74rem;
+            letter-spacing: 2px;
+        }
+
+        .ghz_hero h1 {
+            position: relative;
+            z-index: 1;
+            margin: 15px 0 0;
+            font-size: clamp(1.55rem, 3.2vw, 2.3rem);
+            letter-spacing: 1.2px;
+        }
+
+        .ghz_hero p {
+            position: relative;
+            z-index: 1;
+            margin: 12px 0 0;
+            max-width: 700px;
+            font-size: 0.94rem;
+            line-height: 1.85;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        /* ---------- 请求表单 ---------- */
+        .ghz_card {
+            margin-top: 22px;
+            padding: 20px 22px 22px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 20px;
+            background: var(--ghz_card);
+            box-shadow: 0 14px 30px rgba(28, 45, 90, 0.07);
+        }
+
+        .ghz_card-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0 0 16px;
+            font-size: 1rem;
+        }
+
+        .ghz_card-title::before {
+            content: "";
+            width: 4px;
+            height: 15px;
+            border-radius: 3px;
+            background: var(--ghz_primary);
+        }
+
+        .ghz_req-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ghz_method {
+            height: 44px;
+            padding: 0 12px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 12px;
+            background: #f7f9fe;
+            color: var(--ghz_primary-deep);
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .ghz_method:focus-visible {
+            outline: 2px dashed var(--ghz_primary);
+            outline-offset: 2px;
+        }
+
+        .ghz_url {
+            flex: 1;
+            min-width: 240px;
+            height: 44px;
+            padding: 0 14px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--ghz_ink);
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.84rem;
+        }
+
+        .ghz_url:focus {
+            outline: none;
+            border-color: rgba(47, 107, 214, 0.55);
+            box-shadow: 0 0 0 3px rgba(47, 107, 214, 0.12);
+        }
+
+        .ghz_btn {
+            height: 44px;
+            padding: 0 22px;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--ghz_primary), var(--ghz_primary-deep));
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.86rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(47, 107, 214, 0.28);
+            transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+        }
+
+        .ghz_btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(47, 107, 214, 0.34);
+        }
+
+        .ghz_btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .ghz_btn:focus-visible {
+            outline: 2px dashed var(--ghz_primary);
+            outline-offset: 3px;
+        }
+
+        /* 请求体 */
+        .ghz_field {
+            margin-top: 16px;
+        }
+
+        .ghz_field[hidden] {
+            display: none;
+        }
+
+        .ghz_field-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_field-label b {
+            color: var(--ghz_ink);
+            font-size: 0.8rem;
+        }
+
+        .ghz_body {
+            width: 100%;
+            min-height: 130px;
+            padding: 12px 14px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 12px;
+            background: #fbfcff;
+            color: #34405c;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            resize: vertical;
+        }
+
+        .ghz_body:focus {
+            outline: none;
+            border-color: rgba(47, 107, 214, 0.55);
+            box-shadow: 0 0 0 3px rgba(47, 107, 214, 0.12);
+        }
+
+        .ghz_hint {
+            margin: 10px 0 0;
+            font-size: 0.75rem;
+            line-height: 1.75;
+            color: #93a0bd;
+        }
+
+        /* 快捷示例 */
+        .ghz_presets {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px dashed var(--ghz_line);
+        }
+
+        .ghz_presets span {
+            font-size: 0.74rem;
+            color: var(--ghz_muted);
+        }
+
+        .ghz_preset {
+            padding: 6px 12px;
+            border: 1px solid rgba(47, 107, 214, 0.28);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--ghz_primary-deep);
+            font-family: inherit;
+            font-size: 0.74rem;
+            cursor: pointer;
+            transition: background 0.16s ease, color 0.16s ease;
+        }
+
+        .ghz_preset:hover {
+            background: var(--ghz_primary);
+            color: #fff;
+        }
+
+        .ghz_preset:focus-visible {
+            outline: 2px dashed var(--ghz_primary);
+            outline-offset: 2px;
+        }
+
+        /* ---------- 响应结果 ---------- */
+        .ghz_resp {
+            margin-top: 22px;
+            border: 1px solid var(--ghz_line);
+            border-radius: 20px;
+            background: var(--ghz_card);
+            box-shadow: 0 14px 30px rgba(28, 45, 90, 0.07);
+            overflow: hidden;
+        }
+
+        .ghz_resp-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 22px 4px;
+        }
+
+        .ghz_resp-head h2 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .ghz_resp-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .ghz_resp-meta span {
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #f2f5fd;
+            font-size: 0.73rem;
+            color: #4a5875;
+        }
+
+        /* 状态提示 */
+        .ghz_state {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 12px 22px 0;
+            padding: 11px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            line-height: 1.65;
+            border: 1px solid transparent;
+        }
+
+        .ghz_state::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            flex: none;
+            margin-top: 5px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .ghz_state--idle {
+            color: #6b7690;
+            background: #f4f6fb;
+            border-color: #e6eaf4;
+        }
+
+        .ghz_state--loading {
+            color: #8a6216;
+            background: rgba(239, 157, 53, 0.1);
+            border-color: rgba(239, 157, 53, 0.32);
+        }
+
+        .ghz_state--ok {
+            color: #0f7357;
+            background: rgba(22, 153, 111, 0.1);
+            border-color: rgba(22, 153, 111, 0.3);
+        }
+
+        .ghz_state--error {
+            color: #a93232;
+            background: rgba(214, 69, 69, 0.09);
+            border-color: rgba(214, 69, 69, 0.3);
+        }
+
+        /* 响应体 */
+        .ghz_resp-body {
+            margin: 14px 22px 22px;
+            padding: 16px 18px;
+            max-height: 430px;
+            overflow: auto;
+            border-radius: 14px;
+            background: var(--ghz_code-bg);
+            color: #cfd7ea;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.8rem;
+            line-height: 1.75;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .ghz_resp-body:empty::before {
+            content: "响应正文将显示在这里";
+            color: #5d6a86;
+        }
+
+        .ghz_key { color: #8bd0ff; }
+        .ghz_str { color: #a8e6a1; }
+        .ghz_num { color: #ffb86c; }
+        .ghz_bool { color: #ff8fb1; }
+        .ghz_null { color: #b39ddb; }
+
+        /* 响应头 */
+        .ghz_panel {
+            border-top: 1px solid var(--ghz_line);
+        }
+
+        .ghz_panel summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 22px;
+            cursor: pointer;
+            list-style: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_panel summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .ghz_panel summary::before {
+            content: "＋";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: rgba(47, 107, 214, 0.1);
+            font-size: 0.72rem;
+        }
+
+        .ghz_panel[open] summary::before {
+            content: "−";
+        }
+
+        .ghz_panel summary em {
+            margin-left: auto;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 0.74rem;
+            color: #93a0bd;
+        }
+
+        .ghz_headers {
+            padding: 0 22px 18px;
+            display: grid;
+            gap: 6px;
+            max-height: 260px;
+            overflow: auto;
+        }
+
+        .ghz_header-row {
+            display: flex;
+            gap: 12px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #f7f9fe;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.74rem;
+            line-height: 1.6;
+        }
+
+        .ghz_header-row b {
+            flex: none;
+            width: 210px;
+            color: var(--ghz_primary-deep);
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .ghz_header-row span {
+            color: #4b5670;
+            word-break: break-all;
+        }
+
+        .ghz_header-row--empty {
+            display: block;
+            color: var(--ghz_muted);
+        }
+
+        /* ---------- 代码说明 ---------- */
+        .ghz_code {
+            margin: 0;
+            padding: 18px 20px;
+            background: var(--ghz_code-bg);
+            color: #dbe2f2;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 0.79rem;
+            line-height: 1.85;
+            overflow-x: auto;
+        }
+
+        .ghz_code .ghz_cm { color: #7d8aa8; }
+        .ghz_code .ghz_kw { color: #ff9db6; }
+        .ghz_code .ghz_fn { color: #7fd0ff; }
+        .ghz_code .ghz_lt { color: #a8e6a1; }
+
+        .ghz_footer {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 0.76rem;
+            letter-spacing: 1px;
+            color: #9aa2b8;
+        }
+
+        @media (max-width: 620px) {
+            body {
+                padding: 16px 10px 30px;
+            }
+
+            .ghz_hero {
+                padding: 24px 20px;
+                border-radius: 20px;
+            }
+
+            .ghz_card {
+                padding: 16px 14px 18px;
+            }
+
+            .ghz_url {
+                min-width: 100%;
+            }
+
+            .ghz_btn {
+                width: 100%;
+            }
+
+            .ghz_resp-head {
+                padding: 16px 16px 4px;
+            }
+
+            .ghz_resp-meta {
+                margin-left: 0;
+            }
+
+            .ghz_state {
+                margin: 12px 16px 0;
+            }
+
+            .ghz_resp-body {
+                margin: 14px 16px 18px;
+            }
+
+            .ghz_panel summary,
+            .ghz_headers {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .ghz_header-row {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .ghz_header-row b {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ghz_page">
+        <header class="ghz_hero">
+            <span class="ghz_hero-tag">LESSON 17 · API TEST</span>
+            <h1>接口测试工具</h1>
+            <p>输入接口地址、选择请求方法，用原生 fetch 发起请求并查看返回结果。支持 GET、POST、PUT、PATCH、DELETE，可填写 JSON 请求体，响应会显示状态码、耗时、响应头与正文；请求失败时给出明确的错误提示。</p>
+        </header>
+
+        <!-- 请求区 -->
+        <form class="ghz_card" id="ghz_form">
+            <h2 class="ghz_card-title">请求配置</h2>
+
+            <div class="ghz_req-row">
+                <select class="ghz_method" id="ghz_method" aria-label="请求方法">
+                    <option value="GET" selected>GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+                <input class="ghz_url" id="ghz_url" type="text" value="https://jsonplaceholder.typicode.com/posts" placeholder="https://example.com/api" aria-label="接口地址">
+                <button class="ghz_btn" id="ghz_send" type="submit">发送请求</button>
+            </div>
+
+            <div class="ghz_field" id="ghz_body-field" hidden>
+                <div class="ghz_field-label">
+                    <b>请求体（JSON）</b>
+                    <span>发送前会校验 JSON 格式</span>
+                </div>
+                <textarea class="ghz_body" id="ghz_body" spellcheck="false">{
+  "title": "高浩哲的测试文章",
+  "body": "这是一条通过 POST 提交的数据",
+  "userId": 1
+}</textarea>
+            </div>
+
+            <p class="ghz_hint">示例接口：<code>https://jsonplaceholder.typicode.com/posts</code>。GET 取列表，POST 新建一条数据，PUT / PATCH 更新，DELETE 删除。跨域接口需服务端返回 CORS 响应头。</p>
+
+            <div class="ghz_presets">
+                <span>快捷示例：</span>
+                <button class="ghz_preset" type="button" data-ghz-preset="get-list">GET 文章列表</button>
+                <button class="ghz_preset" type="button" data-ghz-preset="get-one">GET 单篇文章</button>
+                <button class="ghz_preset" type="button" data-ghz-preset="post">POST 新建文章</button>
+                <button class="ghz_preset" type="button" data-ghz-preset="put">PUT 更新文章</button>
+                <button class="ghz_preset" type="button" data-ghz-preset="delete">DELETE 删除文章</button>
+                <button class="ghz_preset" type="button" data-ghz-preset="bad">错误地址演示</button>
+            </div>
+        </form>
+
+        <!-- 响应区 -->
+        <section class="ghz_resp">
+            <div class="ghz_resp-head">
+                <h2>响应结果</h2>
+                <div class="ghz_resp-meta">
+                    <span id="ghz_meta-status">状态码：—</span>
+                    <span id="ghz_meta-time">耗时：—</span>
+                    <span id="ghz_meta-size">大小：—</span>
+                </div>
+            </div>
+
+            <div class="ghz_state ghz_state--idle" id="ghz_state">尚未发送请求，点击「发送请求」开始测试。</div>
+
+            <pre class="ghz_resp-body" id="ghz_resp-body"></pre>
+
+            <details class="ghz_panel">
+                <summary>响应头<em>response.headers</em></summary>
+                <div class="ghz_headers" id="ghz_headers">
+                    <div class="ghz_header-row ghz_header-row--empty">暂无响应头</div>
+                </div>
+            </details>
+        </section>
+
+        <!-- 请求代码说明 -->
+        <details class="ghz_card">
+            <summary style="display: flex; align-items: center; gap: 9px; margin: 0; cursor: pointer; list-style: none; font-size: 1rem; font-weight: 700; color: var(--ghz_primary-deep);">
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 6px; background: rgba(47, 107, 214, 0.1); font-size: 0.72rem;">＋</span>
+                本页使用的核心请求代码
+            </summary>
+            <pre class="ghz_code"><span class="ghz_cm">// 1. 组装请求配置：方法、请求头与请求体</span>
+<span class="ghz_kw">var</span> ghz_options = {
+    method: ghz_method,
+    headers: { <span class="ghz_lt">'Content-Type'</span>: <span class="ghz_lt">'application/json'</span> },
+    body: ghz_method === <span class="ghz_lt">'GET'</span> ? <span class="ghz_kw">null</span> : ghz_body
+};
+
+<span class="ghz_cm">// 2. 发起请求</span>
+<span class="ghz_kw">var</span> ghz_response = <span class="ghz_kw">await</span> <span class="ghz_fn">fetch</span>(ghz_url, ghz_options);
+
+<span class="ghz_cm">// 3. 读取响应正文并尝试解析为 JSON</span>
+<span class="ghz_kw">var</span> ghz_text = <span class="ghz_kw">await</span> ghz_response.<span class="ghz_fn">text</span>();
+<span class="ghz_kw">try</span> {
+    ghz_data = JSON.<span class="ghz_fn">parse</span>(ghz_text);
+} <span class="ghz_kw">catch</span> (ghz_error) {
+    <span class="ghz_cm">// 不是 JSON 时按纯文本展示</span>
+}</pre>
+        </details>
+
+        <p class="ghz_footer">高浩哲 · 《高级网页设计》练习 17-4 · 接口测试工具</p>
+    </div>
+
+    <script>
+        var ghz_form = document.getElementById('ghz_form');
+        var ghz_method = document.getElementById('ghz_method');
+        var ghz_url = document.getElementById('ghz_url');
+        var ghz_body = document.getElementById('ghz_body');
+        var ghz_bodyField = document.getElementById('ghz_body-field');
+        var ghz_send = document.getElementById('ghz_send');
+
+        var ghz_state = document.getElementById('ghz_state');
+        var ghz_respBody = document.getElementById('ghz_resp-body');
+        var ghz_headers = document.getElementById('ghz_headers');
+        var ghz_metaStatus = document.getElementById('ghz_meta-status');
+        var ghz_metaTime = document.getElementById('ghz_meta-time');
+        var ghz_metaSize = document.getElementById('ghz_meta-size');
+
+        // 快捷示例配置
+        var ghz_presets = {
+            'get-list': {
+                ghz_method: 'GET',
+                ghz_url: 'https://jsonplaceholder.typicode.com/posts?_limit=5',
+                ghz_body: ''
+            },
+            'get-one': {
+                ghz_method: 'GET',
+                ghz_url: 'https://jsonplaceholder.typicode.com/posts/1',
+                ghz_body: ''
+            },
+            'post': {
+                ghz_method: 'POST',
+                ghz_url: 'https://jsonplaceholder.typicode.com/posts',
+                ghz_body: '{\n  "title": "高浩哲的测试文章",\n  "body": "这是一条通过 POST 提交的数据",\n  "userId": 1\n}'
+            },
+            'put': {
+                ghz_method: 'PUT',
+                ghz_url: 'https://jsonplaceholder.typicode.com/posts/1',
+                ghz_body: '{\n  "id": 1,\n  "title": "更新后的标题",\n  "body": "更新后的正文",\n  "userId": 1\n}'
+            },
+            'delete': {
+                ghz_method: 'DELETE',
+                ghz_url: 'https://jsonplaceholder.typicode.com/posts/1',
+                ghz_body: ''
+            },
+            'bad': {
+                ghz_method: 'GET',
+                ghz_url: 'https://jsonplaceholder.typicode.com/posts/999999',
+                ghz_body: ''
+            }
+        };
+
+        // 转义文本
+        function ghz_escape(ghz_text) {
+            return String(ghz_text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // JSON 语法高亮
+        function ghz_highlight(ghz_text) {
+            var ghz_escaped = ghz_text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            return ghz_escaped.replace(
+                /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+                function (ghz_match) {
+                    var ghz_cls = 'ghz_num';
+                    if (/^"/.test(ghz_match)) {
+                        ghz_cls = /:$/.test(ghz_match) ? 'ghz_key' : 'ghz_str';
+                    } else if (/true|false/.test(ghz_match)) {
+                        ghz_cls = 'ghz_bool';
+                    } else if (/null/.test(ghz_match)) {
+                        ghz_cls = 'ghz_null';
+                    }
+                    return '<span class="' + ghz_cls + '">' + ghz_match + '</span>';
+                }
+            );
+        }
+
+        function ghz_setState(ghz_text, ghz_kind) {
+            ghz_state.textContent = ghz_text;
+            ghz_state.className = 'ghz_state ghz_state--' + ghz_kind;
+        }
+
+        // 只对有请求体的方法显示文本框
+        function ghz_syncBodyField() {
+            var ghz_hasBody = ghz_method.value !== 'GET' && ghz_method.value !== 'DELETE';
+            ghz_bodyField.hidden = !ghz_hasBody;
+        }
+
+        // 根据状态码判断提示颜色
+        function ghz_statusKind(ghz_code) {
+            if (ghz_code >= 200 && ghz_code < 300) return 'ok';
+            if (ghz_code >= 400) return 'error';
+            return 'loading';
+        }
+
+        // 渲染响应头
+        function ghz_renderHeaders(ghz_response) {
+            var ghz_html = '';
+            var ghz_count = 0;
+
+            ghz_response.headers.forEach(function (ghz_value, ghz_name) {
+                ghz_html +=
+                    '<div class="ghz_header-row">' +
+                        '<b>' + ghz_escape(ghz_name) + '</b>' +
+                        '<span>' + ghz_escape(ghz_value) + '</span>' +
+                    '</div>';
+                ghz_count++;
+            });
+
+            if (!ghz_count) {
+                ghz_headers.innerHTML = '<div class="ghz_header-row ghz_header-row--empty">该响应没有可读取的响应头</div>';
+            } else {
+                ghz_headers.innerHTML = ghz_html;
+            }
+        }
+
+        // 显示错误
+        function ghz_showError(ghz_message, ghz_detail) {
+            ghz_setState('错误：' + ghz_message, 'error');
+            ghz_respBody.innerHTML = '<span class="ghz_null">' + ghz_escape(ghz_detail || '请求未能完成，请检查接口地址、网络连接与跨域设置。') + '</span>';
+            ghz_metaStatus.textContent = '状态码：—';
+            ghz_metaSize.textContent = '大小：—';
+        }
+
+        // 核心：发起请求
+        async function ghz_sendRequest() {
+            var ghz_requestUrl = ghz_url.value.trim();
+
+            // 地址校验
+            if (!ghz_requestUrl) {
+                ghz_showError('接口地址不能为空', '请在地址栏填写以 http:// 或 https:// 开头的接口地址。');
+                return;
+            }
+
+            if (!/^https?:\/\//i.test(ghz_requestUrl)) {
+                ghz_showError('接口地址格式不正确', '地址必须以 http:// 或 https:// 开头。');
+                return;
+            }
+
+            var ghz_methodValue = ghz_method.value;
+            var ghz_hasBody = ghz_methodValue !== 'GET' && ghz_methodValue !== 'DELETE';
+            var ghz_bodyValue = ghz_body.value.trim();
+
+            // 请求体 JSON 校验
+            if (ghz_hasBody && ghz_bodyValue) {
+                try {
+                    JSON.parse(ghz_bodyValue);
+                } catch (ghz_jsonError) {
+                    ghz_showError('请求体不是合法的 JSON', ghz_jsonError.message);
+                    return;
+                }
+            }
+
+            // 状态初始化
+            ghz_send.disabled = true;
+            ghz_send.textContent = '请求中…';
+            ghz_setState('正在请求 ' + ghz_requestUrl + ' …', 'loading');
+            ghz_respBody.innerHTML = '';
+            ghz_headers.innerHTML = '<div class="ghz_header-row ghz_header-row--empty">正在等待响应</div>';
+            ghz_metaStatus.textContent = '状态码：—';
+            ghz_metaTime.textContent = '耗时：—';
+            ghz_metaSize.textContent = '大小：—';
+
+            var ghz_start = Date.now();
+            var ghz_options = {
+                method: ghz_methodValue,
+                headers: { 'Accept': 'application/json' }
+            };
+
+            if (ghz_hasBody && ghz_bodyValue) {
+                ghz_options.headers['Content-Type'] = 'application/json';
+                ghz_options.body = ghz_bodyValue;
+            }
+
+            try {
+                var ghz_response = await fetch(ghz_requestUrl, ghz_options);
+                var ghz_cost = Date.now() - ghz_start;
+                var ghz_text = await ghz_response.text();
+                var ghz_size = ghz_text.length ? (ghz_text.length / 1024).toFixed(1) + ' KB' : '0 B';
+
+                ghz_metaStatus.textContent = '状态码：' + ghz_response.status + ' ' + ghz_response.statusText;
+                ghz_metaTime.textContent = '耗时：' + ghz_cost + ' ms';
+                ghz_metaSize.textContent = '大小：' + ghz_size;
+                ghz_renderHeaders(ghz_response);
+
+                // 尝试解析 JSON，失败则按纯文本展示
+                var ghz_pretty = ghz_text;
+                var ghz_isJson = false;
+
+                if (ghz_text) {
+                    try {
+                        ghz_pretty = JSON.stringify(JSON.parse(ghz_text), null, 2);
+                        ghz_isJson = true;
+                    } catch (ghz_parseError) {
+                        ghz_isJson = false;
+                    }
+                }
+
+                ghz_respBody.innerHTML = ghz_text
+                    ? (ghz_isJson ? ghz_highlight(ghz_pretty) : ghz_escape(ghz_text))
+                    : '<span class="ghz_null">响应正文为空</span>';
+
+                if (!ghz_response.ok) {
+                    ghz_setState(
+                        '请求完成但状态码为 ' + ghz_response.status + ' ' + ghz_response.statusText + '：接口返回了错误状态，请检查请求方法、地址与参数。',
+                        'error'
+                    );
+                } else if (ghz_text === '') {
+                    ghz_setState('请求成功：' + ghz_response.status + '，响应正文为空。', 'ok');
+                } else {
+                    ghz_setState(
+                        '请求成功：' + ghz_response.status + ' ' + ghz_response.statusText + '，耗时 ' + ghz_cost + ' ms。',
+                        'ok'
+                    );
+                }
+            } catch (ghz_error) {
+                var ghz_failCost = Date.now() - ghz_start;
+
+                ghz_metaTime.textContent = '耗时：' + ghz_failCost + ' ms';
+                ghz_showError(ghz_error.message, '请求未能发出或跨域被拦截（' + ghz_error.name + '）。常见原因：地址拼写错误、网络断开、目标服务器未返回 Access-Control-Allow-Origin 响应头。');
+
+                ghz_headers.innerHTML = '<div class="ghz_header-row ghz_header-row--empty">请求失败，没有响应头</div>';
+            } finally {
+                ghz_send.disabled = false;
+                ghz_send.textContent = '发送请求';
+            }
+        }
+
+        // 方法切换时同步请求体显示
+        ghz_method.addEventListener('change', ghz_syncBodyField);
+
+        // 快捷示例
+        var ghz_presetBtns = document.querySelectorAll('.ghz_preset');
+
+        for (var ghz_i = 0; ghz_i < ghz_presetBtns.length; ghz_i++) {
+            ghz_presetBtns[ghz_i].addEventListener('click', function () {
+                var ghz_config = ghz_presets[this.getAttribute('data-ghz-preset')];
+
+                ghz_method.value = ghz_config.ghz_method;
+                ghz_url.value = ghz_config.ghz_url;
+                ghz_body.value = ghz_config.ghz_body;
+                ghz_syncBodyField();
+            });
+        }
+
+        // 提交表单发起请求
+        ghz_form.addEventListener('submit', function (ghz_event) {
+            ghz_event.preventDefault();
+            ghz_sendRequest();
+        });
+
+        ghz_syncBodyField();
+    </script>
+</body>
+</html>
