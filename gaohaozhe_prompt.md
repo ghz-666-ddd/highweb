@@ -172,3 +172,8 @@ logged
 
 好的，上传到 GitHub
 
+
+## 2026-11-04 21:30:00 +08 | model: DeepSeek-V4.1-Flash
+
+把github上的docx，pdf，zip文件都撤销了，占的内存太大了
+

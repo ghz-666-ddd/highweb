@@ -3,6 +3,11 @@
 .tmp/
 .tmp_report.docx
 
+# 课程提交包与报告（体积大，仅本地保存）
+24005240104-*.docx
+24005240104-*.pdf
+24005240104-*.zip
+
 .opencode/
 .trae/
 .DS_Store
