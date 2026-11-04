@@ -1,0 +1,33 @@
+/* 姓名：高浩哲，日期：2026-11-04，功能：四级项目自制 iconfont 字体图标样式 */
+@font-face {
+    font-family: "ghz_iconfont";
+    src: url("./ghz-iconfont.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+.ghz_iconfont {
+    font-family: "ghz_iconfont" !important;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+}
+
+.ghz_icon-home::before { content: "\e900"; }
+.ghz_icon-search::before { content: "\e901"; }
+.ghz_icon-place::before { content: "\e902"; }
+.ghz_icon-headset::before { content: "\e903"; }
+.ghz_icon-coupon::before { content: "\e904"; }
+.ghz_icon-gift::before { content: "\e905"; }
+.ghz_icon-order::before { content: "\e906"; }
+.ghz_icon-settings::before { content: "\e907"; }
+.ghz_icon-arrow::before { content: "\e908"; }
+.ghz_icon-add::before { content: "\e909"; }
+.ghz_icon-bag::before { content: "\e90a"; }
+.ghz_icon-person::before { content: "\e90b"; }
+.ghz_icon-cup::before { content: "\e90c"; }
+.ghz_icon-crown::before { content: "\e90d"; }
+.ghz_icon-star::before { content: "\e90e"; }
+.ghz_icon-clock::before { content: "\e90f"; }

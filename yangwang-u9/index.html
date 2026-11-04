@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-02，功能：高级网页设计I 三级项目——仰望 U9 官网详情页复刻（HTML+CSS+原生JS） -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仰望 U9｜百万级纯电性能超跑</title>
+    <meta name="description" content="仰望 U9 车型详情页，高级网页设计I 三级项目作品。">
+    <style>
+        :root {
+            --ghz_navy: #001433;
+            --ghz_text: #263751;
+            --ghz_gray: #8c95a3;
+            --ghz_line: #e6e8ec;
+            --ghz_bg-light: #ffffff;
+            --ghz_bg-soft: #f4f5f7;
+            --ghz_content: 74%;
+            --ghz_content-max: 1420px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            background: #ffffff;
+            color: var(--ghz_navy);
+            font-family: "HYQiHeiX1", "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body { overflow-x: hidden; }
+
+        img, svg { display: block; max-width: 100%; }
+        a { color: inherit; text-decoration: none; }
+        button, input { font-family: inherit; }
+        ul { margin: 0; padding: 0; list-style: none; }
+
+        .ghz_wrap {
+            width: var(--ghz_content);
+            max-width: var(--ghz_content-max);
+            margin: 0 auto;
+        }
+
+        .ghz_section-title {
+            margin: 0;
+            font-size: clamp(26px, 2.87vw, 55px);
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+            color: var(--ghz_navy);
+            text-align: center;
+        }
+
+        .ghz_title {
+            margin: 0;
+            font-size: clamp(24px, 2.87vw, 55px);
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--ghz_navy);
+        }
+
+        .ghz_desc {
+            margin: 0;
+            font-size: clamp(11px, 0.82vw, 15.8px);
+            line-height: 1.68;
+            color: var(--ghz_text);
+        }
+
+        .ghz_media {
+            position: relative;
+            overflow: hidden;
+            background: #101216;
+        }
+
+        .ghz_media img,
+        .ghz_media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ghz_media--wide { aspect-ratio: 2 / 1; }
+
+        .ghz_stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            align-items: end;
+            text-align: center;
+        }
+
+        .ghz_stat {
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .ghz_stat + .ghz_stat::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 12%;
+            width: 1px;
+            height: 62%;
+            background: var(--ghz_line);
+            opacity: 0.9;
+        }
+
+        .ghz_stat-num {
+            font-size: clamp(22px, 2.42vw, 46px);
+            font-weight: 400;
+            line-height: 1;
+            color: var(--ghz_navy);
+            letter-spacing: 0.01em;
+        }
+
+        .ghz_stat-num span {
+            font-size: 0.36em;
+            font-weight: 400;
+            margin-left: 4px;
+            color: var(--ghz_navy);
+        }
+
+        /* 官网仅“超级车身”数据行带分隔线，其余数据行不加线 */
+        .ghz_yifang-stats .ghz_stat + .ghz_stat::before,
+        .ghz_perf .ghz_stat + .ghz_stat::before { display: none; }
+
+        .ghz_stat-desc {
+            margin: clamp(8px, 0.72vw, 14px) 0 0;
+            font-size: clamp(11px, 0.82vw, 15.8px);
+            color: var(--ghz_gray);
+            line-height: 1;
+        }
+
+        /* ================= 顶部全局导航 ================= */
+        .ghz_top-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 60;
+            height: clamp(56px, 5.6vw, 108px);
+            display: flex;
+            align-items: center;
+            color: #fff;
+        }
+
+        .ghz_top-inner {
+            width: min(92%, 1660px);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .ghz_top-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(18px, 2.4vw, 46px);
+            font-size: clamp(11px, 0.9vw, 17px);
+        }
+
+        .ghz_top-links a {
+            opacity: 0.9;
+            transition: opacity 0.2s ease;
+        }
+
+        .ghz_top-links a:hover { opacity: 1; }
+
+        .ghz_top-logo img { width: clamp(18px, 1.5vw, 29px); }
+
+        .ghz_top-right {
+            display: flex;
+            align-items: center;
+            gap: clamp(14px, 1.6vw, 30px);
+            font-size: clamp(11px, 0.9vw, 17px);
+        }
+
+        .ghz_top-globe { width: clamp(18px, 1.4vw, 27px); height: auto; opacity: 0.9; }
+
+        /* ================= 产品吸顶栏 ================= */
+        .ghz_bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 80;
+            height: clamp(58px, 5.6vw, 108px);
+            background: #fff;
+            color: var(--ghz_navy);
+            border-bottom: 1px solid rgba(0, 20, 51, 0.08);
+            transform: translateY(-101%);
+            transition: transform 0.35s ease;
+        }
+
+        .ghz_bar--show { transform: translateY(0); }
+
+        .ghz_bar-inner {
+            width: min(92%, 1660px);
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: clamp(14px, 1.6vw, 30px);
+        }
+
+        .ghz_bar-model {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: none;
+        }
+
+        .ghz_bar-model img {
+            width: clamp(70px, 5.6vw, 108px);
+            filter: brightness(0);
+        }
+
+        .ghz_bar-price {
+            font-size: clamp(10px, 0.82vw, 15.8px);
+            color: #4a5568;
+            white-space: nowrap;
+            border-left: 1px solid rgba(0, 20, 51, 0.18);
+            padding-left: clamp(8px, 0.9vw, 18px);
+        }
+
+        .ghz_bar-price::before {
+            content: "价格";
+            margin-right: 6px;
+            color: var(--ghz_navy);
+            font-weight: 700;
+        }
+
+        .ghz_bar-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(20px, 2.2vw, 42px);
+            margin-left: auto;
+            margin-right: auto;
+            font-size: clamp(11px, 0.9vw, 17px);
+        }
+
+        .ghz_bar-links a { color: var(--ghz_navy); opacity: 0.85; }
+        .ghz_bar-links a:hover { opacity: 1; }
+
+        .ghz_bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: none;
+        }
+
+        .ghz_bar-btn {
+            height: clamp(30px, 2.4vw, 46px);
+            padding: 0 clamp(12px, 1.3vw, 25px);
+            border: 1px solid rgba(0, 20, 51, 0.35);
+            background: #fff;
+            color: var(--ghz_navy);
+            font-size: clamp(10px, 0.82vw, 15.8px);
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .ghz_bar-btn:hover { background: var(--ghz_navy); color: #fff; }
+
+        .ghz_bar-burger {
+            display: none;
+            width: 34px;
+            height: 34px;
+            border: 0;
+            background: none;
+            cursor: pointer;
+        }
+
+        .ghz_bar-burger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            margin: 7px 0;
+            background: var(--ghz_navy);
+        }
+
+        /* ================= 首屏 ================= */
+        .ghz_hero {
+            position: relative;
+            height: 100vh;
+            min-height: 620px;
+            overflow: hidden;
+        }
+
+        .ghz_hero-bg {
+            position: absolute;
+            inset: 0;
+        }
+
+        .ghz_hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .ghz_hero-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0) 32%, rgba(0, 0, 0, 0.5) 100%);
+        }
+
+        .ghz_hero-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: clamp(72px, 10vh, 130px);
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+        }
+
+        .ghz_hero-title {
+            width: clamp(200px, 20.2vw, 388px);
+            margin: 0 auto;
+        }
+
+        .ghz_hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: clamp(10px, 1.1vw, 20px);
+            margin-top: clamp(18px, 2.4vw, 46px);
+        }
+
+        .ghz_btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: clamp(36px, 2.7vw, 52px);
+            padding: 0 clamp(20px, 2vw, 38px);
+            border: 1px solid transparent;
+            font-size: clamp(11px, 0.82vw, 15.8px);
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .ghz_btn--line {
+            border-color: rgba(255, 255, 255, 0.75);
+            background: transparent;
+            color: #fff;
+        }
+
+        .ghz_btn--line:hover { background: rgba(255, 255, 255, 0.14); }
+
+        .ghz_btn--solid {
+            background: #fff;
+            color: var(--ghz_navy);
+        }
+
+        .ghz_btn--solid:hover { background: #e9ebef; }
+
+        .ghz_btn--dark {
+            background: var(--ghz_navy);
+            color: #fff;
+        }
+
+        .ghz_btn--dark:hover { background: #06224a; }
+
+        .ghz_scroll-hint {
+            position: absolute;
+            right: clamp(24px, 3vw, 58px);
+            bottom: clamp(28px, 4vh, 60px);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ghz_scroll-hint span {
+            width: clamp(30px, 2.4vw, 46px);
+            height: clamp(30px, 2.4vw, 46px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .ghz_scroll-hint svg { width: 50%; height: 50%; }
+
+        /* ================= 通用板块 ================= */
+        .ghz_block { padding: clamp(60px, 7.6vw, 146px) 0; }
+        .ghz_block--white { background: #fff; }
+        .ghz_block--soft { background: var(--ghz_bg-soft); }
+        .ghz_block--dark { background: #000; color: #fff; }
+
+        .ghz_block--dark .ghz_title,
+        .ghz_block--dark .ghz_section-title { color: #fff; }
+        .ghz_block--dark .ghz_desc { color: rgba(255, 255, 255, 0.66); }
+
+        .ghz_block-head { margin-bottom: clamp(26px, 3vw, 58px); }
+
+        .ghz_media-gap { margin-top: clamp(30px, 3.4vw, 66px); }
+
+        /* ================= 易四方 ================= */
+        .ghz_yifang-stats { margin-top: clamp(24px, 2.4vw, 46px); }
+
+        .ghz_mm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: clamp(28px, 3.2vw, 62px);
+            background: #f6f7f9;
+        }
+
+        .ghz_mm-media {
+            position: relative;
+            overflow: hidden;
+            background: #0b0d10;
+            min-height: clamp(300px, 31vw, 600px);
+        }
+
+        .ghz_mm-media img,
+        .ghz_mm-media video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ghz_mm-list {
+            padding: clamp(20px, 2.6vw, 50px) clamp(20px, 2.8vw, 54px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .ghz_mm-item {
+            border-bottom: 1px solid rgba(0, 20, 51, 0.12);
+            padding: clamp(14px, 1.6vw, 30px) 0;
+        }
+
+        .ghz_mm-item:first-child { border-top: 1px solid rgba(0, 20, 51, 0.12); }
+
+        .ghz_mm-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            cursor: pointer;
+        }
+
+        .ghz_mm-head p {
+            margin: 0;
+            font-size: clamp(15px, 1.33vw, 25.6px);
+            font-weight: 700;
+            color: var(--ghz_navy);
+        }
+
+        .ghz_mm-icon {
+            position: relative;
+            width: 14px;
+            height: 14px;
+            flex: none;
+        }
+
+        .ghz_mm-icon::before,
+        .ghz_mm-icon::after {
+            content: "";
+            position: absolute;
+            background: var(--ghz_navy);
+        }
+
+        .ghz_mm-icon::before { left: 0; top: 6px; width: 14px; height: 1px; }
+        .ghz_mm-icon::after { left: 6px; top: 0; width: 1px; height: 14px; }
+
+        .ghz_mm-item--open .ghz_mm-icon::after { display: none; }
+
+        .ghz_mm-body {
+            display: none;
+            max-width: 92%;
+        }
+
+        .ghz_mm-item--open .ghz_mm-body { display: block; }
+
+        .ghz_mm-body .ghz_desc {
+            margin-top: clamp(10px, 1.2vw, 22px);
+            text-align: justify;
+        }
+
+        /* ================= 云辇 ================= */
+        .ghz_yunian-sub {
+            margin: clamp(12px, 1.2vw, 24px) 0 0;
+            text-align: center;
+            font-size: clamp(11px, 0.82vw, 15.8px);
+            color: rgba(255, 255, 255, 0.66);
+        }
+
+        .ghz_split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: clamp(20px, 4vw, 80px);
+            margin-top: clamp(36px, 4.6vw, 92px);
+        }
+
+        .ghz_split .ghz_title { font-size: clamp(24px, 2.87vw, 55px); }
+
+        .ghz_bullets { margin-top: clamp(12px, 1.6vw, 30px); }
+
+        .ghz_bullets li {
+            position: relative;
+            padding-left: 17px;
+            margin-top: clamp(6px, 0.7vw, 14px);
+            font-size: clamp(11px, 0.82vw, 15.8px);
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.66);
+        }
+
+        .ghz_block--white .ghz_bullets li { color: var(--ghz_text); }
+
+        .ghz_bullets li::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 0.65em;
+            width: 4px;
+            height: 4px;
+            background: #b2b7c0;
+        }
+
+        .ghz_block--dark .ghz_bullets li::before { background: #7a7f88; }
+
+        .ghz_split .ghz_media { aspect-ratio: 16 / 9; }
+
+        /* ================= 超级车身 ================= */
+        .ghz_body-stats {
+            margin: clamp(24px, 2.6vw, 52px) auto clamp(30px, 3.4vw, 66px);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            text-align: center;
+        }
+
+        .ghz_body-stats .ghz_stat + .ghz_stat::before { top: 8%; height: 70%; }
+
+        .ghz_body-stats .ghz_stat-num { font-size: clamp(20px, 2.2vw, 42px); }
+
+        /* ================= 空气动力学 ================= */
+        .ghz_tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: clamp(16px, 2.2vw, 42px);
+            margin-top: clamp(24px, 2.8vw, 54px);
+            border-bottom: 1px solid rgba(0, 20, 51, 0.08);
+            padding-bottom: clamp(12px, 1.2vw, 24px);
+        }
+
+        .ghz_tab {
+            position: relative;
+            border: 0;
+            background: none;
+            padding: 0 0 6px;
+            font-size: clamp(13px, 1.33vw, 25.6px);
+            color: #6e7785;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .ghz_tab--active { color: var(--ghz_navy); font-weight: 700; }
+
+        .ghz_tab--active::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -13px;
+            height: 2px;
+            background: var(--ghz_navy);
+        }
+
+        .ghz_tab-desc {
+            max-width: 900px;
+            margin: clamp(18px, 2vw, 38px) auto 0;
+            text-align: center;
+            font-size: clamp(11px, 0.82vw, 15.8px);
+            line-height: 1.9;
+            color: var(--ghz_text);
+        }
+
+        .ghz_tab-note {
+            margin: clamp(12px, 1.4vw, 26px) 0 0;
+            text-align: right;
+            font-size: clamp(10px, 0.72vw, 14px);
+            color: var(--ghz_gray);
+        }
+
+        /* ================= 外观 ================= */
+        .ghz_look-block { margin-top: clamp(40px, 5vw, 100px); }
+        .ghz_look-block:first-child { margin-top: 0; }
+
+        /* ================= 配色 / 内饰 ================= */
+        .ghz_config { padding-top: clamp(30px, 3.4vw, 66px); }
+
+        .ghz_car-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .ghz_car-stage img { width: 100%; height: 100%; object-fit: contain; }
+
+        .ghz_color-picker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(12px, 1.6vw, 30px);
+            margin-top: clamp(-20px, -1.4vw, -8px);
+        }
+
+        .ghz_color-dot {
+            width: clamp(26px, 2.2vw, 42px);
+            height: clamp(26px, 2.2vw, 42px);
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: none;
+            cursor: pointer;
+            overflow: hidden;
+            opacity: 0.55;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .ghz_color-dot img { width: 100%; height: 100%; object-fit: cover; }
+
+        .ghz_color-dot--active { opacity: 1; transform: scale(1.14); }
+
+        .ghz_color-name {
+            min-width: 92px;
+            height: clamp(24px, 2vw, 38px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 20, 51, 0.12);
+            font-size: clamp(10px, 0.72vw, 14px);
+            color: var(--ghz_navy);
+            white-space: nowrap;
+        }
+
+        .ghz_select-tip {
+            margin: clamp(10px, 1vw, 20px) 0 0;
+            text-align: center;
+            font-size: clamp(10px, 0.72vw, 14px);
+            color: var(--ghz_gray);
+        }
+
+        .ghz_view-tabs {
+            display: flex;
+            justify-content: center;
+            gap: clamp(24px, 2.6vw, 50px);
+            margin-top: clamp(18px, 2vw, 38px);
+        }
+
+        .ghz_view-tab {
+            position: relative;
+            border: 0;
+            background: none;
+            padding: 0 0 10px;
+            font-size: clamp(16px, 1.33vw, 25.6px);
+            color: #9aa2ae;
+            cursor: pointer;
+        }
+
+        .ghz_view-tab--active { color: var(--ghz_navy); font-weight: 700; }
+
+        .ghz_view-tab--active::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background: var(--ghz_navy);
+        }
+
+        .ghz_interior {
+            padding: clamp(50px, 7.2917vw, 140px) 0;
+            background: #f5f7fa;
+            scroll-margin-top: clamp(58px, 5.6vw, 108px);
+        }
+
+        .ghz_interior-head {
+            width: var(--ghz_content);
+            max-width: var(--ghz_content-max);
+            margin: 0 auto clamp(26px, 3.2292vw, 62px);
+        }
+
+        /* 三图横向手风琴：悬停/点击展开当前项，图片同时轻微放大 */
+        .ghz_imod {
+            display: flex;
+            width: var(--ghz_content);
+            max-width: var(--ghz_content-max);
+            height: 33.3333vw;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .ghz_imod-item {
+            position: relative;
+            flex: 1 1 18.4375vw;
+            min-width: 0;
+            height: 100%;
+            overflow: hidden;
+            cursor: pointer;
+            transition: flex-grow 0.6s ease-in-out, flex-basis 0.6s ease-in-out;
+        }
+
+        .ghz_imod-item--active { flex: 1 0 38.125vw; }
+
+        .ghz_imod-media { position: absolute; inset: 0; overflow: hidden; }
+
+        .ghz_imod-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .ghz_imod-item:hover .ghz_imod-media img { transform: scale(1.06); }
+
+        .ghz_imod-text {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 12.5vw;
+            padding: 0 1.5625vw 1.7708vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 79.132%);
+            color: #fff;
+        }
+
+        .ghz_imod-title {
+            width: 14.8958vw;
+            margin: 0 0 0.4167vw;
+            font-size: clamp(13px, 1.25vw, 24px);
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.02em;
+        }
+
+        .ghz_imod-item--active .ghz_imod-title { width: 35vw; }
+
+        .ghz_imod-desc {
+            width: 35vw;
+            margin: 0;
+            font-size: clamp(10px, 0.8333vw, 15px);
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: justify;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease 0.15s;
+        }
+
+        .ghz_imod-item--active .ghz_imod-desc { opacity: 1; visibility: visible; }
+
+        /* ================= 性能 ================= */
+        .ghz_perf .ghz_stats { margin-top: clamp(10px, 1.6vw, 30px); }
+
+        .ghz_perf-btns {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: clamp(10px, 1.1vw, 20px);
+            margin-top: clamp(30px, 3.2vw, 62px);
+        }
+
+        .ghz_perf-btns .ghz_btn--line { border-color: rgba(0, 20, 51, 0.3); color: var(--ghz_navy); }
+        .ghz_perf-btns .ghz_btn--line:hover { background: rgba(0, 20, 51, 0.05); }
+
+        /* ================= 购车权益 ================= */
+        .ghz_benefits {
+            position: relative;
+            background: #0a0c10;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .ghz_benefits-bg {
+            position: absolute;
+            inset: 0;
+        }
+
+        .ghz_benefits-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center bottom;
+        }
+
+        .ghz_benefits-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(6, 8, 12, 0.15) 0%, rgba(6, 8, 12, 0.7) 52%, #08090c 100%);
+        }
+
+        .ghz_benefits .ghz_wrap { position: relative; z-index: 2; }
+
+        .ghz_benefits .ghz_title { color: #fff; text-align: center; }
+
+        .ghz_benefits-date {
+            margin: clamp(10px, 1vw, 20px) 0 0;
+            text-align: center;
+            font-size: clamp(10px, 0.72vw, 14px);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .ghz_benefit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            align-items: start;
+            gap: clamp(12px, 1.2vw, 24px);
+            margin-top: clamp(30px, 3.4vw, 66px);
+        }
+
+        .ghz_benefit-card {
+            background: rgba(18, 21, 26, 0.78);
+            padding: clamp(18px, 1.9vw, 38px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ghz_benefit-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: clamp(10px, 1.1vw, 22px);
+        }
+
+        .ghz_benefit-head img { width: clamp(14px, 1.1vw, 21px); height: auto; }
+
+        .ghz_benefit-head p {
+            margin: 0;
+            font-size: clamp(15px, 1.33vw, 25.6px);
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .ghz_benefit-card li {
+            position: relative;
+            padding-left: 14px;
+            font-size: clamp(10px, 0.89vw, 17px);
+            line-height: 1.62;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 6px;
+        }
+
+        .ghz_benefit-card li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.66em;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        .ghz_benefit-special {
+            margin: clamp(16px, 2vw, 38px) 0 0;
+            font-size: clamp(10px, 0.8vw, 15px);
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.38);
+        }
+
+        /* ================= 预约咨询 ================= */
+        .ghz_book {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #fff;
+        }
+
+        .ghz_book-media { position: relative; min-height: 560px; overflow: hidden; background: #0b120e; }
+        .ghz_book-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+        .ghz_book-form {
+            padding: clamp(40px, 6.4vw, 122px) clamp(24px, 5vw, 96px);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .ghz_book-form .ghz_title { font-size: clamp(26px, 2.87vw, 55px); }
+
+        .ghz_field {
+            margin-top: clamp(22px, 2.4vw, 46px);
+            border-bottom: 1px solid #cfd3da;
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: clamp(11px, 0.82vw, 15.8px);
+        }
+
+        .ghz_field-label {
+            flex: none;
+            width: clamp(56px, 4.6vw, 88px);
+            color: var(--ghz_navy);
+        }
+
+        .ghz_field input {
+            flex: 1;
+            min-width: 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            font-size: inherit;
+            color: var(--ghz_navy);
+        }
+
+        .ghz_field input::placeholder { color: #a7adb7; }
+
+        .ghz_field-extra {
+            flex: none;
+            color: #8c95a3;
+            font-size: 0.92em;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .ghz_field-icon { width: 16px; height: 16px; flex: none; }
+
+        .ghz_privacy {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: clamp(16px, 1.8vw, 34px);
+            font-size: clamp(10px, 0.72vw, 14px);
+            color: #7d8592;
+        }
+
+        .ghz_privacy img { width: 15px; height: 15px; }
+
+        .ghz_privacy a { text-decoration: underline; color: #4a5568; }
+
+        .ghz_book-form .ghz_btn { margin-top: clamp(24px, 2.8vw, 54px); width: 100%; }
+
+        .ghz_form-msg {
+            margin-top: 12px;
+            min-height: 18px;
+            font-size: 12px;
+            color: #1f7a3d;
+        }
+
+        /* ================= 页脚 ================= */
+        .ghz_footer {
+            background: #000;
+            color: rgba(255, 255, 255, 0.55);
+            padding: clamp(30px, 3.4vw, 66px) 0 clamp(24px, 2.4vw, 46px);
+            font-size: clamp(10px, 0.72vw, 14px);
+        }
+
+        .ghz_footer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 18px;
+            padding-bottom: clamp(16px, 1.8vw, 34px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ghz_footer-links { display: flex; flex-wrap: wrap; gap: clamp(14px, 1.6vw, 30px); }
+        .ghz_footer-links a:hover { color: #fff; }
+
+        .ghz_footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: clamp(16px, 1.8vw, 34px);
+        }
+
+        .ghz_footer-social {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ghz_footer-social a {
+            width: clamp(24px, 2vw, 38px);
+            height: clamp(24px, 2vw, 38px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50%;
+        }
+
+        .ghz_footer-social img { width: 55%; height: auto; filter: brightness(1.6); }
+
+        /* ================= 侧边悬浮工具 ================= */
+        .ghz_tools {
+            position: fixed;
+            right: clamp(12px, 1.4vw, 26px);
+            bottom: clamp(20px, 4vh, 60px);
+            z-index: 70;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .ghz_tools--show { opacity: 1; pointer-events: auto; }
+
+        .ghz_tool {
+            width: clamp(32px, 2.6vw, 50px);
+            height: clamp(32px, 2.6vw, 50px);
+            border: 1px solid rgba(0, 20, 51, 0.16);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.94);
+            color: var(--ghz_navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .ghz_tool svg { width: 42%; height: 42%; }
+
+        /* ================= 与官网实测节奏对齐（桌面端） ================= */
+        @media (min-width: 1101px) {
+            .ghz_yifang .ghz_mm { margin-top: 94px; margin-bottom: 151px; }
+            .ghz_yunian { padding-top: 255px; }
+            .ghz_yunian .ghz_split { margin-top: 58px; }
+            .ghz_body .ghz_mm { margin-top: 105px; margin-bottom: 148px; }
+            .ghz_aero { padding-bottom: 85px; }
+            .ghz_look { padding-top: 136px; padding-bottom: 133px; }
+            .ghz_look-block + .ghz_look-block { margin-top: 95px; }
+            .ghz_config { padding-top: 82px; padding-bottom: 142px; }
+            .ghz_perf { padding-top: 55px; padding-bottom: 63px; }
+            .ghz_benefits { padding-bottom: 213px; }
+            .ghz_book { padding-bottom: 66px; }
+            .ghz_book-form { padding-top: 168px; }
+        }
+
+        /* ================= 响应式 ================= */
+        @media (max-width: 1100px) {
+            :root { --ghz_content: 90%; }
+            .ghz_bar-links { display: none; }
+            .ghz_mm { grid-template-columns: 1fr; }
+            .ghz_mm-media { min-height: 300px; aspect-ratio: 16 / 10; }
+        }
+
+        @media (max-width: 820px) {
+            .ghz_top-links, .ghz_top-right span { display: none; }
+            .ghz_bar-actions { display: none; }
+            .ghz_bar-burger { display: block; margin-left: auto; }
+            .ghz_hero { min-height: 560px; }
+            .ghz_hero-content { bottom: 62px; }
+            .ghz_stats { grid-template-columns: repeat(2, 1fr); gap: 26px 0; }
+            .ghz_stat:nth-child(3)::before { display: none; }
+            .ghz_split { grid-template-columns: 1fr; gap: 26px; }
+            .ghz_body-stats { grid-template-columns: repeat(2, 1fr); gap: 26px 0; }
+            .ghz_body-stats .ghz_stat:nth-child(odd)::before { display: none; }
+            .ghz_imod {
+                display: grid;
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 2px;
+            }
+            .ghz_imod-item,
+            .ghz_imod-item--active { flex: none; height: 68vw; max-height: 380px; transition: none; }
+            .ghz_imod-text { height: auto; max-height: 80%; padding: 0 20px 18px; }
+            .ghz_imod-title,
+            .ghz_imod-item--active .ghz_imod-title { width: auto; font-size: 16px; }
+            .ghz_imod-desc { width: auto; font-size: 12px; line-height: 1.6; }
+            .ghz_benefit-grid { grid-template-columns: 1fr; }
+            .ghz_book { grid-template-columns: 1fr; }
+            .ghz_book-media { min-height: 320px; order: 2; }
+            .ghz_tools { display: none; }
+        }
+
+        @media (max-width: 520px) {
+            .ghz_hero-btns { flex-direction: column; align-items: center; }
+            .ghz_hero-btns .ghz_btn { width: 70%; }
+            .ghz_tabs { gap: 14px; }
+            .ghz_tab { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 顶部全局导航（覆盖在首屏上） -->
+<div class="ghz_top-nav">
+    <div class="ghz_top-inner">
+        <nav class="ghz_top-links">
+            <a href="#ghz_yifang">车型</a>
+            <a href="#ghz_look">关于仰望</a>
+            <a href="#ghz_config">仰望门店</a>
+            <a href="#ghz_benefits">高级定制</a>
+        </nav>
+        <a class="ghz_top-logo" href="#ghz_hero" aria-label="仰望">
+            <img src="./site-assets/logo.svg" alt="仰望">
+        </a>
+        <div class="ghz_top-right">
+            <a href="#ghz_book"><span>预约咨询</span></a>
+            <svg class="ghz_top-globe" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <ellipse cx="12" cy="12" rx="4" ry="9"></ellipse>
+                <path d="M3.5 8.5h17M3.5 15.5h17"></path>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- 产品吸顶栏（滚动后出现） -->
+<div class="ghz_bar" id="ghz_bar">
+    <div class="ghz_bar-inner">
+        <a class="ghz_bar-model" href="#ghz_hero">
+            <img src="./site-assets/U9-web.svg" alt="仰望 U9">
+        </a>
+        <span class="ghz_bar-price">¥1,800,000 起</span>
+        <nav class="ghz_bar-links">
+            <a href="#ghz_perf">配置</a>
+            <a href="#ghz_benefits">权益</a>
+        </nav>
+        <div class="ghz_bar-actions">
+            <button class="ghz_bar-btn" type="button">参数配置</button>
+            <button class="ghz_bar-btn" type="button" onclick="ghz_scrollToBook()">预约咨询</button>
+        </div>
+        <button class="ghz_bar-burger" type="button" id="ghz_burger" aria-label="展开导航">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<!-- 首屏 -->
+<header class="ghz_hero" id="ghz_hero">
+    <div class="ghz_hero-bg">
+        <img src="./site-assets/u9-green-pc-3840x2160-004.jpg" alt="仰望 U9 极境森林配色">
+    </div>
+    <div class="ghz_hero-content">
+        <img class="ghz_hero-title" src="./site-assets/U9_positioning_white.svg" alt="仰望 U9 百万级纯电性能超跑">
+        <div class="ghz_hero-btns">
+            <a class="ghz_btn ghz_btn--line" href="#ghz_book">预约咨询</a>
+            <a class="ghz_btn ghz_btn--solid" href="#ghz_benefits">立即购车</a>
+        </div>
+    </div>
+    <div class="ghz_scroll-hint">
+        <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4">
+                <rect x="7" y="2.5" width="10" height="16" rx="5"></rect>
+                <line x1="12" y1="6" x2="12" y2="9"></line>
+            </svg>
+        </span>
+        <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4">
+                <path d="M12 4v14M6.5 12.5L12 18l5.5-5.5"></path>
+            </svg>
+        </span>
+    </div>
+</header>
+
+<main>
+    <!-- 易四方技术平台 -->
+    <section class="ghz_block ghz_block--white ghz_yifang" id="ghz_yifang">
+        <div class="ghz_wrap">
+            <h2 class="ghz_section-title">易四方技术平台</h2>
+            <div class="ghz_stats ghz_yifang-stats">
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">1300<span>Ps</span></div>
+                    <p class="ghz_stat-desc">整车马力超</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">21000<span>rpm</span></div>
+                    <p class="ghz_stat-desc">四电机峰值转速</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">1680<span>Nm</span></div>
+                    <p class="ghz_stat-desc">峰值扭矩</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">391.94<span>km/h</span></div>
+                    <p class="ghz_stat-desc">实测最高车速</p>
+                </div>
+            </div>
+
+            <div class="ghz_media ghz_media--wide ghz_media-gap">
+                <video class="ghz_video" src="./site-assets/video/video2.mp4" poster="./site-assets/u9-7-img1.png" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+
+            <div class="ghz_mm">
+                <div class="ghz_mm-media">
+                    <video class="ghz_video" id="ghz_yifangVideo" src="./site-assets/video/video-djsj.mp4" poster="./site-assets/u9-8-img1.jpg" autoplay muted loop playsinline preload="auto"></video>
+                </div>
+                <div class="ghz_mm-list" id="ghz_yifangList">
+                    <div class="ghz_mm-item ghz_mm-item--open">
+                        <div class="ghz_mm-head">
+                            <p>全球独创双电机双电控深度集成设计</p>
+                            <span class="ghz_mm-icon"></span>
+                        </div>
+                        <div class="ghz_mm-body">
+                            <p class="ghz_desc">适配跑车空气动力学与轻量化设计，尺寸更紧凑、重心更低，系统最高效率 94.5%，效率与响应速度远超纯燃油超跑。</p>
+                        </div>
+                    </div>
+                    <div class="ghz_mm-item">
+                        <div class="ghz_mm-head">
+                            <p>全新一代碳化硅电控</p>
+                            <span class="ghz_mm-icon"></span>
+                        </div>
+                        <div class="ghz_mm-body">
+                            <p class="ghz_desc">相比普通IGBT电控，里程提升3%，电流输出能力提升100%，功率密度提升100%；最高传输效率达到99.8%，中高速工况下续航里程更长。</p>
+                        </div>
+                    </div>
+                    <div class="ghz_mm-item">
+                        <div class="ghz_mm-head">
+                            <p>高效热管理系统</p>
+                            <span class="ghz_mm-icon"></span>
+                        </div>
+                        <div class="ghz_mm-body">
+                            <p class="ghz_desc">高效率电控降低热损耗，搭配最高200℃耐温永磁体，提升电机耐温能力。一个电机对应一个油泵，智能精准控制冷却油量。大中小三套冷却循环策略，满足不同工况散热需求。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 云辇-X -->
+    <section class="ghz_block ghz_block--dark ghz_yunian" id="ghz_yunian">
+        <div class="ghz_wrap">
+            <h2 class="ghz_section-title">云辇-X 智能全主动车身控制系统</h2>
+            <p class="ghz_yunian-sub">急弯不飘，侧倾消失 ｜ 颠簸无感，如履平地 ｜ 起步不抬头，刹车不点头</p>
+
+            <div class="ghz_media ghz_media--wide ghz_media-gap">
+                <video class="ghz_video" src="./site-assets/video/video-ynx.mp4" poster="./site-assets/u9-7-img1.png" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+
+            <div class="ghz_split">
+                <div>
+                    <h3 class="ghz_title">预瞄系统+云辇智算中心</h3>
+                    <ul class="ghz_bullets">
+                        <li>集成6大控制模块，27+功能模块，贯穿感知决策执行层面，内外协同控制，输出最优控制策略。</li>
+                    </ul>
+                </div>
+                <div class="ghz_media">
+                    <video class="ghz_video" src="./site-assets/video/video-zszx.mp4" poster="./site-assets/u9-9-img1.jpg" autoplay muted loop playsinline preload="auto"></video>
+                </div>
+            </div>
+
+            <div class="ghz_split">
+                <div class="ghz_media">
+                    <video class="ghz_video" src="./site-assets/video/video-xtys.mp4" poster="./site-assets/u9-9-img2.jpg" autoplay muted loop playsinline preload="auto"></video>
+                </div>
+                <div>
+                    <h3 class="ghz_title">系统优势</h3>
+                    <ul class="ghz_bullets">
+                        <li>电机、电控、主动力源高度集成。</li>
+                        <li>全域800V高压平台，40ms快速响应，调节速度行业领先，主动力超大。</li>
+                        <li>峰值单轴举升速率 500mm/s，最大调节行程达75mm，可快速升高50mm。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 超级车身 -->
+    <section class="ghz_block ghz_block--white ghz_body" id="ghz_body">
+        <div class="ghz_wrap">
+            <h2 class="ghz_section-title">超级车身</h2>
+            <div class="ghz_body-stats">
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">0.95</div>
+                    <p class="ghz_stat-desc">轻量化系数</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">54425<span>N·m/deg</span></div>
+                    <p class="ghz_stat-desc">扭转刚度</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">110<span>kN</span></div>
+                    <p class="ghz_stat-desc">顶盖静压</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">30<span>%</span></div>
+                    <p class="ghz_stat-desc">相较钢铝方案减重</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">&gt;110<span>kg</span></div>
+                    <p class="ghz_stat-desc">整车碳纤用料</p>
+                </div>
+            </div>
+
+            <div class="ghz_media ghz_media--wide">
+                <img src="./site-assets/u9-10-img1.jpg" alt="仰望 U9 碳纤维车身结构">
+            </div>
+
+            <div class="ghz_mm">
+                <div class="ghz_mm-media">
+                    <video class="ghz_video" id="ghz_bodyVideo" src="./site-assets/video/video-cjtc.mp4" poster="./site-assets/u9-8-2-img1.jpg" autoplay muted loop playsinline preload="auto"></video>
+                </div>
+                <div class="ghz_mm-list" id="ghz_bodyList">
+                    <div class="ghz_mm-item ghz_mm-item--open">
+                        <div class="ghz_mm-head">
+                            <p>超级碳舱</p>
+                            <span class="ghz_mm-icon"></span>
+                        </div>
+                        <div class="ghz_mm-body">
+                            <p class="ghz_desc">国内首个整体式碳纤维座舱，采用T700级12K高性能宇航级碳纤维材料，热压罐成型工艺，全方位提升车身各项性能，轻盈又稳定，安全时刻相伴。</p>
+                        </div>
+                    </div>
+                    <div class="ghz_mm-item">
+                        <div class="ghz_mm-head">
+                            <p>全新一代CTB技术</p>
+                            <span class="ghz_mm-icon"></span>
+                        </div>
+                        <div class="ghz_mm-body">
+                            <p class="ghz_desc">电池包与碳舱进行融合设计，整车形成稳固整体，安全性能进一步提升，整车扭转刚度高达54425N·m/deg，采用刀片电池，14C放电倍率，5.5C充电倍率，SoC 30%-80% 最快10分钟。</p>
+                        </div>
+                    </div>
+                    <div class="ghz_mm-item">
+                        <div class="ghz_mm-head">
+                            <p>碳钢铝超混结构</p>
+                            <span class="ghz_mm-icon"></span>
+                        </div>
+                        <div class="ghz_mm-body">
+                            <p class="ghz_desc">通过不同材料组合，合理化车身结构，前后铝框架，充分吸收碰撞能量，车身乘员舱主要传力路径上增加超高强度热成型钢，正面碰撞安全性提升52%，侧面碰撞安全性提升48%，全方位守护驾驶安全。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 空气动力学 -->
+    <section class="ghz_block ghz_block--white ghz_aero" id="ghz_aero">
+        <div class="ghz_wrap">
+            <h2 class="ghz_section-title">空气动力学</h2>
+            <div class="ghz_media ghz_media--wide ghz_media-gap">
+                <video class="ghz_video" id="ghz_aeroVideo" src="./site-assets/video/video-fd.mp4" poster="./site-assets/u9-8-3-img1.jpg" autoplay muted loop playsinline preload="auto"></video>
+            </div>
+            <div class="ghz_tabs" id="ghz_aeroTabs">
+                <button class="ghz_tab ghz_tab--active" type="button" data-aero="0">6组多功能风道</button>
+                <button class="ghz_tab" type="button" data-aero="1">全新环形山阻风板设计</button>
+                <button class="ghz_tab" type="button" data-aero="2">4档可调节电动尾翼</button>
+                <button class="ghz_tab" type="button" data-aero="3">主动扩散器</button>
+                <button class="ghz_tab" type="button" data-aero="4">碳纤维天鹅颈大尾翼*</button>
+            </div>
+            <p class="ghz_tab-desc" id="ghz_aeroDesc">精密布局，精准管理气流，显著提升电池、电机、制动盘等部件的散热性能，同时减小风阻，增加整车下压力。</p>
+            <p class="ghz_tab-note">*碳纤维天鹅颈大尾翼为选配</p>
+        </div>
+    </section>
+
+    <!-- 外观 -->
+    <section class="ghz_block ghz_block--dark ghz_look" id="ghz_look">
+        <div class="ghz_wrap">
+            <div class="ghz_look-block ghz_split">
+                <div>
+                    <h3 class="ghz_title">极具冲击力的俯冲姿态</h3>
+                    <ul class="ghz_bullets">
+                        <li>独特的线条与曲面构成极具冲击力的俯冲姿态，呈现出富有力量感与运动型的外观</li>
+                        <li>大胆、创新、充满张力的线条，让整车造型更加饱满宽大，极具辨识度</li>
+                    </ul>
+                </div>
+                <div class="ghz_media">
+                    <img src="./site-assets/u9-7-img1.png" alt="仰望 U9 俯冲姿态">
+                </div>
+            </div>
+            <div class="ghz_look-block ghz_split">
+                <div class="ghz_media">
+                    <video class="ghz_video" src="./site-assets/video/video-skzm.mp4" poster="./site-assets/u9-5-6-img1.jpg" autoplay muted loop playsinline preload="auto"></video>
+                </div>
+                <div>
+                    <h3 class="ghz_title">极具辨识度的时空之门灯语</h3>
+                    <ul class="ghz_bullets">
+                        <li>星际穿越大灯动感十足的放射性线条点亮的瞬间，犹如开启一扇通往未来时空之门</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 配色选择 + 外观/内饰 -->
+    <section class="ghz_block ghz_block--white ghz_config" id="ghz_config">
+        <div class="ghz_wrap">
+            <div class="ghz_car-stage">
+                <img id="ghz_carImg" src="./site-assets/purple-pc.png" alt="仰望 U9 阿盖尔紫">
+            </div>
+            <div class="ghz_color-picker" id="ghz_colorPicker">
+                <span class="ghz_color-name" id="ghz_colorName">阿盖尔紫</span>
+                <button class="ghz_color-dot ghz_color-dot--active" type="button" data-color="purple" aria-label="阿盖尔紫">
+                    <img src="./site-assets/car-color1.png" alt="阿盖尔紫">
+                </button>
+                <button class="ghz_color-dot" type="button" data-color="red" aria-label="赤霞丹朱">
+                    <img src="./site-assets/car-color2.png" alt="赤霞丹朱">
+                </button>
+                <button class="ghz_color-dot" type="button" data-color="silver" aria-label="月曜银">
+                    <img src="./site-assets/car-color3.png" alt="月曜银">
+                </button>
+                <button class="ghz_color-dot" type="button" data-color="green" aria-label="极境森林">
+                    <img src="./site-assets/U9-green-icon.png" alt="极境森林">
+                </button>
+            </div>
+            <p class="ghz_select-tip">*外观、内饰、轮毂、选配等产品信息，可能与最终量产车型存在差异，请以实际销售车型为准</p>
+            <div class="ghz_view-tabs" id="ghz_viewTabs">
+                <button class="ghz_view-tab ghz_view-tab--active" type="button" data-view="exterior">外观</button>
+                <button class="ghz_view-tab" type="button" data-view="interior">内饰</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 内饰 -->
+    <section class="ghz_interior" id="ghz_interior">
+        <div class="ghz_interior-head">
+            <h2 class="ghz_section-title">友好的超跑驾乘空间</h2>
+        </div>
+        <div class="ghz_imod" id="ghz_interiorMod">
+            <div class="ghz_imod-item ghz_imod-item--active">
+                <div class="ghz_imod-media">
+                    <img src="./site-assets/u9-8-4-img1.jpg" alt="仰望 U9 极致包裹的双环绕星环座舱">
+                </div>
+                <div class="ghz_imod-text">
+                    <h3 class="ghz_imod-title">极致包裹的双环绕星环座舱</h3>
+                    <p class="ghz_imod-desc">流线型的设计在座舱内环绕出包裹感极强的座舱空间，前后环抱仿佛在宇宙星环之中极速穿梭时空，左右镜像尽显极致对称之美，组成360°全驾舱环绕的完美曲线，极致包裹，使得驾驶者犹如置身于宇宙之中，向未来极速前进。</p>
+                </div>
+            </div>
+            <div class="ghz_imod-item">
+                <div class="ghz_imod-media">
+                    <img src="./site-assets/u9-8-4-img2.jpg" alt="仰望 U9 环绕式 127 色氛围灯">
+                </div>
+                <div class="ghz_imod-text">
+                    <h3 class="ghz_imod-title">环绕式 127色氛围灯</h3>
+                    <p class="ghz_imod-desc">仰望U9氛围灯数量多达127色，伴随着驾驶模式的变化和音乐的律动。在座舱内形成一场光与影的狂欢。环绕式氛围灯系统，美学设计与实用功能高度结合，犹如极致沉浸在宇宙星河之中，太空漫步，科幻而不失浪漫。</p>
+                </div>
+            </div>
+            <div class="ghz_imod-item">
+                <div class="ghz_imod-media">
+                    <img src="./site-assets/u9-8-4-img3.jpg" alt="仰望 U9 丹拿铂金证据系列音响">
+                </div>
+                <div class="ghz_imod-text">
+                    <h3 class="ghz_imod-title">丹拿铂金证据系列Hi-End级音响系统</h3>
+                    <p class="ghz_imod-desc">全车配备顶级的丹拿音响系统，12个扬声器，全方位呈现出无与伦比的音乐质感，每一次旅程都成为一次美妙的音乐之旅。配合纯电跑车独有的NVH优势，仿佛置身于一个移动的交响乐演奏厅，随驾驶节奏和心情律动，带来前所未有的感官体验。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 性能数据 -->
+    <section class="ghz_block ghz_block--soft ghz_perf" id="ghz_perf">
+        <div class="ghz_wrap">
+            <div class="ghz_car-stage">
+                <img src="./site-assets/u9-13-img-pc.png" alt="仰望 U9 侧面">
+            </div>
+            <div class="ghz_stats">
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">1300<span>Ps</span></div>
+                    <p class="ghz_stat-desc">整车马力超</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">300<span>km/h</span></div>
+                    <p class="ghz_stat-desc">最高车速</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">2.36<span>s</span></div>
+                    <p class="ghz_stat-desc">零百加速</p>
+                </div>
+                <div class="ghz_stat">
+                    <div class="ghz_stat-num">54425<span>N·m/deg</span></div>
+                    <p class="ghz_stat-desc">扭转刚度</p>
+                </div>
+            </div>
+            <div class="ghz_perf-btns">
+                <button class="ghz_btn ghz_btn--line" type="button">下载车型手册</button>
+                <button class="ghz_btn ghz_btn--line" type="button">查看完整配置</button>
+                <button class="ghz_btn ghz_btn--dark" type="button" onclick="ghz_scrollToBook()">预约咨询</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 购车权益 -->
+    <section class="ghz_benefits ghz_block" id="ghz_benefits">
+        <div class="ghz_benefits-bg">
+            <img src="./site-assets/U9-web.jpeg" alt="仰望 U9 海岸">
+        </div>
+        <div class="ghz_wrap">
+            <h2 class="ghz_title">仰望U9 | 限时尊享购车权益</h2>
+            <p class="ghz_benefits-date">权益周期：2026年10月1日至2026年12月31日（含）</p>
+            <div class="ghz_benefit-grid">
+                <div class="ghz_benefit-card">
+                    <div class="ghz_benefit-head">
+                        <img src="./site-assets/pzwy-esc.png" alt="">
+                        <p>品质无忧</p>
+                    </div>
+                    <ul>
+                        <li>整车包修期6年或15万公里</li>
+                        <li>"三电"系统终身保修服务（首任车主）</li>
+                    </ul>
+                </div>
+                <div class="ghz_benefit-card">
+                    <div class="ghz_benefit-head">
+                        <img src="./site-assets/ldsx-clqd.png" alt="">
+                        <p>联动随行</p>
+                    </div>
+                    <ul>
+                        <li>10年免费5G车联网流量（100GB/月）</li>
+                        <li>10年免费紧急救援（E- Call）</li>
+                        <li>10年免费智慧客服（I- Call）</li>
+                        <li>10年免费云服务功能</li>
+                        <li>终身免费系统OTA升级</li>
+                        <li>1年免费车机App会员权益</li>
+                    </ul>
+                </div>
+                <div class="ghz_benefit-card">
+                    <div class="ghz_benefit-head">
+                        <img src="./site-assets/cz-tc.png" alt="">
+                        <p>金融优选</p>
+                    </div>
+                    <ul>
+                        <li>超低首付 首付低至0元</li>
+                        <li>超低月供 每月低至4,628元</li>
+                        <li>超低费率 年化费率2.99%起</li>
+                        <li>灵活尾款 尾款10%-50%可选</li>
+                    </ul>
+                </div>
+                <div class="ghz_benefit-card">
+                    <div class="ghz_benefit-head">
+                        <img src="./site-assets/zh-liyu.png" alt="">
+                        <p>诚挚守护</p>
+                    </div>
+                    <ul>
+                        <li>8年免费保养</li>
+                        <li>8年免费无忧道路救援服务</li>
+                        <li>终身免费充电桩及安装服务</li>
+                        <li>终身免费维保上门取送车（12次/年）</li>
+                    </ul>
+                </div>
+                <div class="ghz_benefit-card">
+                    <div class="ghz_benefit-head">
+                        <img src="./site-assets/jr-tc.png" alt="">
+                        <p>交付礼遇</p>
+                    </div>
+                    <ul>
+                        <li>上牌关怀礼</li>
+                    </ul>
+                </div>
+                <div class="ghz_benefit-card">
+                    <div class="ghz_benefit-head">
+                        <img src="./site-assets/gh-liyu.png" alt="">
+                        <p>增换购礼遇</p>
+                    </div>
+                    <ul>
+                        <li>2026年12月31日（含）前支付仰望U9定金的增换购用户可享：</li>
+                        <li>仰望车主增换购：可享50,000元增换购补贴，补贴可直接抵扣车款</li>
+                        <li>增购礼遇：可享30,000元增购补贴，直接抵扣车款</li>
+                        <li>换购礼遇：至高可享30,000元换购补贴，直接抵扣车款</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="ghz_benefit-special">特别说明：1. 2026年10月1日-2026年12月31日（含）支付仰望U9定金的用户，并最终购买仰望U9可享以上所有权益 2. 以上权益仅限中国境内使用（不含港澳台地区） 3. 以上权益如在权益有效期内未使用，不可折现 4. 以上所有具体权益内容、期限等以仰望官方发布的《用户权益告知书》为准，详情可咨询您的销售顾问</p>
+        </div>
+    </section>
+
+    <!-- 预约咨询 -->
+    <section class="ghz_book" id="ghz_book">
+        <div class="ghz_book-media">
+            <img src="./site-assets/u9-11-img1.jpg" alt="仰望 U9 极境森林">
+        </div>
+        <div class="ghz_book-form">
+            <h2 class="ghz_title">预约咨询</h2>
+            <form id="ghz_bookForm">
+                <div class="ghz_field">
+                    <span class="ghz_field-label">所在省市</span>
+                    <input type="text" placeholder="请选择省市" aria-label="所在省市">
+                    <span class="ghz_field-extra">
+                        <img class="ghz_field-icon" src="./site-assets/position.svg" alt="" style="display:inline-block;vertical-align:-3px;">
+                        获取定位
+                    </span>
+                </div>
+                <div class="ghz_field">
+                    <span class="ghz_field-label">手机号码</span>
+                    <input type="tel" placeholder="请输入手机号码" aria-label="手机号码">
+                </div>
+                <div class="ghz_field">
+                    <span class="ghz_field-label">验证码</span>
+                    <input type="text" placeholder="请输入验证码" aria-label="验证码">
+                    <span class="ghz_field-extra">获取验证码</span>
+                </div>
+                <div class="ghz_privacy">
+                    <img src="./site-assets/form-no-checked.png" alt="" id="ghz_privacyIcon">
+                    <span>我已同意并阅读 <a href="#" onclick="return false;">《仰望汽车隐私政策》</a></span>
+                </div>
+                <button class="ghz_btn ghz_btn--dark" type="submit" id="ghz_privacyToggleBtn">立即预约</button>
+                <p class="ghz_form-msg" id="ghz_formMsg"></p>
+            </form>
+        </div>
+    </section>
+</main>
+
+<!-- 页脚 -->
+<footer class="ghz_footer">
+    <div class="ghz_wrap">
+        <div class="ghz_footer-top">
+            <nav class="ghz_footer-links">
+                <a href="#" onclick="return false;">营业执照</a>
+                <a href="#" onclick="return false;">法律声明</a>
+                <a href="#" onclick="return false;">隐私政策</a>
+                <a href="#" onclick="return false;">隐私及数据保护</a>
+                <a href="#" onclick="return false;">在线客服</a>
+                <a href="#" onclick="return false;">联系我们：950855</a>
+            </nav>
+            <div class="ghz_footer-social">
+                <a href="#" onclick="return false;" aria-label="微信"><img src="./site-assets/wx.svg" alt="微信"></a>
+                <a href="#" onclick="return false;" aria-label="哔哩哔哩"><img src="./site-assets/bilibili.svg" alt="哔哩哔哩"></a>
+                <a href="#" onclick="return false;" aria-label="抖音"><img src="./site-assets/dy.svg" alt="抖音"></a>
+                <a href="#" onclick="return false;" aria-label="微博"><img src="./site-assets/weibo.svg" alt="微博"></a>
+                <a href="#" onclick="return false;" aria-label="小红书"><img src="./site-assets/xiaohongshu.svg" alt="小红书"></a>
+            </div>
+        </div>
+        <div class="ghz_footer-bottom">
+            <span>深圳仰望汽车销售有限公司 © 2026 版权所有 <a href="#" onclick="return false;">粤ICP备2022142242号</a></span>
+            <span>最新仰望资讯，即刻探索更多</span>
+        </div>
+    </div>
+</footer>
+
+<!-- 侧边工具 -->
+<div class="ghz_tools">
+    <button class="ghz_tool" type="button" id="ghz_toTop" aria-label="回到顶部">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"></path>
+        </svg>
+    </button>
+    <button class="ghz_tool" type="button" onclick="ghz_scrollToBook()" aria-label="预约咨询">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="3.5" y="5" width="17" height="15" rx="2"></rect>
+            <line x1="3.5" y1="9" x2="20.5" y2="9"></line>
+            <line x1="8" y1="3" x2="8" y2="6.5"></line>
+            <line x1="16" y1="3" x2="16" y2="6.5"></line>
+        </svg>
+    </button>
+    <button class="ghz_tool" type="button" aria-label="二维码">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="3.5" y="3.5" width="6" height="6"></rect>
+            <rect x="14.5" y="3.5" width="6" height="6"></rect>
+            <rect x="3.5" y="14.5" width="6" height="6"></rect>
+            <path d="M14.5 14.5h2.5v2.5H14.5zM19 19h1.5v1.5H19zM14.5 19h1.5v1.5h-1.5zM19 14.5h1.5v1.5H19z"></path>
+        </svg>
+    </button>
+</div>
+
+<script>
+    /* 吸顶栏：滚过首屏后出现 */
+    var ghz_bar = document.getElementById('ghz_bar');
+    var ghz_hero = document.getElementById('ghz_hero');
+    var ghz_tools = document.querySelector('.ghz_tools');
+    function ghz_onScroll() {
+        if (window.scrollY > ghz_hero.offsetHeight - 80) {
+            ghz_bar.classList.add('ghz_bar--show');
+            ghz_tools.classList.add('ghz_tools--show');
+        } else {
+            ghz_bar.classList.remove('ghz_bar--show');
+            ghz_tools.classList.remove('ghz_tools--show');
+        }
+    }
+    window.addEventListener('scroll', ghz_onScroll, { passive: true });
+    ghz_onScroll();
+
+    /* 移动端菜单 */
+    var ghz_burger = document.getElementById('ghz_burger');
+    if (ghz_burger) {
+        ghz_burger.addEventListener('click', function () {
+            var links = ghz_bar.querySelector('.ghz_bar-links');
+            if (!links) return;
+            links.style.display = links.style.display === 'flex' ? '' : 'flex';
+            links.style.position = 'absolute';
+            links.style.top = '100%';
+            links.style.left = '0';
+            links.style.right = '0';
+            links.style.background = '#fff';
+            links.style.padding = '18px 6%';
+            links.style.flexDirection = 'column';
+            links.style.alignItems = 'flex-start';
+            links.style.gap = '4px';
+        });
+    }
+
+    /* 手风琴 */
+    var ghz_mmVideoMap = {
+        ghz_yifangList: { el: 'ghz_yifangVideo', list: ['video-djsj', 'video-thgdk', 'video-glxt'], poster: './site-assets/u9-8-img1.jpg' },
+        ghz_bodyList: { el: 'ghz_bodyVideo', list: ['video-cjtc', 'video-ctb', 'video-chjg'], poster: './site-assets/u9-8-2-img1.jpg' }
+    };
+
+    function ghz_playVideo(video, src, poster) {
+        if (!video || video.getAttribute('src') === src) return;
+        video.setAttribute('src', src);
+        if (poster) video.setAttribute('poster', poster);
+        video.load();
+        var p = video.play();
+        if (p && p.catch) p.catch(function () {});
+    }
+
+    function ghz_bindAccordion(id) {
+        var box = document.getElementById(id);
+        if (!box) return;
+        box.addEventListener('click', function (e) {
+            var head = e.target.closest('.ghz_mm-head');
+            if (!head) return;
+            var item = head.parentElement;
+            var items = box.querySelectorAll('.ghz_mm-item');
+            items.forEach(function (it) { it.classList.remove('ghz_mm-item--open'); });
+            item.classList.add('ghz_mm-item--open');
+
+            var map = ghz_mmVideoMap[id];
+            if (map) {
+                var idx = Array.prototype.indexOf.call(items, item);
+                ghz_playVideo(document.getElementById(map.el), './site-assets/video/' + map.list[idx] + '.mp4', map.poster);
+            }
+        });
+    }
+    ghz_bindAccordion('ghz_yifangList');
+    ghz_bindAccordion('ghz_bodyList');
+
+    /* 空气动力学 tab */
+    var ghz_aeroDesc = [
+        '精密布局，精准管理气流，显著提升电池、电机、制动盘等部件的散热性能，同时减小风阻，增加整车下压力。',
+        '分隔正面气流绕过车轮，有效降低风阻。同时引导空气在内部形成纵向涡流，形成内部低压区，为前轴提供下压力。',
+        '0°、10°、15°、20°，4档调节，配合主动扩散器，智能调节匹配全驾驶工况，无论何时，驾驶随心所欲。',
+        '实现低风阻和大下压力适时切换。根据驾驶模式和车速自动匹配调节开合，收放自如，满足不同驾驶工况需求。',
+        '根据仰望U9造型设计，精准匹配车顶气流方向，提升气动效率，最大可提供280kg下压力，过弯更稳，出弯更快。'
+    ];
+    var ghz_aeroVideoList = ['video-fd', 'video-zfbsj', 'video-ddwy', 'video-ksq', 'video-dwy'];
+    var ghz_aeroTabs = document.getElementById('ghz_aeroTabs');
+    if (ghz_aeroTabs) {
+        ghz_aeroTabs.addEventListener('click', function (e) {
+            var btn = e.target.closest('.ghz_tab');
+            if (!btn) return;
+            ghz_aeroTabs.querySelectorAll('.ghz_tab').forEach(function (b) {
+                b.classList.remove('ghz_tab--active');
+            });
+            btn.classList.add('ghz_tab--active');
+            var idx = +btn.getAttribute('data-aero');
+            ghz_aeroDesc && (document.getElementById('ghz_aeroDesc').textContent = ghz_aeroDesc[idx]);
+            ghz_playVideo(document.getElementById('ghz_aeroVideo'), './site-assets/video/' + ghz_aeroVideoList[idx] + '.mp4', './site-assets/u9-8-3-img1.jpg');
+        });
+    }
+
+    /* 配色切换 */
+    var ghz_colors = {
+        purple: { name: '阿盖尔紫', img: './site-assets/purple-pc.png' },
+        red: { name: '赤霞丹朱', img: './site-assets/red-pc.png' },
+        silver: { name: '月曜银', img: './site-assets/silvery-pc.png' },
+        green: { name: '极境森林', img: './site-assets/U9-green-pc-2880x1440.png' }
+    };
+    var ghz_colorPicker = document.getElementById('ghz_colorPicker');
+    if (ghz_colorPicker) {
+        ghz_colorPicker.addEventListener('click', function (e) {
+            var dot = e.target.closest('.ghz_color-dot');
+            if (!dot) return;
+            var key = dot.getAttribute('data-color');
+            var item = ghz_colors[key];
+            document.getElementById('ghz_carImg').src = item.img;
+            document.getElementById('ghz_carImg').alt = '仰望 U9 ' + item.name;
+            document.getElementById('ghz_colorName').textContent = item.name;
+            ghz_colorPicker.querySelectorAll('.ghz_color-dot').forEach(function (d) {
+                d.classList.remove('ghz_color-dot--active');
+            });
+            dot.classList.add('ghz_color-dot--active');
+        });
+    }
+
+    /* 内饰三图手风琴：悬停或点击展开当前项 */
+    var ghz_imod = document.getElementById('ghz_interiorMod');
+    if (ghz_imod) {
+        var ghz_imodItems = ghz_imod.querySelectorAll('.ghz_imod-item');
+        var ghz_imodSet = function (item) {
+            if (!item || item.classList.contains('ghz_imod-item--active')) return;
+            for (var i = 0; i < ghz_imodItems.length; i++) {
+                ghz_imodItems[i].classList.remove('ghz_imod-item--active');
+            }
+            item.classList.add('ghz_imod-item--active');
+        };
+        for (var j = 0; j < ghz_imodItems.length; j++) {
+            (function (item) {
+                item.addEventListener('mouseenter', function () { ghz_imodSet(item); });
+                item.addEventListener('click', function () { ghz_imodSet(item); });
+            })(ghz_imodItems[j]);
+        }
+    }
+
+    /* 外观 / 内饰 tab */
+    var ghz_viewTabs = document.getElementById('ghz_viewTabs');
+    if (ghz_viewTabs) {
+        ghz_viewTabs.addEventListener('click', function (e) {
+            var btn = e.target.closest('.ghz_view-tab');
+            if (!btn) return;
+            ghz_viewTabs.querySelectorAll('.ghz_view-tab').forEach(function (b) {
+                b.classList.remove('ghz_view-tab--active');
+            });
+            btn.classList.add('ghz_view-tab--active');
+            if (btn.getAttribute('data-view') === 'interior') {
+                document.getElementById('ghz_interior').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                document.getElementById('ghz_config').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    /* 隐私勾选 */
+    var ghz_privacyOk = false;
+    var ghz_privacyIcon = document.getElementById('ghz_privacyIcon');
+    var ghz_privacyRow = ghz_privacyIcon ? ghz_privacyIcon.parentElement : null;
+    if (ghz_privacyRow) {
+        ghz_privacyRow.addEventListener('click', function () {
+            ghz_privacyOk = !ghz_privacyOk;
+            ghz_privacyIcon.src = ghz_privacyOk ? './site-assets/form-checked.png' : './site-assets/form-no-checked.png';
+        });
+    }
+
+    /* 表单提交 */
+    var ghz_bookForm = document.getElementById('ghz_bookForm');
+    if (ghz_bookForm) {
+        ghz_bookForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var msg = document.getElementById('ghz_formMsg');
+            var phone = ghz_bookForm.querySelector('input[type="tel"]').value.trim();
+            if (!ghz_privacyOk) { msg.textContent = '请先阅读并同意隐私政策'; return; }
+            if (!/^1\d{10}$/.test(phone)) { msg.textContent = '请输入正确的11位手机号码'; return; }
+            msg.textContent = '预约信息已提交（演示页面，不会真实发送）';
+        });
+    }
+
+    /* 回到顶部与跳转 */
+    document.getElementById('ghz_toTop').addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    function ghz_scrollToBook() {
+        document.getElementById('ghz_book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+</script>
+</body>
+</html>

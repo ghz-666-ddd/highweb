@@ -1,0 +1,2292 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-04，功能：四级项目·喜茶GO 风格移动端点单页，含 SVG 下导航与自制 iconfont 字体图标 -->
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f4f4f6">
+    <title>喜茶GO · 在线点单｜高浩哲 24005240104</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <style>
+        /* ========== 1. 基础重置与设计变量 ========== */
+        :root {
+            --ghz_bg: #f4f4f6;
+            --ghz_card: #ffffff;
+            --ghz_ink: #16161a;
+            --ghz_ink2: #3d3d45;
+            --ghz_sub: #8c8c96;
+            --ghz_line: #ebebef;
+            --ghz_gold: #c2a06a;
+            --ghz_gold2: #efe0c4;
+            --ghz_green: #33aa62;
+            --ghz_radius: 18px;
+            --ghz_nav-h: 60px;
+            --ghz_sticky: 112px;
+            --ghz_shadow: 0 10px 28px rgba(18, 18, 24, .07);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: #e9e9ee;
+            color: var(--ghz_ink);
+            font-family: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: 0;
+            background: none;
+            color: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h2,
+        h3,
+        p {
+            margin: 0;
+        }
+
+        /* ========== 2. 页面外壳 ========== */
+        .ghz_shell {
+            max-width: 520px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--ghz_bg);
+            box-shadow: 0 0 0 1px rgba(20, 20, 26, .05), 0 30px 70px rgba(20, 20, 26, .08);
+            padding-bottom: calc(var(--ghz_nav-h) + 26px + env(safe-area-inset-bottom));
+            overflow-x: hidden;
+        }
+
+        /* ========== 3. 顶部信息栏（吸顶） ========== */
+        .ghz_header {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            padding: 8px 16px 10px;
+            background: rgba(244, 244, 246, .88);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            backdrop-filter: blur(16px) saturate(160%);
+            border-bottom: 1px solid rgba(235, 235, 239, .9);
+        }
+
+        .ghz_header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            height: 40px;
+        }
+
+        .ghz_modes {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-width: 0;
+        }
+
+        .ghz_mode {
+            position: relative;
+            padding: 4px 0 8px;
+            font-size: 15px;
+            color: var(--ghz_sub);
+            white-space: nowrap;
+            transition: color .2s ease;
+        }
+
+        .ghz_mode.is-active {
+            color: var(--ghz_ink);
+            font-weight: 600;
+        }
+
+        .ghz_mode.is-active::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 18px;
+            height: 3px;
+            border-radius: 3px;
+            background: var(--ghz_ink);
+            transform: translateX(-50%);
+        }
+
+        .ghz_iconbtn {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ghz_ink2);
+            background: rgba(255, 255, 255, .7);
+            font-size: 17px;
+            transition: background .2s ease, transform .2s ease;
+        }
+
+        .ghz_iconbtn:hover {
+            background: #fff;
+            transform: translateY(-1px);
+        }
+
+        .ghz_store-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 2px;
+        }
+
+        .ghz_store-main {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .ghz_store-name {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: .2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ghz_store-arrow {
+            font-size: 15px;
+            color: var(--ghz_ink);
+        }
+
+        .ghz_weather {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_temp {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--ghz_ink2);
+        }
+
+        .ghz_store-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            font-size: 11px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--ghz_green);
+            font-weight: 600;
+        }
+
+        .ghz_status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--ghz_green);
+        }
+
+        .ghz_meta-slogan {
+            margin-left: auto;
+            letter-spacing: .4px;
+            font-size: 10px;
+            color: #b0b0ba;
+            white-space: nowrap;
+        }
+
+        /* ========== 4. 面板与通用板块 ========== */
+        .ghz_panel {
+            display: none;
+            padding: 14px 16px 8px;
+            animation: ghz_fade .32s ease both;
+        }
+
+        .ghz_panel.is-active {
+            display: block;
+        }
+
+        @keyframes ghz_fade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ghz_section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin: 22px 2px 10px;
+        }
+
+        .ghz_section-head h3 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+
+        .ghz_section-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            color: var(--ghz_sub);
+        }
+
+        /* ========== 5. 首页 ========== */
+        .ghz_hero {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 24px 20px;
+            border-radius: 24px;
+            background: radial-gradient(circle at 0% 112%, #fbe8ef 0%, #ffffff 46%);
+            box-shadow: var(--ghz_shadow);
+            overflow: hidden;
+        }
+
+        .ghz_hero-text {
+            position: relative;
+            z-index: 2;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ghz_hero-kicker {
+            font-size: 10px;
+            letter-spacing: 2.4px;
+            color: #b6b6c0;
+        }
+
+        .ghz_hero-title {
+            margin-top: 8px;
+            font-size: 27px;
+            line-height: 1.24;
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
+
+        .ghz_hero-desc {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_hero-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 18px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: var(--ghz_ink);
+            color: #fff;
+            font-size: 12px;
+            letter-spacing: .6px;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .ghz_hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(22, 22, 26, .22);
+        }
+
+        .ghz_hero-btn i {
+            font-size: 13px;
+        }
+
+        .ghz_hero-media {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 118px;
+            height: 136px;
+            display: grid;
+            place-items: center;
+        }
+
+        .ghz_hero-media img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .ghz_quick {
+            display: flex;
+            gap: 6px;
+            margin-top: 14px;
+            padding: 16px 6px;
+            border-radius: var(--ghz_radius);
+            background: var(--ghz_card);
+            box-shadow: var(--ghz_shadow);
+        }
+
+        .ghz_quick-item {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            color: var(--ghz_ink2);
+        }
+
+        .ghz_quick-ic {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: #f5f5f8;
+            color: var(--ghz_ink);
+            font-size: 20px;
+            transition: background .2s ease, transform .2s ease;
+        }
+
+        .ghz_quick-item:hover .ghz_quick-ic {
+            background: #ededf2;
+            transform: translateY(-2px);
+        }
+
+        .ghz_scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 2px 2px 6px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+
+        .ghz_scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ghz_newcard {
+            flex: 0 0 138px;
+            padding: 10px;
+            border-radius: 16px;
+            background: var(--ghz_card);
+            box-shadow: 0 6px 18px rgba(18, 18, 24, .06);
+            scroll-snap-align: start;
+            text-align: left;
+        }
+
+        .ghz_newcard-thumb {
+            height: 96px;
+            border-radius: 12px;
+            background: #fff;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .ghz_newcard-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .ghz_newcard-name {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ghz_newcard-price {
+            margin-top: 2px;
+            font-size: 11px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_notice {
+            border-radius: var(--ghz_radius);
+            background: var(--ghz_card);
+            box-shadow: var(--ghz_shadow);
+            overflow: hidden;
+        }
+
+        .ghz_notice-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 14px;
+            font-size: 12px;
+            color: var(--ghz_ink2);
+        }
+
+        .ghz_notice-item + .ghz_notice-item {
+            border-top: 1px solid var(--ghz_line);
+        }
+
+        .ghz_notice-item i {
+            color: var(--ghz_ink);
+            font-size: 16px;
+        }
+
+        .ghz_notice-item span {
+            color: var(--ghz_sub);
+            margin-left: auto;
+            font-size: 11px;
+        }
+
+        /* ========== 6. 点单页 ========== */
+        .ghz_searchbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .ghz_search {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            background: var(--ghz_card);
+            box-shadow: 0 4px 14px rgba(18, 18, 24, .05);
+        }
+
+        .ghz_search i {
+            font-size: 16px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_search-input {
+            flex: 1 1 auto;
+            min-width: 0;
+            border: 0;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--ghz_ink);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .ghz_search-input::placeholder {
+            color: #b3b3bd;
+        }
+
+        .ghz_cart {
+            position: relative;
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 38px;
+            padding: 0 15px;
+            border-radius: 999px;
+            background: var(--ghz_ink);
+            color: #fff;
+            font-size: 12px;
+            letter-spacing: .5px;
+        }
+
+        .ghz_cart i {
+            font-size: 16px;
+        }
+
+        .ghz_cart.is-bump {
+            animation: ghz_bump .4s ease;
+        }
+
+        @keyframes ghz_bump {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.12);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .ghz_cart-num {
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--ghz_ink);
+            font-size: 10px;
+            line-height: 16px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .ghz_order {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .ghz_rail {
+            flex: 0 0 88px;
+            position: sticky;
+            top: calc(var(--ghz_sticky) + 6px);
+            max-height: calc(100vh - var(--ghz_sticky) - 104px);
+            overflow-y: auto;
+            padding: 2px 0;
+            scrollbar-width: none;
+        }
+
+        .ghz_rail::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ghz_rail-item {
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 13px 8px 13px 12px;
+            text-align: left;
+            font-size: 11px;
+            line-height: 1.35;
+            color: var(--ghz_sub);
+            border-radius: 10px;
+            transition: color .18s ease, background .18s ease;
+        }
+
+        .ghz_rail-item + .ghz_rail-item {
+            margin-top: 2px;
+        }
+
+        .ghz_rail-item.is-active {
+            color: var(--ghz_ink);
+            font-weight: 700;
+            background: var(--ghz_card);
+            box-shadow: 0 4px 14px rgba(18, 18, 24, .06);
+        }
+
+        .ghz_rail-item.is-active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 3px;
+            height: 18px;
+            border-radius: 3px;
+            background: var(--ghz_ink);
+            transform: translateY(-50%);
+        }
+
+        .ghz_list {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ghz_list-head {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 2px 2px 6px;
+        }
+
+        .ghz_list-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .ghz_list-note {
+            font-size: 10px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_products {
+            display: block;
+        }
+
+        .ghz_product {
+            display: flex;
+            gap: 10px;
+            padding: 14px 0 15px;
+            border-bottom: 1px solid rgba(235, 235, 239, .9);
+        }
+
+        .ghz_thumb {
+            flex: 0 0 68px;
+            width: 68px;
+            height: 68px;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+            display: grid;
+            place-items: center;
+        }
+
+        .ghz_thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ghz_thumb--orb {
+            background: var(--ghz_orb, linear-gradient(160deg, #d8d8e0, #b6b6c2));
+            color: rgba(255, 255, 255, .92);
+            font-size: 26px;
+        }
+
+        .ghz_cake {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(160deg, #f8f2e9, #eee2d2);
+        }
+
+        .ghz_cake::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 40px;
+            height: 17px;
+            border-radius: 7px 7px 4px 4px;
+            background: #f4e8d6;
+            transform: translate(-50%, -70%);
+            box-shadow: 0 7px 0 -1px #4b3126, 0 15px 0 -1px #3a241c;
+        }
+
+        .ghz_cake::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: calc(50% - 12px);
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #8a5a3c;
+            transform: translateX(-50%);
+            box-shadow: -12px 4px 0 #a06a45, 10px 3px 0 #7d4f34, 2px -5px 0 #95603d,
+                -7px 9px 0 #b07a50, 7px -6px 0 #6d432b;
+        }
+
+        .ghz_pinfo {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ghz_prow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .ghz_pname {
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ghz_badge {
+            flex: 0 0 auto;
+            padding: 1px 5px;
+            border-radius: 4px;
+            background: var(--ghz_ink);
+            color: #fff;
+            font-size: 9px;
+            line-height: 14px;
+            letter-spacing: .3px;
+        }
+
+        .ghz_tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 5px;
+        }
+
+        .ghz_tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            border: 1px solid #ececef;
+            font-size: 9px;
+            line-height: 14px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_tag--green {
+            color: #2f9c58;
+            border-color: #ddf0e4;
+            background: #f4fbf6;
+        }
+
+        .ghz_tag--green::before {
+            content: "";
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #33aa62;
+        }
+
+        .ghz_pdesc {
+            margin-top: 7px;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #9a9aa4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .ghz_pbottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 9px;
+        }
+
+        .ghz_price {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 5px;
+            font-weight: 700;
+        }
+
+        .ghz_origin {
+            font-size: 10px;
+            color: #c3c3cc;
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .ghz_price-yen {
+            font-size: 12px;
+            margin-right: -3px;
+        }
+
+        .ghz_price-num {
+            font-size: 17px;
+            letter-spacing: -.2px;
+        }
+
+        .ghz_spec {
+            flex: 0 0 auto;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--ghz_ink);
+            color: #fff;
+            font-size: 11px;
+            letter-spacing: .4px;
+            transition: transform .18s ease, opacity .18s ease;
+        }
+
+        .ghz_spec:hover {
+            transform: translateY(-1px);
+            opacity: .92;
+        }
+
+        .ghz_spec:active {
+            transform: scale(.96);
+        }
+
+        .ghz_empty {
+            padding: 54px 0;
+            text-align: center;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_empty i {
+            font-size: 26px;
+            color: #c8c8d2;
+        }
+
+        .ghz_empty p {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        /* ========== 7. 会员页 ========== */
+        .ghz_mcard {
+            position: relative;
+            padding: 20px 20px 18px;
+            border-radius: 22px;
+            color: #2c2418;
+            background: linear-gradient(140deg, #f3e6cd 0%, #e7d2ab 46%, #d9bd8c 100%);
+            box-shadow: 0 16px 34px rgba(178, 145, 88, .26);
+            overflow: hidden;
+        }
+
+        .ghz_mcard::after {
+            content: "";
+            position: absolute;
+            right: -34px;
+            bottom: -52px;
+            width: 168px;
+            height: 168px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .5);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 70%);
+        }
+
+        .ghz_mcard-top {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            letter-spacing: .8px;
+        }
+
+        .ghz_mcard-lv {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(44, 36, 24, .1);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .ghz_mcard-lv i {
+            font-size: 11px;
+        }
+
+        .ghz_mcard-points {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-top: 18px;
+        }
+
+        .ghz_mcard-num {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -.5px;
+        }
+
+        .ghz_mcard-unit {
+            font-size: 11px;
+            color: rgba(44, 36, 24, .6);
+        }
+
+        .ghz_mbar {
+            position: relative;
+            z-index: 2;
+            height: 4px;
+            margin-top: 14px;
+            border-radius: 4px;
+            background: rgba(44, 36, 24, .16);
+            overflow: hidden;
+        }
+
+        .ghz_mbar-fill {
+            display: block;
+            width: 68%;
+            height: 100%;
+            border-radius: 4px;
+            background: #33291a;
+        }
+
+        .ghz_mcard-foot {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 9px;
+            font-size: 10px;
+            color: rgba(44, 36, 24, .65);
+        }
+
+        .ghz_privileges {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-top: 14px;
+            padding: 16px 6px;
+            border-radius: var(--ghz_radius);
+            background: var(--ghz_card);
+            box-shadow: var(--ghz_shadow);
+        }
+
+        .ghz_priv {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--ghz_ink2);
+        }
+
+        .ghz_priv i {
+            font-size: 20px;
+            color: var(--ghz_ink);
+        }
+
+        .ghz_coupon-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ghz_coupon {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--ghz_card);
+            box-shadow: 0 6px 18px rgba(18, 18, 24, .05);
+            border-left: 3px solid var(--ghz_gold);
+        }
+
+        .ghz_coupon-val {
+            flex: 0 0 62px;
+            font-weight: 700;
+        }
+
+        .ghz_coupon-val small {
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        .ghz_coupon-val strong {
+            font-size: 22px;
+        }
+
+        .ghz_coupon-info {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .ghz_coupon-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ghz_coupon-time {
+            margin-top: 3px;
+            font-size: 10px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_coupon-btn {
+            flex: 0 0 auto;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--ghz_ink);
+            font-size: 10px;
+            color: var(--ghz_ink);
+        }
+
+        /* ========== 8. 百货页 ========== */
+        .ghz_goods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .ghz_good {
+            padding: 10px;
+            border-radius: 16px;
+            background: var(--ghz_card);
+            box-shadow: 0 6px 18px rgba(18, 18, 24, .06);
+            text-align: left;
+            transition: transform .2s ease;
+        }
+
+        .ghz_good:hover {
+            transform: translateY(-3px);
+        }
+
+        .ghz_good-thumb {
+            position: relative;
+            height: 128px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 46px;
+            overflow: hidden;
+        }
+
+        .ghz_good-thumb::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 20%, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0) 58%);
+        }
+
+        .ghz_good-name {
+            margin-top: 9px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .ghz_good-foot {
+            margin-top: 6px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .ghz_good-price {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ghz_good-price small {
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        .ghz_good-tag {
+            font-size: 9px;
+            color: var(--ghz_sub);
+        }
+
+        /* ========== 9. 我的页面 ========== */
+        .ghz_profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 22px 18px;
+            border-radius: 22px;
+            background: var(--ghz_card);
+            box-shadow: var(--ghz_shadow);
+        }
+
+        .ghz_avatar {
+            flex: 0 0 56px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(150deg, #2a2a31, #111114);
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 18px rgba(18, 18, 24, .18);
+        }
+
+        .ghz_profile-info {
+            min-width: 0;
+        }
+
+        .ghz_profile-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .ghz_profile-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: linear-gradient(120deg, #f1e2c6, #dcc092);
+            font-size: 10px;
+            font-weight: 600;
+            color: #4a3a22;
+        }
+
+        .ghz_orders {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            margin-top: 14px;
+            padding: 16px 4px;
+            border-radius: var(--ghz_radius);
+            background: var(--ghz_card);
+            box-shadow: var(--ghz_shadow);
+        }
+
+        .ghz_order-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--ghz_ink2);
+            position: relative;
+        }
+
+        .ghz_order-item i {
+            font-size: 21px;
+        }
+
+        .ghz_order-num {
+            position: absolute;
+            top: -4px;
+            right: 16%;
+            min-width: 15px;
+            height: 15px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: var(--ghz_ink);
+            color: #fff;
+            font-size: 9px;
+            line-height: 15px;
+            text-align: center;
+        }
+
+        .ghz_menulist {
+            margin-top: 14px;
+            border-radius: var(--ghz_radius);
+            background: var(--ghz_card);
+            box-shadow: var(--ghz_shadow);
+            overflow: hidden;
+        }
+
+        .ghz_menurow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 15px 16px;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .ghz_menurow + .ghz_menurow {
+            border-top: 1px solid var(--ghz_line);
+        }
+
+        .ghz_menurow i:first-child {
+            font-size: 18px;
+            color: var(--ghz_ink);
+        }
+
+        .ghz_menurow .ghz_arrow {
+            margin-left: auto;
+            font-size: 14px;
+            color: #c4c4ce;
+        }
+
+        .ghz_credit {
+            margin: 22px 4px 8px;
+            text-align: center;
+            font-size: 10px;
+            line-height: 1.7;
+            color: #b6b6c0;
+        }
+
+        /* ========== 10. 下导航（内联 SVG） ========== */
+        .ghz_nav {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 90;
+            background: rgba(255, 255, 255, .93);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid rgba(235, 235, 239, .95);
+            box-shadow: 0 -8px 26px rgba(18, 18, 24, .07);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .ghz_nav-inner {
+            max-width: 520px;
+            margin: 0 auto;
+            height: var(--ghz_nav-h);
+            display: flex;
+            align-items: stretch;
+        }
+
+        .ghz_nav-item {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 0;
+            color: #9b9ba5;
+            font-size: 11px;
+            letter-spacing: .3px;
+            transition: color .22s ease;
+        }
+
+        .ghz_nav-item svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform .28s cubic-bezier(.2, .8, .3, 1), stroke-width .22s ease;
+        }
+
+        .ghz_nav-item.is-active {
+            color: var(--ghz_ink);
+            font-weight: 700;
+        }
+
+        .ghz_nav-item.is-active svg {
+            transform: translateY(-2px) scale(1.06);
+            stroke-width: 2.1;
+        }
+
+        .ghz_nav-item:active svg {
+            transform: scale(.92);
+        }
+
+        /* ========== 11. 规格弹层与轻提示 ========== */
+        .ghz_sheet {
+            position: fixed;
+            inset: 0;
+            z-index: 120;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            visibility: hidden;
+        }
+
+        .ghz_sheet.is-open {
+            visibility: visible;
+        }
+
+        .ghz_sheet-mask {
+            position: absolute;
+            inset: 0;
+            background: rgba(18, 18, 22, .45);
+            opacity: 0;
+            transition: opacity .26s ease;
+        }
+
+        .ghz_sheet.is-open .ghz_sheet-mask {
+            opacity: 1;
+        }
+
+        .ghz_sheet-body {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            max-height: 82vh;
+            overflow-y: auto;
+            padding: 20px 18px calc(18px + env(safe-area-inset-bottom));
+            border-radius: 22px 22px 0 0;
+            background: #fff;
+            transform: translateY(102%);
+            transition: transform .32s cubic-bezier(.24, .8, .32, 1);
+        }
+
+        .ghz_sheet.is-open .ghz_sheet-body {
+            transform: translateY(0);
+        }
+
+        .ghz_sheet-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .ghz_sheet-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .ghz_sheet-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--ghz_sub);
+        }
+
+        .ghz_sheet-close {
+            flex: 0 0 auto;
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #f3f3f6;
+            color: var(--ghz_ink2);
+            font-size: 16px;
+        }
+
+        .ghz_sheet-close i {
+            transform: rotate(45deg);
+        }
+
+        .ghz_sheet-group {
+            margin-top: 18px;
+        }
+
+        .ghz_sheet-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ghz_ink2);
+        }
+
+        .ghz_chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 9px;
+        }
+
+        .ghz_chip {
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 1px solid #e6e6eb;
+            background: #f7f7fa;
+            font-size: 12px;
+            color: var(--ghz_ink2);
+            transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+        }
+
+        .ghz_chip.is-active {
+            border-color: var(--ghz_ink);
+            background: var(--ghz_ink);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .ghz_sheet-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--ghz_line);
+        }
+
+        .ghz_sheet-price {
+            display: flex;
+            align-items: baseline;
+            gap: 2px;
+            font-weight: 700;
+        }
+
+        .ghz_sheet-price .ghz_price-yen {
+            font-size: 13px;
+        }
+
+        .ghz_sheet-price .ghz_price-num {
+            font-size: 24px;
+        }
+
+        .ghz_sheet-ok {
+            flex: 1 1 auto;
+            max-width: 240px;
+            height: 46px;
+            border-radius: 999px;
+            background: var(--ghz_ink);
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: opacity .2s ease, transform .2s ease;
+        }
+
+        .ghz_sheet-ok:active {
+            transform: scale(.98);
+            opacity: .9;
+        }
+
+        .ghz_toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(var(--ghz_nav-h) + 34px + env(safe-area-inset-bottom));
+            z-index: 150;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(22, 22, 26, .92);
+            color: #fff;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(-50%, 12px);
+            transition: opacity .26s ease, transform .26s ease, visibility .26s;
+            pointer-events: none;
+        }
+
+        .ghz_toast.is-show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
+        }
+
+        .ghz_toast i {
+            font-size: 14px;
+        }
+
+        /* ========== 12. 响应式 ========== */
+        @media (max-width: 380px) {
+            .ghz_rail {
+                flex-basis: 78px;
+            }
+
+            .ghz_rail-item {
+                font-size: 10px;
+                padding: 12px 6px 12px 10px;
+            }
+
+            .ghz_thumb {
+                flex-basis: 60px;
+                width: 60px;
+                height: 60px;
+            }
+
+            .ghz_hero-media {
+                flex-basis: 96px;
+                height: 118px;
+            }
+
+            .ghz_hero-title {
+                font-size: 23px;
+            }
+
+            .ghz_modes {
+                gap: 12px;
+            }
+
+            .ghz_mode {
+                font-size: 14px;
+            }
+
+            .ghz_pname {
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 700px) {
+            body {
+                padding: 26px 0;
+            }
+
+            .ghz_shell {
+                min-height: calc(100vh - 52px);
+                border-radius: 26px;
+            }
+
+            .ghz_header {
+                border-radius: 26px 26px 0 0;
+            }
+
+            .ghz_nav {
+                left: 50%;
+                right: auto;
+                width: 520px;
+                transform: translateX(-50%);
+                bottom: 26px;
+                border-radius: 18px;
+                border: 1px solid rgba(235, 235, 239, .95);
+            }
+
+            .ghz_shell {
+                padding-bottom: calc(var(--ghz_nav-h) + 62px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ghz_shell">
+        <header class="ghz_header">
+            <div class="ghz_header-row">
+                <div class="ghz_modes">
+                    <button class="ghz_mode is-active" type="button" data-ghz-mode="pick">到店取</button>
+                    <button class="ghz_mode" type="button" data-ghz-mode="deliver">喜外送</button>
+                    <button class="ghz_mode" type="button" data-ghz-mode="assist">阿喜助理</button>
+                </div>
+                <button class="ghz_iconbtn" type="button" data-ghz-toast="搜索门店与茶饮">
+                    <i class="ghz_iconfont ghz_icon-search"></i>
+                </button>
+            </div>
+            <div class="ghz_store-row">
+                <div class="ghz_store-main">
+                    <span class="ghz_store-name">深圳湾万象城二期店</span>
+                    <i class="ghz_iconfont ghz_icon-arrow ghz_store-arrow"></i>
+                </div>
+                <div class="ghz_weather">
+                    <span class="ghz_temp">26°</span>
+                    <span class="ghz_wtxt">多云</span>
+                </div>
+            </div>
+            <div class="ghz_store-meta">
+                <span class="ghz_status"><span class="ghz_status-dot"></span>营业中</span>
+                <span>距离您 1.2km</span>
+                <span class="ghz_meta-slogan">new style tea, by inspiration</span>
+            </div>
+        </header>
+
+        <main class="ghz_main">
+            <!-- 首页 -->
+            <section class="ghz_panel" data-ghz-panel="home">
+                <div class="ghz_hero">
+                    <div class="ghz_hero-text">
+                        <span class="ghz_hero-kicker">NEW STYLE TEA</span>
+                        <h2 class="ghz_hero-title">一起喝杯<br>灵感之茶</h2>
+                        <p class="ghz_hero-desc">当季鲜果 × 奇兰茶底，现点现制</p>
+                        <button class="ghz_hero-btn" type="button" data-ghz-go="order">
+                            立即点单<i class="ghz_iconfont ghz_icon-arrow"></i>
+                        </button>
+                    </div>
+                    <div class="ghz_hero-media">
+                        <img src="./img/p1.jpg" alt="多肉桃李">
+                    </div>
+                </div>
+
+                <div class="ghz_quick">
+                    <button class="ghz_quick-item" type="button" data-ghz-go="order">
+                        <span class="ghz_quick-ic"><i class="ghz_iconfont ghz_icon-cup"></i></span>
+                        点单
+                    </button>
+                    <button class="ghz_quick-item" type="button" data-ghz-go="member">
+                        <span class="ghz_quick-ic"><i class="ghz_iconfont ghz_icon-coupon"></i></span>
+                        优惠券
+                    </button>
+                    <button class="ghz_quick-item" type="button" data-ghz-go="member">
+                        <span class="ghz_quick-ic"><i class="ghz_iconfont ghz_icon-crown"></i></span>
+                        会员
+                    </button>
+                    <button class="ghz_quick-item" type="button" data-ghz-toast="客服小助手已上线">
+                        <span class="ghz_quick-ic"><i class="ghz_iconfont ghz_icon-headset"></i></span>
+                        客服
+                    </button>
+                </div>
+
+                <div class="ghz_section-head">
+                    <h3>本周新品</h3>
+                    <span class="ghz_section-more">全部<i class="ghz_iconfont ghz_icon-arrow"></i></span>
+                </div>
+                <div class="ghz_scroll">
+                    <button class="ghz_newcard" type="button" data-ghz-go="order">
+                        <span class="ghz_newcard-thumb"><img src="./img/p1.jpg" alt="多肉桃李"></span>
+                        <span class="ghz_newcard-name">多肉桃李（首创）</span>
+                        <span class="ghz_newcard-price">¥17 起</span>
+                    </button>
+                    <button class="ghz_newcard" type="button" data-ghz-go="order">
+                        <span class="ghz_newcard-thumb"><img src="./img/p2.jpg" alt="奇兰芭乐莲雾"></span>
+                        <span class="ghz_newcard-name">奇兰芭乐莲雾</span>
+                        <span class="ghz_newcard-price">¥23 起</span>
+                    </button>
+                    <button class="ghz_newcard" type="button" data-ghz-go="order">
+                        <span class="ghz_newcard-thumb"><img src="./img/p3.jpg" alt="奇兰苹果杏"></span>
+                        <span class="ghz_newcard-name">奇兰苹果杏</span>
+                        <span class="ghz_newcard-price">¥19 起</span>
+                    </button>
+                </div>
+
+                <div class="ghz_section-head">
+                    <h3>门店动态</h3>
+                </div>
+                <div class="ghz_notice">
+                    <div class="ghz_notice-item">
+                        <i class="ghz_iconfont ghz_icon-gift"></i>
+                        新会员注册即得 5 元无门槛券
+                        <span>今天</span>
+                    </div>
+                    <div class="ghz_notice-item">
+                        <i class="ghz_iconfont ghz_icon-clock"></i>
+                        门店出杯时效约 6 分钟
+                        <span>实时</span>
+                    </div>
+                    <div class="ghz_notice-item">
+                        <i class="ghz_iconfont ghz_icon-place"></i>
+                        支持到店自取，无需排队
+                        <span>说明</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 点单 -->
+            <section class="ghz_panel is-active" data-ghz-panel="order">
+                <div class="ghz_searchbar">
+                    <div class="ghz_search">
+                        <i class="ghz_iconfont ghz_icon-search"></i>
+                        <input class="ghz_search-input" type="search" placeholder="搜索多肉桃李、轻乳茶…" aria-label="搜索茶饮">
+                    </div>
+                    <button class="ghz_cart" type="button" data-ghz-cart-btn>
+                        <i class="ghz_iconfont ghz_icon-bag"></i>
+                        购物车
+                        <span class="ghz_cart-num" data-ghz-cart>0</span>
+                    </button>
+                </div>
+
+                <div class="ghz_order">
+                    <aside class="ghz_rail" data-ghz-rail aria-label="商品分类"></aside>
+                    <div class="ghz_list">
+                        <div class="ghz_list-head">
+                            <h2 class="ghz_list-title" data-ghz-cat-title>人气推荐榜</h2>
+                            <span class="ghz_list-note" data-ghz-cat-note>本店销量 TOP</span>
+                        </div>
+                        <div class="ghz_products" data-ghz-products></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 会员 -->
+            <section class="ghz_panel" data-ghz-panel="member">
+                <div class="ghz_mcard">
+                    <div class="ghz_mcard-top">
+                        <span>喜茶GO 黑金会员</span>
+                        <span class="ghz_mcard-lv"><i class="ghz_iconfont ghz_icon-crown"></i>LV.4</span>
+                    </div>
+                    <div class="ghz_mcard-points">
+                        <span class="ghz_mcard-num">1,280</span>
+                        <span class="ghz_mcard-unit">可用积分</span>
+                    </div>
+                    <div class="ghz_mbar"><span class="ghz_mbar-fill"></span></div>
+                    <div class="ghz_mcard-foot">
+                        <span>再消费 ¥120 升级黑钻</span>
+                        <span>2026-11-30 到期</span>
+                    </div>
+                </div>
+
+                <div class="ghz_privileges">
+                    <div class="ghz_priv"><i class="ghz_iconfont ghz_icon-coupon"></i>每月券</div>
+                    <div class="ghz_priv"><i class="ghz_iconfont ghz_icon-star"></i>积分翻倍</div>
+                    <div class="ghz_priv"><i class="ghz_iconfont ghz_icon-gift"></i>生日礼</div>
+                    <div class="ghz_priv"><i class="ghz_iconfont ghz_icon-clock"></i>优先出杯</div>
+                </div>
+
+                <div class="ghz_section-head">
+                    <h3>我的优惠券</h3>
+                    <span class="ghz_section-more">3 张可用</span>
+                </div>
+                <div class="ghz_coupon-list">
+                    <div class="ghz_coupon">
+                        <div class="ghz_coupon-val"><small>¥</small><strong>5</strong></div>
+                        <div class="ghz_coupon-info">
+                            <div class="ghz_coupon-name">新会员无门槛券</div>
+                            <div class="ghz_coupon-time">有效期至 2026-11-30</div>
+                        </div>
+                        <button class="ghz_coupon-btn" type="button" data-ghz-go="order">去使用</button>
+                    </div>
+                    <div class="ghz_coupon">
+                        <div class="ghz_coupon-val"><small>¥</small><strong>8</strong></div>
+                        <div class="ghz_coupon-info">
+                            <div class="ghz_coupon-name">满 25 元可用</div>
+                            <div class="ghz_coupon-time">有效期至 2026-12-15</div>
+                        </div>
+                        <button class="ghz_coupon-btn" type="button" data-ghz-go="order">去使用</button>
+                    </div>
+                    <div class="ghz_coupon">
+                        <div class="ghz_coupon-val"><small>折</small><strong>9</strong></div>
+                        <div class="ghz_coupon-info">
+                            <div class="ghz_coupon-name">轻乳茶系列 9 折</div>
+                            <div class="ghz_coupon-time">每周三可用</div>
+                        </div>
+                        <button class="ghz_coupon-btn" type="button" data-ghz-go="order">去使用</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 百货 -->
+            <section class="ghz_panel" data-ghz-panel="shop">
+                <div class="ghz_section-head" style="margin-top:4px">
+                    <h3>喜茶百货</h3>
+                    <span class="ghz_section-more">灵感周边<i class="ghz_iconfont ghz_icon-arrow"></i></span>
+                </div>
+                <div class="ghz_goods">
+                    <div class="ghz_good">
+                        <div class="ghz_good-thumb" style="background:linear-gradient(150deg,#2f2f37,#111114)">
+                            <i class="ghz_iconfont ghz_icon-gift"></i>
+                        </div>
+                        <div class="ghz_good-name">喜茶灵感茶包礼盒</div>
+                        <div class="ghz_good-foot">
+                            <span class="ghz_good-price"><small>¥</small>88</span>
+                            <span class="ghz_good-tag">月售 320+</span>
+                        </div>
+                    </div>
+                    <div class="ghz_good">
+                        <div class="ghz_good-thumb" style="background:linear-gradient(150deg,#e8b9c6,#c2708a)">
+                            <i class="ghz_iconfont ghz_icon-cup"></i>
+                        </div>
+                        <div class="ghz_good-name">多肉桃李限定马克杯</div>
+                        <div class="ghz_good-foot">
+                            <span class="ghz_good-price"><small>¥</small>129</span>
+                            <span class="ghz_good-tag">限定</span>
+                        </div>
+                    </div>
+                    <div class="ghz_good">
+                        <div class="ghz_good-thumb" style="background:linear-gradient(150deg,#cfc0a4,#9d8a6b)">
+                            <i class="ghz_iconfont ghz_icon-bag"></i>
+                        </div>
+                        <div class="ghz_good-name">黑金会员帆布袋</div>
+                        <div class="ghz_good-foot">
+                            <span class="ghz_good-price"><small>¥</small>69</span>
+                            <span class="ghz_good-tag">会员价</span>
+                        </div>
+                    </div>
+                    <div class="ghz_good">
+                        <div class="ghz_good-thumb" style="background:linear-gradient(150deg,#9ec3ab,#5f8f74)">
+                            <i class="ghz_iconfont ghz_icon-star"></i>
+                        </div>
+                        <div class="ghz_good-name">奇兰香氛蜡烛</div>
+                        <div class="ghz_good-foot">
+                            <span class="ghz_good-price"><small>¥</small>99</span>
+                            <span class="ghz_good-tag">新品</span>
+                        </div>
+                    </div>
+                    <div class="ghz_good">
+                        <div class="ghz_good-thumb" style="background:linear-gradient(150deg,#b9aee0,#7a6ab0)">
+                            <i class="ghz_iconfont ghz_icon-crown"></i>
+                        </div>
+                        <div class="ghz_good-name">联名徽章盲盒</div>
+                        <div class="ghz_good-foot">
+                            <span class="ghz_good-price"><small>¥</small>39</span>
+                            <span class="ghz_good-tag">随机 1 款</span>
+                        </div>
+                    </div>
+                    <div class="ghz_good">
+                        <div class="ghz_good-thumb" style="background:linear-gradient(150deg,#c8b48e,#a08c66)">
+                            <i class="ghz_iconfont ghz_icon-coupon"></i>
+                        </div>
+                        <div class="ghz_good-name">喜茶GO 电子礼品卡</div>
+                        <div class="ghz_good-foot">
+                            <span class="ghz_good-price"><small>¥</small>100</span>
+                            <span class="ghz_good-tag">可转赠</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 我的 -->
+            <section class="ghz_panel" data-ghz-panel="mine">
+                <div class="ghz_profile">
+                    <div class="ghz_avatar">高</div>
+                    <div class="ghz_profile-info">
+                        <div class="ghz_profile-name">高浩哲</div>
+                        <div class="ghz_profile-sub">学号 24005240104 · 深圳湾万象城二期店</div>
+                        <span class="ghz_profile-badge"><i class="ghz_iconfont ghz_icon-crown"></i>黑金会员 · 1,280 积分</span>
+                    </div>
+                </div>
+
+                <div class="ghz_orders">
+                    <button class="ghz_order-item" type="button" data-ghz-toast="暂无待付款订单">
+                        <i class="ghz_iconfont ghz_icon-order"></i>
+                        待付款
+                    </button>
+                    <button class="ghz_order-item" type="button" data-ghz-toast="暂无制作中的订单">
+                        <i class="ghz_iconfont ghz_icon-clock"></i>
+                        制作中
+                        <span class="ghz_order-num">0</span>
+                    </button>
+                    <button class="ghz_order-item" type="button" data-ghz-toast="暂无待取餐订单">
+                        <i class="ghz_iconfont ghz_icon-cup"></i>
+                        待取餐
+                    </button>
+                    <button class="ghz_order-item" type="button" data-ghz-toast="历史订单已全部完成">
+                        <i class="ghz_iconfont ghz_icon-star"></i>
+                        已完成
+                    </button>
+                </div>
+
+                <div class="ghz_menulist">
+                    <button class="ghz_menurow" type="button" data-ghz-toast="订单记录：共 12 单">
+                        <i class="ghz_iconfont ghz_icon-order"></i>
+                        我的订单
+                        <i class="ghz_iconfont ghz_icon-arrow ghz_arrow"></i>
+                    </button>
+                    <button class="ghz_menurow" type="button" data-ghz-go="member">
+                        <i class="ghz_iconfont ghz_icon-coupon"></i>
+                        我的优惠券
+                        <i class="ghz_iconfont ghz_icon-arrow ghz_arrow"></i>
+                    </button>
+                    <button class="ghz_menurow" type="button" data-ghz-toast="默认地址：深圳市南山区科苑南路">
+                        <i class="ghz_iconfont ghz_icon-place"></i>
+                        收货地址
+                        <i class="ghz_iconfont ghz_icon-arrow ghz_arrow"></i>
+                    </button>
+                    <button class="ghz_menurow" type="button" data-ghz-toast="客服小助手已上线">
+                        <i class="ghz_iconfont ghz_icon-headset"></i>
+                        客服中心
+                        <i class="ghz_iconfont ghz_icon-arrow ghz_arrow"></i>
+                    </button>
+                    <button class="ghz_menurow" type="button" data-ghz-toast="设置项为课程演示">
+                        <i class="ghz_iconfont ghz_icon-settings"></i>
+                        设置
+                        <i class="ghz_iconfont ghz_icon-arrow ghz_arrow"></i>
+                    </button>
+                </div>
+
+                <p class="ghz_credit">高级网页设计 I · 四级项目练习作品<br>高浩哲 · 24005240104</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- 下导航：字体图标用本地 iconfont，本导航统一采用内联 SVG 绘制 -->
+    <nav class="ghz_nav" aria-label="主导航">
+        <div class="ghz_nav-inner">
+            <button class="ghz_nav-item" type="button" data-ghz-tab="home" aria-label="首页">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3.8 10.6 12 3.4l8.2 7.2" />
+                    <path d="M6 9.6v11h12V9.6" />
+                    <path d="M9.9 20.6v-5.4h4.2v5.4" />
+                </svg>
+                <span class="ghz_nav-label">首页</span>
+            </button>
+            <button class="ghz_nav-item is-active" type="button" data-ghz-tab="order" aria-label="点单">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 7.6h10l-1 11.2a2.5 2.5 0 0 1-2.5 2.2h-3A2.5 2.5 0 0 1 8 18.8z" />
+                    <path d="M6.2 7.6h11.6" />
+                    <path d="M9.6 4.2h4.8" />
+                </svg>
+                <span class="ghz_nav-label">点单</span>
+            </button>
+            <button class="ghz_nav-item" type="button" data-ghz-tab="member" aria-label="会员">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4.2 17.4 3.4 7.9l5.2 3.9L12 5.4l3.4 6.4 5.2-3.9-1 9.5z" />
+                    <path d="M4.8 20.4h14.4" />
+                </svg>
+                <span class="ghz_nav-label">会员</span>
+            </button>
+            <button class="ghz_nav-item" type="button" data-ghz-tab="shop" aria-label="百货">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5.4 8.2h13.2l-1 11.3a1.9 1.9 0 0 1-1.9 1.7H8.3a1.9 1.9 0 0 1-1.9-1.7z" />
+                    <path d="M8.7 8.2V6.5a3.3 3.3 0 0 1 6.6 0v1.7" />
+                </svg>
+                <span class="ghz_nav-label">百货</span>
+            </button>
+            <button class="ghz_nav-item" type="button" data-ghz-tab="mine" aria-label="我的">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="7.6" r="3.4" />
+                    <path d="M4.9 20.4c.8-3.6 3.6-5.8 7.1-5.8s6.3 2.2 7.1 5.8" />
+                </svg>
+                <span class="ghz_nav-label">我的</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 规格选择弹层 -->
+    <div class="ghz_sheet" data-ghz-sheet aria-hidden="true">
+        <div class="ghz_sheet-mask" data-ghz-sheet-close></div>
+        <div class="ghz_sheet-body" role="dialog" aria-modal="true" aria-label="规格选择">
+            <div class="ghz_sheet-head">
+                <div>
+                    <h3 class="ghz_sheet-title" data-ghz-sheet-name>规格选择</h3>
+                    <p class="ghz_sheet-sub">请选择温度、糖度与加料</p>
+                </div>
+                <button class="ghz_sheet-close" type="button" data-ghz-sheet-close aria-label="关闭">
+                    <i class="ghz_iconfont ghz_icon-add"></i>
+                </button>
+            </div>
+
+            <div class="ghz_sheet-group">
+                <p class="ghz_sheet-label">温度</p>
+                <div class="ghz_chips" data-ghz-group="temp">
+                    <button class="ghz_chip is-active" type="button" data-ghz-chip>冰</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip>少冰</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip>去冰</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip>热饮</button>
+                </div>
+            </div>
+
+            <div class="ghz_sheet-group">
+                <p class="ghz_sheet-label">糖度</p>
+                <div class="ghz_chips" data-ghz-group="sugar">
+                    <button class="ghz_chip" type="button" data-ghz-chip>标准糖</button>
+                    <button class="ghz_chip is-active" type="button" data-ghz-chip>少糖</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip>半糖</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip>无糖</button>
+                </div>
+            </div>
+
+            <div class="ghz_sheet-group">
+                <p class="ghz_sheet-label">加料</p>
+                <div class="ghz_chips" data-ghz-group="extra">
+                    <button class="ghz_chip is-active" type="button" data-ghz-chip data-ghz-add="0">不加料</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip data-ghz-add="2">芝士奶盖 +2</button>
+                    <button class="ghz_chip" type="button" data-ghz-chip data-ghz-add="3">黑糖波波 +3</button>
+                </div>
+            </div>
+
+            <div class="ghz_sheet-foot">
+                <div class="ghz_sheet-price">
+                    <span class="ghz_price-yen">¥</span>
+                    <span class="ghz_price-num" data-ghz-sheet-price>17</span>
+                </div>
+                <button class="ghz_sheet-ok" type="button" data-ghz-sheet-ok>加入购物车</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ghz_toast" data-ghz-toastbox>
+        <i class="ghz_iconfont ghz_icon-order"></i>
+        <span data-ghz-toasttext>已加入购物车</span>
+    </div>
+
+    <script>
+        /* ================= 商品数据 ================= */
+        var ghz_cats = [
+            { key: 'hot', label: '人气推荐榜', note: '本店销量 TOP' },
+            { key: 'season', label: '时令上新', note: '当季鲜果限定' },
+            { key: 'milktea', label: '轻乳茶', note: '茶香更轻一点' },
+            { key: 'fruit', label: '鲜果茶', note: '整颗水果现切' },
+            { key: 'pure', label: '纯茶 / 茗茶', note: '只有茶与水' },
+            { key: 'dessert', label: '灵感茶点', note: '配茶更配心情' },
+            { key: 'topping', label: '经典小料', note: '加一点更满足' }
+        ];
+
+        var ghz_goods = [
+            { cat: 'hot', id: 'd1', img: './img/p1.jpg', name: '多肉桃李（首创）', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '广东铁排银妃三华李 + 当季红皮黄油桃，2022 年首创，应季回归', price: 17, note: 'TOP 1' },
+            { cat: 'hot', id: 'd2', img: './img/p2.jpg', name: '奇兰芭乐莲雾（首创）', tags: [['green', '咖啡因绿灯'], ['', '可做热饮']], desc: '花香奇兰 + 白芭乐 + 黑金刚莲雾，原配方人气回归', price: 23 },
+            { cat: 'hot', id: 'd3', img: './img/p3.jpg', name: '奇兰苹果杏（首创）', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '自带高香的奇兰茶 + 红富士苹果 + 自然熟金太阳杏，特调一杯茶', price: 19, origin: 25 },
+            { cat: 'hot', id: 'd4', cake: true, name: '巧苦·咸酪碎银子', tags: [['green', '咖啡因绿灯'], ['', '冷热皆宜']], desc: '可可脆片与咸酪交融，苦甜之后再回甘', price: 15 },
+
+            { cat: 'season', id: 's1', img: './img/p1.jpg', name: '多肉桃李·双倍果肉', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '双倍桃李果肉，果香更浓，季节限定', price: 22, note: '新品' },
+            { cat: 'season', id: 's2', img: './img/p3.jpg', name: '奇兰苹果杏·去冰版', tags: [['green', '咖啡因绿灯'], ['', '可做热饮']], desc: '去冰后茶感更足，适合慢慢喝的一杯', price: 19 },
+            { cat: 'season', id: 's3', orb: 'linear-gradient(150deg,#e3a9bd,#b8617f)', name: '芝芝莓莓·雪顶', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '草莓果肉 + 芝士奶盖雪顶，酸甜刚好', price: 18 },
+
+            { cat: 'milktea', id: 'm1', img: './img/p2.jpg', name: '奇兰·轻乳茶', tags: [['green', '咖啡因绿灯'], ['', '可做热饮']], desc: '奇兰茶底配轻乳，花香与奶香交替出现', price: 18 },
+            { cat: 'milktea', id: 'm2', orb: 'linear-gradient(150deg,#a98568,#6b4a39)', name: '黑糖波波轻乳', tags: [['green', '咖啡因绿灯'], ['', '可做热饮']], desc: '现煮黑糖波波，杯壁挂糖纹，越喝越香', price: 20 },
+            { cat: 'milktea', id: 'm3', orb: 'linear-gradient(150deg,#a9c9b2,#5f8f74)', name: '茉莉初雪·轻乳', tags: [['green', '咖啡因绿灯'], ['', '可做热饮']], desc: '茉莉初雪茶胚 + 轻乳，清香不腻', price: 16 },
+
+            { cat: 'fruit', id: 'f1', img: './img/p1.jpg', name: '多肉桃李', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '整颗黄油桃现切，果肉看得见', price: 17 },
+            { cat: 'fruit', id: 'f2', img: './img/p3.jpg', name: '奇兰苹果杏', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '苹果与杏子的组合，回甘很干净', price: 19, origin: 25 },
+            { cat: 'fruit', id: 'f3', orb: 'linear-gradient(150deg,#e8b06a,#c07830)', name: '满杯红柚', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '红柚果粒满杯，微苦之后是清甜', price: 22 },
+
+            { cat: 'pure', id: 'p1', orb: 'linear-gradient(150deg,#4a4a54,#1a1a1f)', name: '奇兰纯茶', tags: [['green', '咖啡因绿灯'], ['', '冷热皆宜']], desc: '不加糖不加奶，只留一杯茶原本的样子', price: 12 },
+            { cat: 'pure', id: 'p2', orb: 'linear-gradient(150deg,#a9c9b2,#5f8f74)', name: '茉莉绿茶', tags: [['green', '咖啡因绿灯'], ['', '冷热皆宜']], desc: '茉莉窨制的绿茶，香气清扬', price: 10 },
+            { cat: 'pure', id: 'p3', orb: 'linear-gradient(150deg,#d9b36a,#a87a2e)', name: '鸭屎香单丛', tags: [['green', '咖啡因绿灯'], ['', '冷热皆宜']], desc: '单丛茶特有的蜜兰香，回甘持久', price: 14 },
+
+            { cat: 'dessert', id: 'x1', cake: true, name: '巧苦·咸酪碎银子', tags: [['green', '咖啡因绿灯'], ['', '冷热皆宜']], desc: '可可脆片与咸酪交融，苦甜之后再回甘', price: 15 },
+            { cat: 'dessert', id: 'x2', cake: true, name: '芝芝莓莓雪顶杯', tags: [['green', '咖啡因绿灯'], ['', '含茶']], desc: '草莓果酱与芝士雪顶的甜咸平衡', price: 18 },
+            { cat: 'dessert', id: 'x3', orb: 'linear-gradient(150deg,#cbb0d6,#8b6aa5)', name: '芋泥麻薯盒子', tags: [['green', '咖啡因绿灯'], ['', '冷藏']], desc: '手打芋泥配麻薯，绵密有嚼劲', price: 16 },
+
+            { cat: 'topping', id: 't1', orb: 'linear-gradient(150deg,#efe6d6,#cbb790)', name: '芝士奶盖', tags: [['', '加料']], desc: '咸甜芝士奶盖，任意茶饮都能加', price: 4 },
+            { cat: 'topping', id: 't2', orb: 'linear-gradient(150deg,#8a6a52,#3f2a1e)', name: '黑糖波波', tags: [['', '加料']], desc: '现煮黑糖珍珠，Q 弹带焦香', price: 3 },
+            { cat: 'topping', id: 't3', orb: 'linear-gradient(150deg,#c9c0e0,#8a7ab5)', name: '手作芋圆', tags: [['', '加料']], desc: '手作芋圆，软糯有芋香', price: 3 }
+        ];
+
+        /* ================= 元素与状态 ================= */
+        var ghz_navItems = document.querySelectorAll('[data-ghz-tab]');
+        var ghz_panels = document.querySelectorAll('[data-ghz-panel]');
+        var ghz_rail = document.querySelector('[data-ghz-rail]');
+        var ghz_products = document.querySelector('[data-ghz-products]');
+        var ghz_catTitle = document.querySelector('[data-ghz-cat-title]');
+        var ghz_catNote = document.querySelector('[data-ghz-cat-note]');
+        var ghz_searchInput = document.querySelector('.ghz_search-input');
+        var ghz_cartNum = document.querySelector('[data-ghz-cart]');
+        var ghz_cartBtn = document.querySelector('[data-ghz-cart-btn]');
+        var ghz_sheet = document.querySelector('[data-ghz-sheet]');
+        var ghz_sheetName = document.querySelector('[data-ghz-sheet-name]');
+        var ghz_sheetPrice = document.querySelector('[data-ghz-sheet-price]');
+        var ghz_toastBox = document.querySelector('[data-ghz-toastbox]');
+        var ghz_toastText = document.querySelector('[data-ghz-toasttext]');
+        var ghz_header = document.querySelector('.ghz_header');
+
+        var ghz_current = 'hot';
+        var ghz_keyword = '';
+        var ghz_cartCount = 0;
+        var ghz_specBase = 17;
+        var ghz_specAdd = 0;
+        var ghz_toastTimer = null;
+
+        /* ================= 通用方法 ================= */
+        function ghz_toast(msg) {
+            ghz_toastText.textContent = msg;
+            ghz_toastBox.classList.add('is-show');
+            if (ghz_toastTimer) {
+                clearTimeout(ghz_toastTimer);
+            }
+            ghz_toastTimer = setTimeout(function () {
+                ghz_toastBox.classList.remove('is-show');
+            }, 1900);
+        }
+
+        function ghz_measureHeader() {
+            if (!ghz_header) {
+                return;
+            }
+            document.documentElement.style.setProperty('--ghz_sticky', ghz_header.offsetHeight + 'px');
+        }
+
+        /* ================= 面板切换 ================= */
+        function ghz_switchPanel(key) {
+            var i;
+            for (i = 0; i < ghz_panels.length; i++) {
+                var on = ghz_panels[i].getAttribute('data-ghz-panel') === key;
+                ghz_panels[i].classList.toggle('is-active', on);
+            }
+            for (i = 0; i < ghz_navItems.length; i++) {
+                var act = ghz_navItems[i].getAttribute('data-ghz-tab') === key;
+                ghz_navItems[i].classList.toggle('is-active', act);
+                if (act) {
+                    ghz_navItems[i].setAttribute('aria-current', 'page');
+                } else {
+                    ghz_navItems[i].removeAttribute('aria-current');
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            ghz_measureHeader();
+        }
+
+        for (var ghz_i = 0; ghz_i < ghz_navItems.length; ghz_i++) {
+            (function (btn) {
+                btn.addEventListener('click', function () {
+                    ghz_switchPanel(btn.getAttribute('data-ghz-tab'));
+                });
+            })(ghz_navItems[ghz_i]);
+        }
+
+        /* ================= 分类栏 ================= */
+        function ghz_renderRail() {
+            var html = '';
+            for (var i = 0; i < ghz_cats.length; i++) {
+                var on = ghz_cats[i].key === ghz_current ? ' is-active' : '';
+                html += '<button class="ghz_rail-item' + on + '" type="button" data-ghz-cat="' +
+                    ghz_cats[i].key + '">' + ghz_cats[i].label + '</button>';
+            }
+            ghz_rail.innerHTML = html;
+        }
+
+        /* ================= 商品卡片 ================= */
+        function ghz_thumbHtml(g) {
+            if (g.img) {
+                return '<div class="ghz_thumb"><img src="' + g.img + '" alt="' + g.name + '" loading="lazy"></div>';
+            }
+            if (g.cake) {
+                return '<div class="ghz_thumb"><span class="ghz_cake"></span></div>';
+            }
+            return '<div class="ghz_thumb ghz_thumb--orb" style="--ghz_orb:' + g.orb + '">' +
+                '<i class="ghz_iconfont ghz_icon-cup"></i></div>';
+        }
+
+        function ghz_cardHtml(g) {
+            var tags = '';
+            for (var i = 0; i < g.tags.length; i++) {
+                tags += '<span class="ghz_tag ghz_tag--' + g.tags[i][0] + '">' + g.tags[i][1] + '</span>';
+            }
+            var note = g.note ? '<span class="ghz_badge">' + g.note + '</span>' : '';
+            var origin = g.origin ? '<span class="ghz_origin">¥' + g.origin + '</span>' : '';
+            return '<article class="ghz_product">' + ghz_thumbHtml(g) +
+                '<div class="ghz_pinfo">' +
+                '<div class="ghz_prow"><h3 class="ghz_pname">' + g.name + '</h3>' + note + '</div>' +
+                '<div class="ghz_tags">' + tags + '</div>' +
+                '<p class="ghz_pdesc">' + g.desc + '</p>' +
+                '<div class="ghz_pbottom">' +
+                '<div class="ghz_price">' + origin + '<span class="ghz_price-yen">¥</span><span class="ghz_price-num">' + g.price + '</span></div>' +
+                '<button class="ghz_spec" type="button" data-ghz-spec="' + g.id + '" data-ghz-name="' + g.name + '" data-ghz-price="' + g.price + '">选规格</button>' +
+                '</div></div></article>';
+        }
+
+        function ghz_renderList() {
+            var list = [];
+            for (var i = 0; i < ghz_goods.length; i++) {
+                if (ghz_goods[i].cat !== ghz_current) {
+                    continue;
+                }
+                if (ghz_keyword && ghz_goods[i].name.indexOf(ghz_keyword) === -1) {
+                    continue;
+                }
+                list.push(ghz_goods[i]);
+            }
+            var html = '';
+            if (!list.length) {
+                html = '<div class="ghz_empty"><i class="ghz_iconfont ghz_icon-search"></i><p>没有找到与「' + ghz_keyword + '」相关的茶饮</p></div>';
+            } else {
+                for (var j = 0; j < list.length; j++) {
+                    html += ghz_cardHtml(list[j]);
+                }
+            }
+            ghz_products.innerHTML = html;
+
+            for (var k = 0; k < ghz_cats.length; k++) {
+                if (ghz_cats[k].key === ghz_current) {
+                    ghz_catTitle.textContent = ghz_cats[k].label;
+                    ghz_catNote.textContent = ghz_cats[k].note;
+                }
+            }
+        }
+
+        ghz_rail.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-ghz-cat]');
+            if (!btn) {
+                return;
+            }
+            ghz_current = btn.getAttribute('data-ghz-cat');
+            ghz_keyword = '';
+            ghz_searchInput.value = '';
+            ghz_renderRail();
+            ghz_renderList();
+        });
+
+        ghz_searchInput.addEventListener('input', function () {
+            ghz_keyword = this.value.trim();
+            ghz_renderList();
+        });
+
+        /* ================= 规格弹层 ================= */
+        function ghz_openSheet(name, basePrice) {
+            ghz_specBase = Number(basePrice) || 0;
+            ghz_specAdd = 0;
+            ghz_sheetName.textContent = name;
+            ghz_sheetPrice.textContent = ghz_specBase;
+            var groups = ghz_sheet.querySelectorAll('[data-ghz-group]');
+            for (var i = 0; i < groups.length; i++) {
+                var chips = groups[i].querySelectorAll('[data-ghz-chip]');
+                for (var j = 0; j < chips.length; j++) {
+                    chips[j].classList.toggle('is-active', chips[j].getAttribute('data-ghz-add') === '0');
+                }
+            }
+            ghz_sheet.classList.add('is-open');
+            ghz_sheet.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function ghz_closeSheet() {
+            ghz_sheet.classList.remove('is-open');
+            ghz_sheet.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function ghz_addCart() {
+            ghz_cartCount += 1;
+            ghz_cartNum.textContent = ghz_cartCount;
+            ghz_cartBtn.classList.remove('is-bump');
+            void ghz_cartBtn.offsetWidth;
+            ghz_cartBtn.classList.add('is-bump');
+            ghz_toast('已加入购物车 · ' + ghz_sheetName.textContent);
+            ghz_closeSheet();
+        }
+
+        ghz_products.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-ghz-spec]');
+            if (!btn) {
+                return;
+            }
+            ghz_openSheet(btn.getAttribute('data-ghz-name'), btn.getAttribute('data-ghz-price'));
+        });
+
+        ghz_sheet.addEventListener('click', function (e) {
+            var close = e.target.closest('[data-ghz-sheet-close]');
+            if (close) {
+                ghz_closeSheet();
+                return;
+            }
+            var ok = e.target.closest('[data-ghz-sheet-ok]');
+            if (ok) {
+                ghz_addCart();
+                return;
+            }
+            var chip = e.target.closest('[data-ghz-chip]');
+            if (chip) {
+                var group = chip.closest('[data-ghz-group]');
+                var siblings = group.querySelectorAll('[data-ghz-chip]');
+                for (var i = 0; i < siblings.length; i++) {
+                    siblings[i].classList.remove('is-active');
+                }
+                chip.classList.add('is-active');
+                if (group.getAttribute('data-ghz-group') === 'extra') {
+                    ghz_specAdd = Number(chip.getAttribute('data-ghz-add')) || 0;
+                    ghz_sheetPrice.textContent = ghz_specBase + ghz_specAdd;
+                }
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && ghz_sheet.classList.contains('is-open')) {
+                ghz_closeSheet();
+            }
+        });
+
+        /* ================= 顶部模式与提示 ================= */
+        var ghz_modes = document.querySelectorAll('[data-ghz-mode]');
+        for (var ghz_m = 0; ghz_m < ghz_modes.length; ghz_m++) {
+            (function (btn) {
+                btn.addEventListener('click', function () {
+                    for (var i = 0; i < ghz_modes.length; i++) {
+                        ghz_modes[i].classList.remove('is-active');
+                    }
+                    btn.classList.add('is-active');
+                });
+            })(ghz_modes[ghz_m]);
+        }
+
+        document.addEventListener('click', function (e) {
+            var go = e.target.closest('[data-ghz-go]');
+            if (go) {
+                ghz_switchPanel(go.getAttribute('data-ghz-go'));
+                return;
+            }
+            var tip = e.target.closest('[data-ghz-toast]');
+            if (tip) {
+                ghz_toast(tip.getAttribute('data-ghz-toast'));
+            }
+        });
+
+        /* ================= 初始化 ================= */
+        ghz_renderRail();
+        ghz_renderList();
+        ghz_measureHeader();
+        window.addEventListener('resize', ghz_measureHeader);
+    </script>
+</body>
+
+</html>
