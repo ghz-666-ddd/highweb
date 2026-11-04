@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 姓名：高浩哲，日期：2026-10-22，功能：课程作品导航首页 -->
+<!-- 姓名：高浩哲，日期：2026-11-04，功能：课程作品导航首页，按学习阶段分类展示全部网页作品 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -7,139 +7,305 @@
     <title>高浩哲的《高级网页设计》课堂实践</title>
     <style>
         :root {
-            --yl_bg-1: #f4f7ff;
-            --yl_bg-2: #eef8ff;
-            --yl_card: rgba(255,255,255,0.82);
-            --yl_primary: #2f6fed;
-            --yl_primary-deep: #1747b9;
-            --yl_accent: #ffb703;
-            --yl_text: #1d2a39;
-            --yl_muted: #5f6f82;
-            --yl_shadow: 0 18px 45px rgba(32, 67, 140, 0.18);
-            --yl_border: rgba(47, 111, 237, 0.12);
+            --ghz_bg-1: #f4f7ff;
+            --ghz_bg-2: #eef8ff;
+            --ghz_card: rgba(255, 255, 255, 0.86);
+            --ghz_primary: #2f6fed;
+            --ghz_primary-deep: #1747b9;
+            --ghz_accent: #ffb703;
+            --ghz_text: #1d2a39;
+            --ghz_muted: #5f6f82;
+            --ghz_shadow: 0 18px 45px rgba(32, 67, 140, 0.18);
+            --ghz_border: rgba(47, 111, 237, 0.12);
+            --ghz_radius: 20px;
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             margin: 0;
             font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
-            color: var(--yl_text);
+            color: var(--ghz_text);
             background:
                 radial-gradient(circle at top left, rgba(90, 146, 255, 0.18), transparent 26%),
                 radial-gradient(circle at bottom right, rgba(255, 183, 3, 0.15), transparent 28%),
-                linear-gradient(135deg, var(--yl_bg-1), var(--yl_bg-2));
+                linear-gradient(135deg, var(--ghz_bg-1), var(--ghz_bg-2));
             min-height: 100vh;
         }
 
-        .yl_container {
+        .ghz_container {
             width: min(1180px, calc(100% - 32px));
             margin: 0 auto;
             padding: 48px 0 60px;
         }
 
-        .yl_hero {
-            background: linear-gradient(135deg, rgba(47, 111, 237, 0.94), rgba(86, 156, 255, 0.92));
+        .ghz_hero {
+            background: linear-gradient(135deg, rgba(47, 111, 237, 0.95), rgba(86, 156, 255, 0.92) 55%, rgba(124, 92, 240, 0.92));
             color: #fff;
             border-radius: 28px;
-            padding: 36px 38px;
-            box-shadow: var(--yl_shadow);
+            padding: 38px 40px 34px;
+            box-shadow: var(--ghz_shadow);
             position: relative;
             overflow: hidden;
         }
 
-        .yl_hero::before,
-        .yl_hero::after {
+        .ghz_hero::before,
+        .ghz_hero::after {
             content: "";
             position: absolute;
             border-radius: 50%;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
         }
 
-        .yl_hero::before {
-            width: 220px;
-            height: 220px;
-            top: -72px;
-            right: -40px;
+        .ghz_hero::before {
+            width: 240px;
+            height: 240px;
+            top: -84px;
+            right: -46px;
         }
 
-        .yl_hero::after {
-            width: 180px;
-            height: 180px;
-            left: -40px;
-            bottom: -60px;
+        .ghz_hero::after {
+            width: 190px;
+            height: 190px;
+            left: -52px;
+            bottom: -70px;
         }
 
-        .yl_hero h1 {
+        .ghz_hero h1 {
             margin: 0;
-            font-size: clamp(2rem, 3vw, 3rem);
-            letter-spacing: 2px;
+            font-size: clamp(1.9rem, 3vw, 2.9rem);
+            letter-spacing: 1px;
             position: relative;
             z-index: 1;
         }
 
-        .yl_hero p {
+        .ghz_hero p {
             margin: 14px 0 0;
-            font-size: 1.08rem;
-            color: rgba(255,255,255,0.88);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
             position: relative;
             z-index: 1;
         }
 
-        .yl_section {
-            margin-top: 32px;
+        .ghz_hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+            position: relative;
+            z-index: 1;
         }
 
-        .yl_section-title {
-            font-size: 1.7rem;
-            margin: 0 0 18px;
-            color: var(--yl_primary-deep);
+        .ghz_hero-stat {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            backdrop-filter: blur(6px);
+        }
+
+        .ghz_hero-stat strong {
+            font-size: 1.45rem;
+            line-height: 1;
+            color: #fff;
+        }
+
+        .ghz_hero-stat span {
+            font-size: 0.86rem;
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+        .ghz_quicknav {
+            position: sticky;
+            top: 14px;
+            z-index: 20;
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            margin: 26px 0 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--ghz_border);
+            box-shadow: 0 12px 30px rgba(31, 72, 149, 0.10);
+            backdrop-filter: blur(14px);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .ghz_quicknav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ghz_quicknav-link {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-size: 0.92rem;
             font-weight: 700;
+            color: var(--ghz_muted);
+            text-decoration: none;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
 
-        .yl_grid {
+        .ghz_quicknav-link b {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(47, 111, 237, 0.10);
+            color: var(--ghz_primary-deep);
+        }
+
+        .ghz_quicknav-link:hover {
+            background: rgba(47, 111, 237, 0.10);
+            color: var(--ghz_primary-deep);
+            transform: translateY(-1px);
+        }
+
+        .ghz_quicknav-link.is-active {
+            background: linear-gradient(135deg, var(--ghz_primary), #5a92ff);
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(47, 111, 237, 0.28);
+        }
+
+        .ghz_quicknav-link.is-active b {
+            background: rgba(255, 255, 255, 0.22);
+            color: #fff;
+        }
+
+        .ghz_cat {
+            margin-top: 34px;
+        }
+
+        .ghz_cat--basic {
+            --ghz_cat: #2f6fed;
+            --ghz_cat-soft: rgba(47, 111, 237, 0.10);
+        }
+
+        .ghz_cat--layout {
+            --ghz_cat: #7c5cf0;
+            --ghz_cat-soft: rgba(124, 92, 240, 0.10);
+        }
+
+        .ghz_cat--script {
+            --ghz_cat: #0e9f8f;
+            --ghz_cat-soft: rgba(14, 159, 143, 0.10);
+        }
+
+        .ghz_cat--project {
+            --ghz_cat: #e58a00;
+            --ghz_cat-soft: rgba(229, 138, 0, 0.12);
+        }
+
+        .ghz_cat-head {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .ghz_cat-bar {
+            width: 7px;
+            height: 30px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, var(--ghz_cat), rgba(255, 255, 255, 0));
+        }
+
+        .ghz_cat-title {
+            margin: 0;
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--ghz_text);
+        }
+
+        .ghz_cat-note {
+            font-size: 0.88rem;
+            color: var(--ghz_muted);
+            flex: 1 1 240px;
+        }
+
+        .ghz_cat-count {
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--ghz_cat);
+            background: var(--ghz_cat-soft);
+        }
+
+        .ghz_grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 22px;
         }
 
-        .yl_card {
+        .ghz_card {
             display: block;
-            background: var(--yl_card);
-            border: 1px solid var(--yl_border);
-            border-radius: 20px;
-            padding: 22px 20px;
+            background: var(--ghz_card);
+            border: 1px solid var(--ghz_border);
+            border-radius: var(--ghz_radius);
+            padding: 24px 20px 34px;
             text-decoration: none;
-            color: var(--yl_text);
-            box-shadow: 0 10px 28px rgba(31, 72, 149, 0.08);
+            color: var(--ghz_text);
+            box-shadow: 0 10px 28px rgba(31, 72, 149, 0.07);
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-            min-height: 170px;
+            min-height: 172px;
             position: relative;
             overflow: hidden;
         }
 
-        .yl_card:hover {
+        .ghz_card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 18px 36px rgba(32, 67, 140, 0.15);
-            border-color: rgba(47, 111, 237, 0.3);
+            box-shadow: 0 18px 38px rgba(32, 67, 140, 0.16);
+            border-color: var(--ghz_cat);
         }
 
-        .yl_card::before {
+        .ghz_card::before {
             content: "";
             position: absolute;
-            inset: 0 auto auto 0;
-            width: 100%;
+            inset: 0 0 auto 0;
             height: 5px;
-            background: linear-gradient(90deg, var(--yl_primary), var(--yl_accent));
+            background: linear-gradient(90deg, var(--ghz_cat), rgba(255, 255, 255, 0));
         }
 
-        .yl_tag {
+        .ghz_card::after {
+            content: "→";
+            position: absolute;
+            right: 18px;
+            bottom: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--ghz_cat);
+            opacity: 0.45;
+            transform: translateX(-4px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .ghz_card:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .ghz_tag {
             display: inline-block;
-            padding: 6px 10px;
-            background: rgba(47, 111, 237, 0.09);
-            color: var(--yl_primary-deep);
+            padding: 6px 11px;
+            background: var(--ghz_cat-soft);
+            color: var(--ghz_cat);
             border-radius: 999px;
             font-size: 0.74rem;
             font-weight: 700;
@@ -147,248 +313,350 @@
             margin-bottom: 14px;
         }
 
-        .yl_card h3 {
+        .ghz_card h3 {
             margin: 0 0 12px;
-            font-size: 1.3rem;
-            color: var(--yl_text);
+            font-size: 1.22rem;
+            line-height: 1.45;
+            color: var(--ghz_text);
         }
 
-        .yl_card p {
+        .ghz_card p {
             margin: 0;
             line-height: 1.7;
-            color: var(--yl_muted);
-            font-size: 0.96rem;
+            color: var(--ghz_muted);
+            font-size: 0.94rem;
         }
 
-        .yl_prompt-box {
+        .ghz_prompt-box {
             margin-top: 34px;
-            background: rgba(255,255,255,0.75);
-            border: 1px solid var(--yl_border);
-            box-shadow: var(--yl_shadow);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid var(--ghz_border);
+            box-shadow: var(--ghz_shadow);
+            border-radius: var(--ghz_radius);
             padding: 26px 24px;
         }
 
-        .yl_prompt-box h2 {
+        .ghz_prompt-box h2 {
             margin: 0 0 14px;
-            color: var(--yl_primary-deep);
+            color: var(--ghz_primary-deep);
             font-size: 1.5rem;
         }
 
-        .yl_prompt-box blockquote {
+        .ghz_prompt-box blockquote {
             margin: 0;
             padding: 18px 20px;
             background: linear-gradient(135deg, #f8fbff, #eef4ff);
-            border-left: 6px solid var(--yl_accent);
+            border-left: 6px solid var(--ghz_accent);
             border-radius: 12px;
             font-size: 1rem;
             line-height: 1.8;
-            color: var(--yl_text);
+            color: var(--ghz_text);
         }
 
         @media (max-width: 640px) {
-            .yl_container {
+            .ghz_container {
                 width: min(100% - 20px, 1180px);
                 padding-top: 24px;
             }
 
-            .yl_hero {
-                padding: 28px 20px;
+            .ghz_hero {
+                padding: 28px 22px;
                 border-radius: 20px;
             }
 
-            .yl_card {
+            .ghz_quicknav {
+                top: 8px;
+                border-radius: 16px;
+                margin-top: 18px;
+                flex-wrap: wrap;
+                overflow-x: visible;
+            }
+
+            .ghz_quicknav-link {
+                padding: 9px 14px;
+                font-size: 0.85rem;
+            }
+
+            .ghz_cat-note {
+                flex-basis: 100%;
+            }
+
+            .ghz_card {
                 min-height: 150px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="yl_container">
-        <header class="yl_hero">
+    <div class="ghz_container">
+        <header class="ghz_hero">
             <h1>高浩哲的《高级网页设计》课堂实践</h1>
-            <p>本页面汇总了本目录下所有网页作品，展示 HTML 与 CSS 实践成果。</p>
+            <p>本页面汇总了本目录下所有网页作品，按学习阶段分为基础语法、布局特效、交互接口与页面实战四类，便于按专题回顾练习。</p>
+            <div class="ghz_hero-stats">
+                <div class="ghz_hero-stat"><strong>28</strong><span>个网页作品</span></div>
+                <div class="ghz_hero-stat"><strong>4</strong><span>个专题分类</span></div>
+                <div class="ghz_hero-stat"><strong>2</strong><span>个课程项目</span></div>
+            </div>
         </header>
 
-        <main class="yl_section">
-            <h2 class="yl_section-title">课程作品导航</h2>
-            <div class="yl_grid">
-                <a class="yl_card" href="./1.html">
-                    <span class="yl_tag">作品 1</span>
-                    <h3>1.html</h3>
-                    <p>HTML 基础元素、列表、段落、文本样式与练习页面。</p>
-                </a>
+        <main>
+            <nav class="ghz_quicknav" aria-label="作品分类导航">
+                <a class="ghz_quicknav-link is-active" href="#ghz_cat-basic">基础语法 <b>7</b></a>
+                <a class="ghz_quicknav-link" href="#ghz_cat-layout">布局特效 <b>5</b></a>
+                <a class="ghz_quicknav-link" href="#ghz_cat-script">交互接口 <b>12</b></a>
+                <a class="ghz_quicknav-link" href="#ghz_cat-project">页面实战 <b>4</b></a>
+            </nav>
 
-                <a class="yl_card" href="./2-2.html">
-                    <span class="yl_tag">作品 2</span>
-                    <h3>2-2.html</h3>
-                    <p>超链接、图片引用、图像展示与表格布局的综合练习。</p>
-                </a>
+            <section class="ghz_cat ghz_cat--basic" id="ghz_cat-basic">
+                <div class="ghz_cat-head">
+                    <span class="ghz_cat-bar" aria-hidden="true"></span>
+                    <h2 class="ghz_cat-title">基础语法与样式</h2>
+                    <span class="ghz_cat-note">HTML 结构、超链接与表单、CSS 选择器、层叠继承与盒模型</span>
+                    <span class="ghz_cat-count">7 个作品</span>
+                </div>
+                <div class="ghz_grid">
+                    <a class="ghz_card" href="./1.html">
+                        <span class="ghz_tag">作品 1</span>
+                        <h3>1.html</h3>
+                        <p>HTML 基础元素、列表、段落、文本样式与练习页面。</p>
+                    </a>
 
-                <a class="yl_card" href="./3-1.html">
-                    <span class="yl_tag">作品 3</span>
-                    <h3>3-1.html</h3>
-                    <p>HTML 表单元素、输入控件、选择器与常见交互组件。</p>
-                </a>
+                    <a class="ghz_card" href="./2-2.html">
+                        <span class="ghz_tag">作品 2</span>
+                        <h3>2-2.html</h3>
+                        <p>超链接、图片引用、图像展示与表格布局的综合练习。</p>
+                    </a>
 
-                <a class="yl_card" href="./3-2.html">
-                    <span class="yl_tag">作品 4</span>
-                    <h3>3-2.html</h3>
-                    <p>CSS 选择器、样式层叠、标签与 ID 选择器应用实例。</p>
-                </a>
+                    <a class="ghz_card" href="./3-1.html">
+                        <span class="ghz_tag">作品 3</span>
+                        <h3>3-1.html</h3>
+                        <p>HTML 表单元素、输入控件、选择器与常见交互组件。</p>
+                    </a>
 
-                <a class="yl_card" href="./4-1 css2.html">
-                    <span class="yl_tag">作品 5</span>
-                    <h3>4-1 css2.html</h3>
-                    <p>CSS 进阶：群组选择器、后代选择器、继承与样式细节处理。</p>
-                </a>
+                    <a class="ghz_card" href="./3-2.html">
+                        <span class="ghz_tag">作品 4</span>
+                        <h3>3-2.html</h3>
+                        <p>CSS 选择器、样式层叠、标签与 ID 选择器应用实例。</p>
+                    </a>
 
-                <a class="yl_card" href="./5-1 层叠与继承.html">
-                    <span class="yl_tag">作品 6</span>
-                    <h3>5-1 层叠与继承.html</h3>
-                    <p>CSS 层叠与继承：id、class、标签选择器的优先级与 !important。</p>
-                </a>
+                    <a class="ghz_card" href="./4-1 css2.html">
+                        <span class="ghz_tag">作品 5</span>
+                        <h3>4-1 css2.html</h3>
+                        <p>CSS 进阶：群组选择器、后代选择器、继承与样式细节处理。</p>
+                    </a>
 
-                <a class="yl_card" href="./5-2 盒模型.html">
-                    <span class="yl_tag">作品 7</span>
-                    <h3>5-2 盒模型.html</h3>
-                    <p>盒模型：border、padding、margin 及实线、虚线、点线边框效果。</p>
-                </a>
+                    <a class="ghz_card" href="./5-1 层叠与继承.html">
+                        <span class="ghz_tag">作品 6</span>
+                        <h3>5-1 层叠与继承.html</h3>
+                        <p>CSS 层叠与继承：id、class、标签选择器的优先级与 !important。</p>
+                    </a>
 
-                <a class="yl_card" href="./6-1 flex.html">
-                    <span class="yl_tag">作品 8</span>
-                    <h3>6-1 flex.html</h3>
-                    <p>Flex 弹性布局：盒子居中、垂直排列、两行两列与通栏组合四种效果。</p>
-                </a>
+                    <a class="ghz_card" href="./5-2 盒模型.html">
+                        <span class="ghz_tag">作品 7</span>
+                        <h3>5-2 盒模型.html</h3>
+                        <p>盒模型：border、padding、margin 及实线、虚线、点线边框效果。</p>
+                    </a>
+                </div>
+            </section>
 
-                <a class="yl_card" href="./6-2.html">
-                    <span class="yl_tag">作品 9</span>
-                    <h3>6-2.html</h3>
-                    <p>标题栏排版：用 flex 与绝对定位实现三种“标题 + 更多链接”布局。</p>
-                </a>
+            <section class="ghz_cat ghz_cat--layout" id="ghz_cat-layout">
+                <div class="ghz_cat-head">
+                    <span class="ghz_cat-bar" aria-hidden="true"></span>
+                    <h2 class="ghz_cat-title">布局与视觉特效</h2>
+                    <span class="ghz_cat-note">Flex 弹性布局、CSS3 选择器与 3D 动画、单位与响应式尺寸</span>
+                    <span class="ghz_cat-count">5 个作品</span>
+                </div>
+                <div class="ghz_grid">
+                    <a class="ghz_card" href="./6-1 flex.html">
+                        <span class="ghz_tag">作品 8</span>
+                        <h3>6-1 flex.html</h3>
+                        <p>Flex 弹性布局：盒子居中、垂直排列、两行两列与通栏组合四种效果。</p>
+                    </a>
 
-                <a class="yl_card" href="./8-1.css3选择器.html">
-                    <span class="yl_tag">作品 10</span>
-                    <h3>8-1.css3选择器.html</h3>
-                    <p>CSS3 选择器与悬停特效：nth-child、渐变、transform、伪元素应用。</p>
-                </a>
+                    <a class="ghz_card" href="./6-2.html">
+                        <span class="ghz_tag">作品 9</span>
+                        <h3>6-2.html</h3>
+                        <p>标题栏排版：用 flex 与绝对定位实现三种“标题 + 更多链接”布局。</p>
+                    </a>
 
-                <a class="yl_card" href="./11-1.html">
-                    <span class="yl_tag">作品 11</span>
-                    <h3>11-1.html</h3>
-                    <p>Web 前端长度单位：px、%、em、rem、vw/vh 等单位的可视化演示。</p>
-                </a>
+                    <a class="ghz_card" href="./8-1.css3选择器.html">
+                        <span class="ghz_tag">作品 10</span>
+                        <h3>8-1.css3选择器.html</h3>
+                        <p>CSS3 选择器与悬停特效：nth-child、渐变、transform、伪元素应用。</p>
+                    </a>
 
-                <a class="yl_card" href="./11-2.html">
-                    <span class="yl_tag">作品 12</span>
-                    <h3>11-2.html</h3>
-                    <p>CSS3 3D 动画：旋转立方体、翻转卡片、旋转木马、圆柱体等七种效果。</p>
-                </a>
+                    <a class="ghz_card" href="./11-1.html">
+                        <span class="ghz_tag">作品 11</span>
+                        <h3>11-1.html</h3>
+                        <p>Web 前端长度单位：px、%、em、rem、vw/vh 等单位的可视化演示。</p>
+                    </a>
 
-                <a class="yl_card" href="./14-1.html">
-                    <span class="yl_tag">作品 13</span>
-                    <h3>14-1.html</h3>
-                    <p>JavaScript 基础练习：document.write、alert、prompt、confirm。</p>
-                </a>
+                    <a class="ghz_card" href="./11-2.html">
+                        <span class="ghz_tag">作品 12</span>
+                        <h3>11-2.html</h3>
+                        <p>CSS3 3D 动画：旋转立方体、翻转卡片、旋转木马、圆柱体等七种效果。</p>
+                    </a>
+                </div>
+            </section>
 
-                <a class="yl_card" href="./14-2.html">
-                    <span class="yl_tag">作品 14</span>
-                    <h3>14-2.html</h3>
-                    <p>JavaScript 六种基本数据类型：Number、String、Boolean、Undefined、Null、Object 演示。</p>
-                </a>
+            <section class="ghz_cat ghz_cat--script" id="ghz_cat-script">
+                <div class="ghz_cat-head">
+                    <span class="ghz_cat-bar" aria-hidden="true"></span>
+                    <h2 class="ghz_cat-title">交互与接口</h2>
+                    <span class="ghz_cat-note">JavaScript 语法、数组与对象、JSON、fetch 接口、定时器与异步流程</span>
+                    <span class="ghz_cat-count">12 个作品</span>
+                </div>
+                <div class="ghz_grid">
+                    <a class="ghz_card" href="./14-1.html">
+                        <span class="ghz_tag">作品 13</span>
+                        <h3>14-1.html</h3>
+                        <p>JavaScript 基础练习：document.write、alert、prompt、confirm。</p>
+                    </a>
 
-                <a class="yl_card" href="./15-1.html">
-                    <span class="yl_tag">作品 15</span>
-                    <h3>15-1.html</h3>
-                    <p>JavaScript 数 7 规则：100 个盒子中，7 的倍数、个位是 7 或含 7 的数字输出空盒子。</p>
-                </a>
+                    <a class="ghz_card" href="./14-2.html">
+                        <span class="ghz_tag">作品 14</span>
+                        <h3>14-2.html</h3>
+                        <p>JavaScript 六种基本数据类型：Number、String、Boolean、Undefined、Null、Object 演示。</p>
+                    </a>
 
-                <a class="yl_card" href="./16-1.html">
-                    <span class="yl_tag">作品 16</span>
-                    <h3>16-1.html</h3>
-                    <p>JavaScript 数组主要方法：可视化实验室、push/pop、splice/slice、map/filter、reduce 与方法速查表。</p>
-                </a>
+                    <a class="ghz_card" href="./15-1.html">
+                        <span class="ghz_tag">作品 15</span>
+                        <h3>15-1.html</h3>
+                        <p>JavaScript 数 7 规则：100 个盒子中，7 的倍数、个位是 7 或含 7 的数字输出空盒子。</p>
+                    </a>
 
-                <a class="yl_card" href="./16-2.html">
-                    <span class="yl_tag">作品 17</span>
-                    <h3>16-2.html</h3>
-                    <p>JavaScript 对象：对象实验室增删改属性、解构、浅拷贝、this、原型链、class 与 JSON 速查表。</p>
-                </a>
+                    <a class="ghz_card" href="./16-1.html">
+                        <span class="ghz_tag">作品 16</span>
+                        <h3>16-1.html</h3>
+                        <p>JavaScript 数组主要方法：可视化实验室、push/pop、splice/slice、map/filter、reduce 与方法速查表。</p>
+                    </a>
 
-                <a class="yl_card" href="./16-3.html">
-                    <span class="yl_tag">作品 18</span>
-                    <h3>16-3.html</h3>
-                    <p>霸王茶姬产品系列页：左侧分类菜单与右侧产品图文卡片布局。</p>
-                </a>
+                    <a class="ghz_card" href="./16-2.html">
+                        <span class="ghz_tag">作品 17</span>
+                        <h3>16-2.html</h3>
+                        <p>JavaScript 对象：对象实验室增删改属性、解构、浅拷贝、this、原型链、class 与 JSON 速查表。</p>
+                    </a>
 
-                <a class="yl_card" href="./16-4.html">
-                    <span class="yl_tag">作品 19</span>
-                    <h3>16-4.html</h3>
-                    <p>文学社科书城页：主编推荐、可切换 tab 的书单与订阅榜布局。</p>
-                </a>
+                    <a class="ghz_card" href="./17-1.html">
+                        <span class="ghz_tag">作品 21</span>
+                        <h3>17-1.html</h3>
+                        <p>JSON 数据展示：语法要点、可展开的 JSON 树状结构，以及 JSON.parse / stringify 演示。</p>
+                    </a>
 
-                <a class="yl_card" href="./yangwang-u9/index.html">
-                    <span class="yl_tag">作品 20</span>
-                    <h3>仰望 U9 详情页</h3>
-                    <p>高级网页设计I 三级项目：按官网复刻的仰望 U9 车型详情页，含吸顶导航、视频与手风琴交互。</p>
-                </a>
+                    <a class="ghz_card" href="./17-2.html">
+                        <span class="ghz_tag">作品 22</span>
+                        <h3>17-2.html</h3>
+                        <p>fetch 获取跨域接口数据：请求 dog.ceo 猎犬随机 3 张图片，展示请求状态、耗时、图片卡片与原始 JSON。</p>
+                    </a>
 
-                <a class="yl_card" href="./17-1.html">
-                    <span class="yl_tag">作品 21</span>
-                    <h3>17-1.html</h3>
-                    <p>JSON 数据展示：语法要点、可展开的 JSON 树状结构，以及 JSON.parse / stringify 演示。</p>
-                </a>
+                    <a class="ghz_card" href="./17-3.html">
+                        <span class="ghz_tag">作品 23</span>
+                        <h3>17-3.html</h3>
+                        <p>商品列表页：fetch 请求 dummyjson 商品列表，卡片展示价格、评分并携带 ID 跳转详情。</p>
+                    </a>
 
-                <a class="yl_card" href="./17-2.html">
-                    <span class="yl_tag">作品 22</span>
-                    <h3>17-2.html</h3>
-                    <p>fetch 获取跨域接口数据：请求 dog.ceo 猎犬随机 3 张图片，展示请求状态、耗时、图片卡片与原始 JSON。</p>
-                </a>
+                    <a class="ghz_card" href="./17-3-detail.html?id=1">
+                        <span class="ghz_tag">作品 24</span>
+                        <h3>17-3-detail.html</h3>
+                        <p>商品详情页：根据地址栏的 id 用 fetch 获取单个商品，展示图片切换、价格、参数与用户评价。</p>
+                    </a>
 
-                <a class="yl_card" href="./17-3.html">
-                    <span class="yl_tag">作品 23</span>
-                    <h3>17-3.html</h3>
-                    <p>商品列表页：fetch 请求 dummyjson 商品列表，卡片展示价格、评分并携带 ID 跳转详情。</p>
-                </a>
+                    <a class="ghz_card" href="./17-4.html">
+                        <span class="ghz_tag">作品 25</span>
+                        <h3>17-4.html</h3>
+                        <p>接口测试工具：支持 GET / POST / PUT / PATCH / DELETE，展示状态码、耗时、响应头、数据与错误提示。</p>
+                    </a>
 
-                <a class="yl_card" href="./17-3-detail.html?id=1">
-                    <span class="yl_tag">作品 24</span>
-                    <h3>17-3-detail.html</h3>
-                    <p>商品详情页：根据地址栏的 id 用 fetch 获取单个商品，展示图片切换、价格、参数与用户评价。</p>
-                </a>
+                    <a class="ghz_card" href="./17-5.html">
+                        <span class="ghz_tag">作品 26</span>
+                        <h3>17-5.html</h3>
+                        <p>JavaScript 两种定时器：setTimeout 延时提示与 setInterval 秒表演示，附对比表与注意事项。</p>
+                    </a>
 
-                <a class="yl_card" href="./17-4.html">
-                    <span class="yl_tag">作品 25</span>
-                    <h3>17-4.html</h3>
-                    <p>接口测试工具：支持 GET / POST / PUT / PATCH / DELETE，展示状态码、耗时、响应头、数据与错误提示。</p>
-                </a>
+                    <a class="ghz_card" href="./17-6.html">
+                        <span class="ghz_tag">作品 27</span>
+                        <h3>17-6.html</h3>
+                        <p>包饺子异步流程：Promise 包装 setTimeout，async/await 串联，和面与和馅用 Promise.all 同时进行。</p>
+                    </a>
+                </div>
+            </section>
 
-                <a class="yl_card" href="./17-5.html">
-                    <span class="yl_tag">作品 26</span>
-                    <h3>17-5.html</h3>
-                    <p>JavaScript 两种定时器：setTimeout 延时提示与 setInterval 秒表演示，附对比表与注意事项。</p>
-                </a>
+            <section class="ghz_cat ghz_cat--project" id="ghz_cat-project">
+                <div class="ghz_cat-head">
+                    <span class="ghz_cat-bar" aria-hidden="true"></span>
+                    <h2 class="ghz_cat-title">页面实战与课程项目</h2>
+                    <span class="ghz_cat-note">完整页面还原与三级、四级项目作品</span>
+                    <span class="ghz_cat-count">4 个作品</span>
+                </div>
+                <div class="ghz_grid">
+                    <a class="ghz_card" href="./16-3.html">
+                        <span class="ghz_tag">作品 18</span>
+                        <h3>16-3.html</h3>
+                        <p>霸王茶姬产品系列页：左侧分类菜单与右侧产品图文卡片布局。</p>
+                    </a>
 
-                <a class="yl_card" href="./17-6.html">
-                    <span class="yl_tag">作品 27</span>
-                    <h3>17-6.html</h3>
-                    <p>包饺子异步流程：Promise 包装 setTimeout，async/await 串联，和面与和馅用 Promise.all 同时进行。</p>
-                </a>
+                    <a class="ghz_card" href="./16-4.html">
+                        <span class="ghz_tag">作品 19</span>
+                        <h3>16-4.html</h3>
+                        <p>文学社科书城页：主编推荐、可切换 tab 的书单与订阅榜布局。</p>
+                    </a>
 
-                <a class="yl_card" href="./heytea-go/index.html">
-                    <span class="yl_tag">作品 28</span>
-                    <h3>喜茶GO 点单页</h3>
-                    <p>高级网页设计I 四级项目：复刻喜茶GO 移动端点单页，五项固定下导航、自制 iconfont 与内联 SVG 双图标方案。</p>
-                </a>
-            </div>
+                    <a class="ghz_card" href="./yangwang-u9/index.html">
+                        <span class="ghz_tag">作品 20</span>
+                        <h3>仰望 U9 详情页</h3>
+                        <p>高级网页设计I 三级项目：按官网复刻的仰望 U9 车型详情页，含吸顶导航、视频与手风琴交互。</p>
+                    </a>
+
+                    <a class="ghz_card" href="./heytea-go/index.html">
+                        <span class="ghz_tag">作品 28</span>
+                        <h3>喜茶GO 点单页</h3>
+                        <p>高级网页设计I 四级项目：复刻喜茶GO 移动端点单页，五项固定下导航、自制 iconfont 与内联 SVG 双图标方案。</p>
+                    </a>
+                </div>
+            </section>
         </main>
 
-        <section class="yl_prompt-box">
+        <section class="ghz_prompt-box">
             <h2>本提示词</h2>
             <blockquote>
-                “创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为高浩哲的《高级网页设计》课堂实践，美化页面，页面中包括本提示词。”
+                “帮我给我的导航分一下类，做的好看一点”
             </blockquote>
         </section>
     </div>
+
+    <script>
+        // 高浩哲：分类快捷导航的选中态跟随滚动位置
+        var ghz_quickLinks = document.querySelectorAll('.ghz_quicknav-link');
+        var ghz_sections = document.querySelectorAll('.ghz_cat');
+
+        function ghz_setActive(ghz_key) {
+            for (var i = 0; i < ghz_quickLinks.length; i++) {
+                var ghz_isOn = ghz_quickLinks[i].getAttribute('href') === '#' + ghz_key;
+                ghz_quickLinks[i].classList.toggle('is-active', ghz_isOn);
+            }
+        }
+
+        for (var i = 0; i < ghz_quickLinks.length; i++) {
+            ghz_quickLinks[i].addEventListener('click', function () {
+                ghz_setActive(this.getAttribute('href').slice(1));
+            });
+        }
+
+        // 以滚动位置判断当前所在分类，避免多分类同时出现在视口时的误判
+        function ghz_syncByScroll() {
+            var ghz_y = window.scrollY + 150;
+            var ghz_current = ghz_sections[0].id;
+            for (var k = 0; k < ghz_sections.length; k++) {
+                if (ghz_sections[k].offsetTop <= ghz_y) {
+                    ghz_current = ghz_sections[k].id;
+                }
+            }
+            ghz_setActive(ghz_current);
+        }
+
+        window.addEventListener('scroll', ghz_syncByScroll, { passive: true });
+        window.addEventListener('resize', ghz_syncByScroll);
+        ghz_syncByScroll();
+    </script>
 </body>
 </html>
