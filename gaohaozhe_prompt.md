@@ -202,3 +202,13 @@ logged
 ## 2026-11-05 13:52:12 +08 | model: DeepSeek-V4.1-Flash
 
 好的，上传到 GitHub
+
+
+## 2026-11-05 14:02:30 +08 | model: DeepSeek-V4.1-Flash
+
+实现18-4.html，其中包括echarts的两个图：相关矩阵（散点图）和三维柱状图 - 透明效果，cdn文件下载到cdn目录下。
+
+
+## 2026-11-05 14:17:02 +08 | model: DeepSeek-V4.1-Flash
+
+好的，上传到 GitHub

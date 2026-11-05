@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-05，功能：18-4 使用本地 ECharts 绘制相关系数矩阵散点图与透明三维柱状图 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-4 ECharts 相关矩阵与三维柱状图 · 高浩哲</title>
+<style>
+:root{--ghz_bg:#eef2f9;--ghz_ink:#16233c;--ghz_muted:#5f6c88;--ghz_line:#d7e0ef;--ghz-blue:#2563eb;--ghz-red:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:26px 16px 40px;font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--ghz_ink);background:radial-gradient(circle at 12% 4%,rgba(37,99,235,.1),transparent 32%),radial-gradient(circle at 88% 96%,rgba(124,58,237,.1),transparent 30%),var(--ghz_bg)}
+.ghz_page{width:min(1100px,100%);margin:0 auto}
+.ghz_head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px;margin-bottom:16px}
+.ghz_tag{padding:4px 11px;border:1px solid rgba(37,99,235,.28);border-radius:999px;font-size:.7rem;letter-spacing:2px;color:#3f5f9e;background:#fff}
+.ghz_head h1{margin:0;font-size:clamp(1.35rem,2.8vw,1.9rem);letter-spacing:1px}
+.ghz_head p{margin:0;font-size:.8rem;line-height:1.7;color:var(--ghz_muted)}
+.ghz_card{margin-top:18px;border:1px solid #cfd9ea;border-radius:18px;background:#fff;box-shadow:0 16px 40px rgba(22,35,60,.08);overflow:hidden}
+.ghz_card-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:16px 22px;border-bottom:1px solid #eef2fa}
+.ghz_card-head h2{margin:0;font-size:1rem;letter-spacing:.4px}
+.ghz_badge{padding:3px 9px;border-radius:999px;background:rgba(37,99,235,.1);color:#1d4fa8;font-size:.68rem;letter-spacing:.5px}
+.ghz_card-head p{margin:0;flex:1;min-width:220px;font-size:.74rem;line-height:1.6;color:var(--ghz_muted)}
+.ghz_chart{width:100%;height:460px}
+.ghz_chart--dark{height:520px}
+.ghz_dark{padding:0;background:radial-gradient(circle at 50% 12%,#1b2746,#0a0f1e 70%);border-color:#1c2a4d}
+.ghz_dark .ghz_card-head{border-bottom-color:rgba(140,170,255,.18)}
+.ghz_dark .ghz_card-head h2{color:#e6edff}
+.ghz_dark .ghz_card-head p{color:#8b97bd}
+.ghz_dark .ghz_badge{background:rgba(120,150,255,.16);color:#b9c9ff}
+.ghz_toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:12px 22px 16px}
+.ghz_btn{padding:7px 16px;border:1px solid rgba(120,150,255,.4);border-radius:999px;background:rgba(120,150,255,.08);color:#dbe4ff;font-family:inherit;font-size:.76rem;letter-spacing:.5px;cursor:pointer;transition:background .16s,transform .16s}
+.ghz_btn:hover{background:rgba(120,150,255,.2);transform:translateY(-1px)}
+.ghz_hint{margin-left:auto;align-self:center;font-size:.72rem;color:#8b97bd}
+.ghz_notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.ghz_note{padding:15px 17px;border:1px solid var(--ghz_line);border-radius:14px;background:#fff;box-shadow:0 8px 22px rgba(22,35,60,.05)}
+.ghz_note h2{margin:0 0 6px;font-size:.85rem;color:#24365c}
+.ghz_note p{margin:0;font-size:.75rem;line-height:1.8;color:var(--ghz_muted)}
+.ghz_footer{margin-top:22px;text-align:center;font-size:.74rem;letter-spacing:1px;color:#8492ad}
+@media (max-width:760px){.ghz_notes{grid-template-columns:1fr}.ghz_chart{height:400px}.ghz_chart--dark{height:440px}.ghz_card-head{padding:14px 16px}.ghz_toolbar{padding:10px 16px 14px}}
+</style>
+</head>
+<body>
+<div class="ghz_page">
+<header class="ghz_head">
+<span class="ghz_tag">LESSON 18 · ECHARTS</span>
+<h1>相关系数矩阵与三维柱状图</h1>
+<p>两个图表都用本地 echarts 渲染：左卡片用散点大小与颜色表示六个经营指标的相关系数，下卡片用 echarts-gl 绘制半透明三维柱状图并自动旋转。</p>
+</header>
+
+<section class="ghz_card">
+<div class="ghz_card-head">
+<span class="ghz_badge">图 1 · 散点矩阵</span>
+<h2>指标相关系数矩阵</h2>
+<p>颜色由蓝到红表示从负相关到正相关，圆点越大相关性越强；对角线为 1，矩阵上下对称。</p>
+</div>
+<div class="ghz_chart" id="ghz_corr"></div>
+</section>
+
+<section class="ghz_card ghz_dark">
+<div class="ghz_card-head">
+<span class="ghz_badge">图 2 · 3D BAR</span>
+<h2>分地区季度销量（透明柱体）</h2>
+<p>柱体透明度 0.55，配合光照呈现玻璃质感；可拖动旋转、滚轮缩放，也可点击按钮暂停自动旋转。</p>
+</div>
+<div class="ghz_chart ghz_chart--dark" id="ghz_bar3d"></div>
+<div class="ghz_toolbar">
+<button class="ghz_btn" type="button" id="ghz_autorotate">暂停自动旋转</button>
+<button class="ghz_btn" type="button" id="ghz_resetview">重置视角</button>
+<span class="ghz_hint">左键拖动旋转 · 滚轮缩放</span>
+</div>
+</section>
+
+<section class="ghz_notes">
+<div class="ghz_note"><h2>相关矩阵怎么读</h2><p>取值 -1 到 1：越接近 1 越正相关，越接近 -1 越负相关，接近 0 说明关系弱。例如销量与评论数为 0.66，属于较强正相关。</p></div>
+<div class="ghz_note"><h2>散点如何编码</h2><p>横纵坐标为指标名，每个格子用一个散点表示相关系数；点的大小按绝对值放大，颜色由 visualMap 连续映射。</p></div>
+<div class="ghz_note"><h2>透明柱体怎么做</h2><p>bar3D 的 itemStyle.opacity 设为 0.55，配合 lambert 光照与深色背景，柱体之间彼此可见，形成半透明玻璃效果。</p></div>
+</section>
+
+<p class="ghz_footer">高浩哲 · 《高级网页设计》练习 18-4 · ECharts 图表（本地 cdn 目录引用）</p>
+</div>
+
+<script src="./cdn/echarts.min.js"></script>
+<script src="./cdn/echarts-gl.min.js"></script>
+<script>
+var ghz_libOK = !!window.echarts;
+var ghz_glOK = ghz_libOK && !!window['echarts-gl'];
+
+if (!ghz_libOK) {
+    document.getElementById('ghz_corr').textContent = '本地图表库未加载，请确认 cdn/echarts.min.js 存在。';
+}
+
+if (!ghz_glOK) {
+    document.getElementById('ghz_bar3d').textContent = '三维图表库未加载，请确认 cdn/echarts-gl.min.js 存在。';
+    document.getElementById('ghz_autorotate').style.display = 'none';
+    document.getElementById('ghz_resetview').style.display = 'none';
+}
+
+// ================= 图 1：相关系数矩阵（散点） =================
+if (ghz_libOK) {
+var ghz_vars = ['价格', '销量', '评分', '评论数', '转化率', '复购率'];
+
+// 6×6 相关系数矩阵，上下对称，对角线为 1
+var ghz_matrix = [
+    [ 1.00, -0.62,  0.18, -0.35, -0.48, -0.12],
+    [-0.62,  1.00,  0.41,  0.66,  0.58,  0.45],
+    [ 0.18,  0.41,  1.00,  0.72,  0.39,  0.51],
+    [-0.35,  0.66,  0.72,  1.00,  0.47,  0.33],
+    [-0.48,  0.58,  0.39,  0.47,  1.00,  0.61],
+    [-0.12,  0.45,  0.51,  0.33,  0.61,  1.00]
+];
+
+var ghz_corrChart = echarts.init(document.getElementById('ghz_corr'));
+var ghz_corrData = [];
+
+for (var ghz_i = 0; ghz_i < ghz_matrix.length; ghz_i++) {
+    for (var ghz_j = 0; ghz_j < ghz_matrix[ghz_i].length; ghz_j++) {
+        ghz_corrData.push([ghz_j, ghz_i, ghz_matrix[ghz_i][ghz_j]]);
+    }
+}
+
+// 按相关系数绝对值给出强弱描述
+function ghz_strength(ghz_value) {
+    var ghz_abs = Math.abs(ghz_value);
+
+    if (ghz_abs >= 0.7) return '强';
+    if (ghz_abs >= 0.4) return '中等';
+    if (ghz_abs >= 0.2) return '弱';
+    return '极弱';
+}
+
+ghz_corrChart.setOption({
+    backgroundColor: '#ffffff',
+    title: {
+        text: '六个经营指标的相关系数矩阵',
+        subtext: '散点大小 = |r|，颜色从蓝（负相关）到红（正相关）',
+        left: 24,
+        top: 16,
+        textStyle: { color: '#16233c', fontSize: 15, fontWeight: 700 },
+        subtextStyle: { color: '#8492ad', fontSize: 11 }
+    },
+    tooltip: {
+        formatter: function (ghz_params) {
+            var ghz_val = ghz_params.value[2];
+
+            return '<b>' + ghz_vars[ghz_params.value[0]] + ' × ' + ghz_vars[ghz_params.value[1]] +
+                   '</b><br>相关系数 r = ' + ghz_val.toFixed(2) +
+                   '<br>相关性：' + ghz_strength(ghz_val) +
+                   (ghz_val > 0 ? '正相关' : (ghz_val < 0 ? '负相关' : '无'));
+        }
+    },
+    visualMap: {
+        min: -1,
+        max: 1,
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        bottom: 12,
+        itemWidth: 14,
+        itemHeight: 90,
+        precision: 2,
+        text: ['正相关', '负相关'],
+        textStyle: { color: '#5f6c88', fontSize: 11 },
+        inRange: {
+            color: ['#2563eb', '#c7d5f2', '#f8fafc', '#f6b3b3', '#ef4444']
+        }
+    },
+    xAxis: {
+        type: 'category',
+        data: ghz_vars,
+        name: '指标',
+        nameLocation: 'middle',
+        nameGap: 32,
+        nameTextStyle: { color: '#8492ad' },
+        axisLine: { lineStyle: { color: '#c8d4e8' } },
+        axisTick: { show: false },
+        axisLabel: { color: '#4b5a78', fontSize: 11 },
+        splitLine: { show: true, lineStyle: { color: '#f0f4fa' } }
+    },
+    yAxis: {
+        type: 'category',
+        data: ghz_vars,
+        inverse: true,
+        name: '指标',
+        nameTextStyle: { color: '#8492ad' },
+        axisLine: { lineStyle: { color: '#c8d4e8' } },
+        axisTick: { show: false },
+        axisLabel: { color: '#4b5a78', fontSize: 11 },
+        splitLine: { show: true, lineStyle: { color: '#f0f4fa' } }
+    },
+    grid: {
+        left: 90,
+        right: 60,
+        top: 82,
+        bottom: 96
+    },
+    series: [{
+        type: 'scatter',
+        data: ghz_corrData,
+        symbolSize: function (ghz_value) {
+            return 7 + Math.abs(ghz_value[2]) * 23;
+        },
+        itemStyle: {
+            borderColor: 'rgba(255,255,255,.85)',
+            borderWidth: 1
+        },
+        emphasis: {
+            itemStyle: {
+                borderColor: '#16233c',
+                borderWidth: 2
+            }
+        }
+    }]
+});
+}
+
+// ================= 图 2：三维柱状图（透明） =================
+if (ghz_glOK) {
+var ghz_regions = ['华东', '华北', '华南', '西南', '东北'];
+var ghz_quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+// 每行依次为 华东、华北、华南、西南、东北 的四个季度销量
+var ghz_sales = [
+    [82, 74, 91, 88],
+    [65, 58, 72, 70],
+    [78, 85, 80, 92],
+    [52, 61, 57, 66],
+    [41, 46, 44, 50]
+];
+
+var ghz_bar3dChart = echarts.init(document.getElementById('ghz_bar3d'));
+var ghz_3dData = [];
+
+for (var ghz_r = 0; ghz_r < ghz_regions.length; ghz_r++) {
+    for (var ghz_q = 0; ghz_q < ghz_quarters.length; ghz_q++) {
+        ghz_3dData.push([ghz_r, ghz_q, ghz_sales[ghz_r][ghz_q]]);
+    }
+}
+
+var ghz_autoRotate = true;
+
+ghz_bar3dChart.setOption({
+    backgroundColor: 'transparent',
+    tooltip: {
+        formatter: function (ghz_params) {
+            return ghz_regions[ghz_params.value[0]] + ' · ' + ghz_quarters[ghz_params.value[1]] +
+                   '<br>销量：<b>' + ghz_params.value[2] + '</b> 万件';
+        }
+    },
+    visualMap: {
+        dimension: 2,
+        min: 35,
+        max: 95,
+        calculable: true,
+        right: 14,
+        top: 14,
+        itemWidth: 12,
+        itemHeight: 110,
+        precision: 0,
+        textStyle: { color: '#c9d5ff', fontSize: 10 },
+        inRange: {
+            color: ['#38bdf8', '#a78bfa', '#f472b6']
+        }
+    },
+    xAxis3D: {
+        type: 'category',
+        data: ghz_regions,
+        name: '地区',
+        nameTextStyle: { color: '#a9b8ee' },
+        axisLine: { lineStyle: { color: 'rgba(150,175,255,.45)' } },
+        axisLabel: { color: '#c9d5ff', fontSize: 11 },
+        splitLine: { lineStyle: { color: 'rgba(120,150,255,.14)' } }
+    },
+    yAxis3D: {
+        type: 'category',
+        data: ghz_quarters,
+        name: '季度',
+        nameTextStyle: { color: '#a9b8ee' },
+        axisLine: { lineStyle: { color: 'rgba(150,175,255,.45)' } },
+        axisLabel: { color: '#c9d5ff', fontSize: 11 },
+        splitLine: { lineStyle: { color: 'rgba(120,150,255,.14)' } }
+    },
+    zAxis3D: {
+        type: 'value',
+        name: '销量 / 万件',
+        nameTextStyle: { color: '#a9b8ee', fontSize: 10 },
+        axisLine: { lineStyle: { color: 'rgba(150,175,255,.45)' } },
+        axisLabel: { color: '#c9d5ff', fontSize: 10 },
+        splitLine: { lineStyle: { color: 'rgba(120,150,255,.14)' } }
+    },
+    grid3D: {
+        boxWidth: 110,
+        boxDepth: 78,
+        boxHeight: 70,
+        environment: '#0a0f1e',
+        axisPointer: {
+            show: true,
+            lineStyle: { color: 'rgba(180,200,255,.35)' }
+        },
+        light: {
+            main: {
+                intensity: 1.15,
+                shadow: true,
+                alpha: 35,
+                beta: 30
+            },
+            ambient: {
+                intensity: 0.4
+            }
+        },
+        viewControl: {
+            autoRotate: true,
+            autoRotateSpeed: 6,
+            distance: 210,
+            alpha: 20,
+            beta: 35,
+            minAlpha: 5,
+            maxAlpha: 80,
+            minDistance: 120,
+            maxDistance: 320
+        }
+    },
+    series: [{
+        type: 'bar3D',
+        data: ghz_3dData,
+        shading: 'lambert',
+        barSize: 11,
+        itemStyle: {
+            opacity: 0.55,
+            borderWidth: 0
+        },
+        emphasis: {
+            itemStyle: {
+                opacity: 0.95
+            }
+        },
+        label: {
+            show: false
+        }
+    }]
+});
+
+// 交互按钮
+document.getElementById('ghz_autorotate').addEventListener('click', function () {
+    ghz_autoRotate = !ghz_autoRotate;
+
+    ghz_bar3dChart.setOption({
+        grid3D: {
+            viewControl: {
+                autoRotate: ghz_autoRotate
+            }
+        }
+    });
+
+    this.textContent = ghz_autoRotate ? '暂停自动旋转' : '开启自动旋转';
+});
+
+document.getElementById('ghz_resetview').addEventListener('click', function () {
+    ghz_bar3dChart.setOption({
+        grid3D: {
+            viewControl: {
+                autoRotate: ghz_autoRotate,
+                alpha: 20,
+                beta: 35,
+                distance: 210
+            }
+        }
+    });
+});
+}
+
+// 窗口尺寸变化时重绘
+window.addEventListener('resize', function () {
+    if (ghz_corrChart) ghz_corrChart.resize();
+    if (ghz_bar3dChart) ghz_bar3dChart.resize();
+});
+</script>
+</body>
+</html>
