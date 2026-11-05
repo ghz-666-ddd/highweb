@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-05，功能：18-2 用 Canvas 绘制电商全站系统架构图 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-2 Canvas 电商系统架构图 · 高浩哲</title>
+<style>
+:root{--ghz_bg:#0c1224;--ghz_ink:#e9eeff;--ghz_muted:#8b97bd;--ghz_line:rgba(130,160,255,.18)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:26px 16px 40px;font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--ghz_ink);background:radial-gradient(circle at 15% 5%,rgba(79,214,228,.14),transparent 32%),radial-gradient(circle at 85% 92%,rgba(154,123,255,.16),transparent 34%),var(--ghz_bg)}
+.ghz_page{width:min(1100px,100%);margin:0 auto}
+.ghz_head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 18px;margin-bottom:18px}
+.ghz_tag{padding:4px 11px;border:1px solid rgba(130,160,255,.35);border-radius:999px;font-size:.72rem;letter-spacing:2px;color:#a9b8ee}
+.ghz_head h1{margin:0;font-size:clamp(1.4rem,3vw,2rem);letter-spacing:1.5px}
+.ghz_head p{margin:0;font-size:.82rem;line-height:1.7;color:var(--ghz_muted)}
+.ghz_stage{position:relative;border:1px solid var(--ghz_line);border-radius:22px;overflow:hidden;background:#0a0f1e;box-shadow:0 24px 60px rgba(0,0,0,.42)}
+.ghz_canvas{display:block;width:100%;height:auto}
+.ghz_hint{position:absolute;left:16px;bottom:12px;pointer-events:none;font-size:.7rem;letter-spacing:1px;color:rgba(190,205,245,.45)}
+.ghz_notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.ghz_note{padding:15px 17px;border:1px solid var(--ghz_line);border-radius:16px;background:rgba(18,25,46,.72)}
+.ghz_note h2{margin:0 0 6px;font-size:.86rem;color:#c9d5ff;letter-spacing:.5px}
+.ghz_note p{margin:0;font-size:.76rem;line-height:1.75;color:var(--ghz_muted)}
+.ghz_footer{margin-top:22px;text-align:center;font-size:.74rem;letter-spacing:1px;color:#5f6c92}
+@media (max-width:720px){.ghz_notes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="ghz_page">
+<header class="ghz_head">
+<span class="ghz_tag">LESSON 18 · CANVAS</span>
+<h1>电商系统架构图</h1>
+<p>整张架构图由 canvas 直接绘制：五层结构、二十多个模块、分层配色与调用箭头，鼠标悬停可高亮对应模块。</p>
+</header>
+
+<div class="ghz_stage">
+<canvas class="ghz_canvas" id="ghz_canvas"></canvas>
+<span class="ghz_hint">鼠标悬停高亮模块</span>
+</div>
+
+<section class="ghz_notes">
+<div class="ghz_note"><h2>五层结构</h2><p>自上而下依次为用户层、接入层、业务层、支撑层、数据层，请求从用户端流向数据库。</p></div>
+<div class="ghz_note"><h2>业务拆分</h2><p>按领域拆成用户、商品、订单、支付、库存、营销六个服务，便于独立部署与扩容。</p></div>
+<div class="ghz_note"><h2>中间件支撑</h2><p>Kafka 削峰解耦、Redis 抗热点、ES 承担搜索、OSS 存放图片，是高并发场景的常用组合。</p></div>
+</section>
+
+<p class="ghz_footer">高浩哲 · 《高级网页设计》练习 18-2 · 基于 Canvas 的电商系统架构图</p>
+</div>
+
+<script>
+var ghz_canvas = document.getElementById('ghz_canvas');
+var ghz_ctx = ghz_canvas.getContext('2d');
+
+var ghz_VW = 1000;   // 逻辑坐标系宽度
+var ghz_VH = 740;    // 逻辑坐标系高度
+var ghz_hover = null;
+var ghz_boxes = [];  // 记录每个模块的位置，用于悬停检测
+
+// 五层架构数据，boxes 按层自动均分横向空间
+var ghz_layers = [
+    {
+        ghz_name: '用户层',
+        ghz_color: '#4fd6e4',
+        ghz_y: 78,
+        ghz_boxes: [
+            { ghz_title: 'Web 商城', ghz_sub: 'PC 浏览器访问' },
+            { ghz_title: '移动 App', ghz_sub: 'iOS / Android' },
+            { ghz_title: '小程序 · H5', ghz_sub: '微信 / 支付宝' }
+        ]
+    },
+    {
+        ghz_name: '接入层',
+        ghz_color: '#7ea8ff',
+        ghz_y: 198,
+        ghz_boxes: [
+            { ghz_title: 'CDN', ghz_sub: '静态资源加速' },
+            { ghz_title: 'Nginx', ghz_sub: '负载均衡' },
+            { ghz_title: 'API 网关', ghz_sub: '鉴权 · 限流' },
+            { ghz_title: 'WAF · HTTPS', ghz_sub: '安全防护' }
+        ]
+    },
+    {
+        ghz_name: '业务层',
+        ghz_color: '#9a7bff',
+        ghz_y: 318,
+        ghz_boxes: [
+            { ghz_title: '用户服务', ghz_sub: '会员 · 权限' },
+            { ghz_title: '商品服务', ghz_sub: '商品 · 类目' },
+            { ghz_title: '订单服务', ghz_sub: '下单 · 履约' },
+            { ghz_title: '支付服务', ghz_sub: '支付 · 退款' },
+            { ghz_title: '库存服务', ghz_sub: '库存 · 仓储' },
+            { ghz_title: '营销服务', ghz_sub: '优惠 · 活动' }
+        ]
+    },
+    {
+        ghz_name: '支撑层',
+        ghz_color: '#ffbe60',
+        ghz_y: 438,
+        ghz_boxes: [
+            { ghz_title: 'Kafka', ghz_sub: '消息队列' },
+            { ghz_title: 'Redis', ghz_sub: '缓存' },
+            { ghz_title: 'Elasticsearch', ghz_sub: '全文搜索' },
+            { ghz_title: 'OSS', ghz_sub: '对象存储' },
+            { ghz_title: '调度中心', ghz_sub: '定时任务' }
+        ]
+    },
+    {
+        ghz_name: '数据层',
+        ghz_color: '#67e8a2',
+        ghz_y: 558,
+        ghz_boxes: [
+            { ghz_title: 'MySQL 主从', ghz_sub: '读写分离' },
+            { ghz_title: '分库分表', ghz_sub: '水平拆分' },
+            { ghz_title: '数据仓库', ghz_sub: '离线分析' },
+            { ghz_title: '日志中心', ghz_sub: '监控告警' }
+        ]
+    }
+];
+
+// 圆角矩形
+function ghz_roundRect(ghz_x, ghz_y, ghz_w, ghz_h, ghz_r) {
+    ghz_ctx.beginPath();
+    ghz_ctx.moveTo(ghz_x + ghz_r, ghz_y);
+    ghz_ctx.lineTo(ghz_x + ghz_w - ghz_r, ghz_y);
+    ghz_ctx.arcTo(ghz_x + ghz_w, ghz_y, ghz_x + ghz_w, ghz_y + ghz_r, ghz_r);
+    ghz_ctx.lineTo(ghz_x + ghz_w, ghz_y + ghz_h - ghz_r);
+    ghz_ctx.arcTo(ghz_x + ghz_w, ghz_y + ghz_h, ghz_x + ghz_w - ghz_r, ghz_y + ghz_h, ghz_r);
+    ghz_ctx.lineTo(ghz_x + ghz_r, ghz_y + ghz_h);
+    ghz_ctx.arcTo(ghz_x, ghz_y + ghz_h, ghz_x, ghz_y + ghz_h - ghz_r, ghz_r);
+    ghz_ctx.lineTo(ghz_x, ghz_y + ghz_r);
+    ghz_ctx.arcTo(ghz_x, ghz_y, ghz_x + ghz_r, ghz_y, ghz_r);
+    ghz_ctx.closePath();
+}
+
+// 颜色转 rgba
+function ghz_alpha(ghz_hex, ghz_a) {
+    var ghz_r = parseInt(ghz_hex.slice(1, 3), 16);
+    var ghz_g = parseInt(ghz_hex.slice(3, 5), 16);
+    var ghz_b = parseInt(ghz_hex.slice(5, 7), 16);
+    return 'rgba(' + ghz_r + ',' + ghz_g + ',' + ghz_b + ',' + ghz_a + ')';
+}
+
+// 纵向箭头
+function ghz_arrow(ghz_x, ghz_from, ghz_to) {
+    ghz_ctx.strokeStyle = `rgba(140,170,255,.5)`; 
+    ghz_ctx.lineWidth = 1.4;
+    ghz_ctx.beginPath();
+    ghz_ctx.moveTo(ghz_x, ghz_from);
+    ghz_ctx.lineTo(ghz_x, ghz_to - 7);
+    ghz_ctx.stroke();
+
+    ghz_ctx.fillStyle = 'rgba(140,170,255,.65)';
+    ghz_ctx.beginPath();
+    ghz_ctx.moveTo(ghz_x, ghz_to);
+    ghz_ctx.lineTo(ghz_x - 4, ghz_to - 8);
+    ghz_ctx.lineTo(ghz_x + 4, ghz_to - 8);
+    ghz_ctx.closePath();
+    ghz_ctx.fill();
+}
+
+// 绘制整张架构图
+function ghz_draw() {
+    ghz_ctx.clearRect(0, 0, ghz_VW, ghz_VH);
+
+    // 标题
+    ghz_ctx.fillStyle = '#eaf0ff';
+    ghz_ctx.font = '700 27px "Microsoft YaHei", sans-serif';
+    ghz_ctx.textAlign = 'left';
+    ghz_ctx.fillText('电商全站系统架构图', 40, 46);
+
+    ghz_ctx.fillStyle = 'rgba(160,178,225,.6)';
+    ghz_ctx.font = '12px "Microsoft YaHei", sans-serif';
+    ghz_ctx.textAlign = 'right';
+    ghz_ctx.fillText('高浩哲 · 基于 Canvas 绘制', 960, 46);
+
+    ghz_boxes = [];
+
+    for (var ghz_i = 0; ghz_i < ghz_layers.length; ghz_i++) {
+        var ghz_layer = ghz_layers[ghz_i];
+        var ghz_count = ghz_layer.ghz_boxes.length;
+        var ghz_gap = ghz_count >= 6 ? 12 : (ghz_count === 5 ? 15 : (ghz_count === 4 ? 18 : 25));
+        var ghz_boxW = (810 - ghz_gap * (ghz_count - 1)) / ghz_count;
+        var ghz_boxH = 54;
+        var ghz_boxY = ghz_layer.ghz_y + 22;
+
+        // 层背景
+        ghz_ctx.fillStyle = 'rgba(255,255,255,.024)';
+        ghz_roundRect(30, ghz_layer.ghz_y, 945, 80, 14);
+        ghz_ctx.fill();
+        ghz_ctx.strokeStyle = ghz_alpha(ghz_layer.ghz_color, 0.16);
+        ghz_ctx.lineWidth = 1;
+        ghz_ctx.stroke();
+
+        // 层名称
+        ghz_ctx.fillStyle = ghz_layer.ghz_color;
+        ghz_ctx.font = '700 14px "Microsoft YaHei", sans-serif';
+        ghz_ctx.textAlign = 'left';
+        ghz_ctx.fillText(ghz_layer.ghz_name, 58, ghz_layer.ghz_y + 45);
+
+        // 模块
+        for (var ghz_j = 0; ghz_j < ghz_count; ghz_j++) {
+            var ghz_box = ghz_layer.ghz_boxes[ghz_j];
+            var ghz_x = 150 + ghz_j * (ghz_boxW + ghz_gap);
+            var ghz_key = ghz_i + '-' + ghz_j;
+            var ghz_active = ghz_hover === ghz_key;
+
+            ghz_ctx.fillStyle = ghz_active
+                ? ghz_alpha(ghz_layer.ghz_color, 0.22)
+                : ghz_alpha(ghz_layer.ghz_color, 0.07);
+            ghz_roundRect(ghz_x, ghz_boxY, ghz_boxW, ghz_boxH, 10);
+            ghz_ctx.fill();
+
+            ghz_ctx.strokeStyle = ghz_alpha(ghz_layer.ghz_color, ghz_active ? 0.95 : 0.5);
+            ghz_ctx.lineWidth = ghz_active ? 2 : 1;
+            ghz_ctx.stroke();
+
+            ghz_ctx.textAlign = 'center';
+            ghz_ctx.fillStyle = '#f2f5ff';
+            ghz_ctx.font = '700 14px "Microsoft YaHei", sans-serif';
+            ghz_ctx.fillText(ghz_box.ghz_title, ghz_x + ghz_boxW / 2, ghz_boxY + 24);
+
+            ghz_ctx.fillStyle = 'rgba(170,186,225,.72)';
+            ghz_ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+            ghz_ctx.fillText(ghz_box.ghz_sub, ghz_x + ghz_boxW / 2, ghz_boxY + 42);
+
+            ghz_boxes.push({
+                ghz_key: ghz_key,
+                ghz_x: ghz_x,
+                ghz_y: ghz_boxY,
+                ghz_w: ghz_boxW,
+                ghz_h: ghz_boxH
+            });
+        }
+
+        // 层与层之间的调用箭头
+        if (ghz_i < ghz_layers.length - 1) {
+            ghz_arrow(515, ghz_layer.ghz_y + 80, ghz_layers[ghz_i + 1].ghz_y);
+        }
+    }
+
+    // 图例
+    var ghz_legend = [
+        { ghz_text: '用户端', ghz_color: '#4fd6e4' },
+        { ghz_text: '接入', ghz_color: '#7ea8ff' },
+        { ghz_text: '业务服务', ghz_color: '#9a7bff' },
+        { ghz_text: '中间件', ghz_color: '#ffbe60' },
+        { ghz_text: '数据存储', ghz_color: '#67e8a2' }
+    ];
+
+    ghz_ctx.textAlign = 'left';
+    ghz_ctx.fillStyle = 'rgba(160,178,225,.65)';
+    ghz_ctx.font = '11px "Microsoft YaHei", sans-serif';
+    ghz_ctx.fillText('图例', 40, 700);
+
+    var ghz_lx = 86;
+
+    for (var ghz_k = 0; ghz_k < ghz_legend.length; ghz_k++) {
+        var ghz_item = ghz_legend[ghz_k];
+
+        ghz_ctx.fillStyle = ghz_item.ghz_color;
+        ghz_roundRect(ghz_lx, 691, 11, 11, 3);
+        ghz_ctx.fill();
+
+        ghz_ctx.fillStyle = 'rgba(198,210,242,.78)';
+        ghz_ctx.fillText(ghz_item.ghz_text, ghz_lx + 18, 701);
+
+        ghz_lx += 18 + ghz_ctx.measureText(ghz_item.ghz_text).width + 26;
+    }
+
+    ghz_ctx.strokeStyle = 'rgba(140,170,255,.5)';
+    ghz_ctx.lineWidth = 1.4;
+    ghz_ctx.beginPath();
+    ghz_ctx.moveTo(ghz_lx, 696);
+    ghz_ctx.lineTo(ghz_lx + 26, 696);
+    ghz_ctx.stroke();
+
+    ghz_ctx.fillStyle = 'rgba(198,210,242,.78)';
+    ghz_ctx.fillText('调用方向', ghz_lx + 34, 701);
+}
+
+// 自适应尺寸：按容器宽度等比缩放
+function ghz_fit() {
+    var ghz_width = ghz_canvas.parentElement.getBoundingClientRect().width;
+    if (!ghz_width) return;
+
+    var ghz_dpr = window.devicePixelRatio || 1;
+    var ghz_height = ghz_width * ghz_VH / ghz_VW;
+
+    ghz_canvas.width = Math.round(ghz_width * ghz_dpr);
+    ghz_canvas.height = Math.round(ghz_height * ghz_dpr);
+    ghz_canvas.style.height = Math.round(ghz_height) + 'px';
+
+    var ghz_scale = ghz_width / ghz_VW;
+    ghz_ctx.setTransform(ghz_dpr * ghz_scale, 0, 0, ghz_dpr * ghz_scale, 0, 0);
+
+    ghz_draw();
+}
+
+// 悬停高亮
+ghz_canvas.addEventListener('mousemove', function (ghz_event) {
+    var ghz_rect = ghz_canvas.getBoundingClientRect();
+    var ghz_mx = (ghz_event.clientX - ghz_rect.left) / ghz_rect.width * ghz_VW;
+    var ghz_my = (ghz_event.clientY - ghz_rect.top) / ghz_rect.height * ghz_VH;
+    var ghz_found = null;
+
+    for (var ghz_i = 0; ghz_i < ghz_boxes.length; ghz_i++) {
+        var ghz_b = ghz_boxes[ghz_i];
+
+        if (ghz_mx >= ghz_b.ghz_x && ghz_mx <= ghz_b.ghz_x + ghz_b.ghz_w &&
+            ghz_my >= ghz_b.ghz_y && ghz_my <= ghz_b.ghz_y + ghz_b.ghz_h) {
+            ghz_found = ghz_b.ghz_key;
+            break;
+        }
+    }
+
+    if (ghz_found !== ghz_hover) {
+        ghz_hover = ghz_found;
+        ghz_canvas.style.cursor = ghz_hover ? 'pointer' : 'default';
+        ghz_draw();
+    }
+});
+
+ghz_canvas.addEventListener('mouseleave', function () {
+    ghz_hover = null;
+    ghz_canvas.style.cursor = 'default';
+    ghz_draw();
+});
+
+var ghz_resizeTimer = null;
+window.addEventListener('resize', function () {
+    clearTimeout(ghz_resizeTimer);
+    ghz_resizeTimer = setTimeout(ghz_fit, 180);
+});
+
+ghz_fit();
+</script>
+</body>
+</html>
