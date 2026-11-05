@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-05，功能：18-8 基于本地 ECharts 的智能客服运营数据大屏（三列布局，中部中国地图） -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-8 智能客服运营数据大屏 · 高浩哲</title>
+<style>
+:root{--ghz_bg:#050a16;--ghz_panel:#0a1526;--ghz_line:rgba(74,120,190,.28);--ghz_cyan:#4fd6e4;--ghz_blue:#3b82f6;--ghz_text:#dce9ff;--ghz_muted:#7f9bc4}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;padding:16px;font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--ghz_text);background:radial-gradient(circle at 50% -10%,#12294a 0%,#050a16 55%),#050a16}
+.ghz_screen{width:min(1560px,100%);margin:0 auto;display:flex;flex-direction:column;min-height:calc(100vh - 32px)}
+.ghz_top{display:flex;align-items:center;gap:16px;padding:10px 18px 14px;border-bottom:1px solid var(--ghz_line)}
+.ghz_brand{display:flex;align-items:center;gap:10px;font-size:.78rem;letter-spacing:2px;color:#8fb4e6}
+.ghz_brand-mark{width:24px;height:24px;border:1px solid var(--ghz_cyan);border-radius:6px;position:relative}
+.ghz_brand-mark::before,.ghz_brand-mark::after{content:"";position:absolute;background:var(--ghz_cyan);opacity:.7}
+.ghz_brand-mark::before{left:4px;right:4px;top:11px;height:1px}
+.ghz_brand-mark::after{top:4px;bottom:4px;left:11px;width:1px}
+.ghz_title{flex:1;text-align:center}
+.ghz_title h1{margin:0;font-size:clamp(1.05rem,2vw,1.5rem);letter-spacing:6px;font-weight:600;background:linear-gradient(180deg,#ffffff,#7fc8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ghz_title p{margin:4px 0 0;font-size:.68rem;letter-spacing:3px;color:#5879a8}
+.ghz_clock{min-width:190px;text-align:right;font-size:.78rem;color:#9db9e0;font-variant-numeric:tabular-nums}
+.ghz_clock b{display:block;font-size:1rem;color:var(--ghz_cyan);letter-spacing:1px}
+.ghz_main{flex:1;display:grid;grid-template-columns:300px minmax(0,1fr) 330px;gap:14px;padding-top:14px}
+.ghz_col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ghz_panel{position:relative;border:1px solid var(--ghz_line);border-radius:10px;background:linear-gradient(180deg,rgba(14,32,58,.92),rgba(7,16,31,.92));box-shadow:inset 0 0 26px rgba(30,90,160,.12);overflow:hidden}
+.ghz_panel::before,.ghz_panel::after{content:"";position:absolute;width:10px;height:10px;border:1px solid rgba(79,214,228,.55);pointer-events:none}
+.ghz_panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.ghz_panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+.ghz_panel-head{display:flex;align-items:center;gap:8px;padding:10px 14px 6px}
+.ghz_panel-head h2{margin:0;font-size:.8rem;font-weight:600;letter-spacing:2px;color:#bfe0ff}
+.ghz_panel-head h2::before{content:"";display:inline-block;width:3px;height:11px;margin-right:8px;vertical-align:-1px;border-radius:2px;background:linear-gradient(180deg,var(--ghz_cyan),var(--ghz_blue))}
+.ghz_panel-tag{margin-left:auto;font-size:.62rem;letter-spacing:1px;color:#5f7fa9}
+.ghz_kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ghz_kpi{position:relative;padding:12px 12px 10px;border:1px solid var(--ghz_line);border-radius:10px;background:linear-gradient(160deg,rgba(23,52,90,.9),rgba(8,18,34,.92));overflow:hidden}
+.ghz_kpi::after{content:"";position:absolute;right:-16px;top:-16px;width:52px;height:52px;border-radius:50%;background:radial-gradient(circle,rgba(79,214,228,.22),transparent 70%)}
+.ghz_kpi span{display:block;font-size:.66rem;letter-spacing:1px;color:var(--ghz_muted)}
+.ghz_kpi strong{display:block;margin-top:4px;font-size:1.32rem;font-weight:700;color:#ffffff;font-variant-numeric:tabular-nums}
+.ghz_kpi strong em{font-style:normal;font-size:.68rem;margin-left:2px;color:#8fbfe8}
+.ghz_kpi i{position:absolute;left:12px;top:0;width:26px;height:2px;background:linear-gradient(90deg,var(--ghz_cyan),transparent)}
+.ghz_chart{width:100%}
+#ghz_bar{height:190px}
+#ghz_map{height:470px}
+#ghz_line{height:214px}
+#ghz_pie{height:206px}
+#ghz_gauge{height:176px}
+.ghz_live{padding:0 14px 12px;margin:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.ghz_live-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid rgba(74,120,190,.16);border-radius:7px;background:rgba(13,30,54,.7);font-size:.68rem;color:#a9c6e8;animation:ghz_fade .5s ease}
+.ghz_live-item .ghz_time{color:#5f88b8;font-variant-numeric:tabular-nums}
+.ghz_live-item .ghz_ch{flex:none;padding:2px 6px;border-radius:4px;font-size:.6rem;background:rgba(59,130,246,.18);color:#8ec5ff}
+.ghz_live-item .ghz_msg{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ghz_live-item .ghz_state{flex:none;width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399}
+.ghz_live-item.is_human .ghz_state{background:#fbbf24;box-shadow:0 0 6px #fbbf24}
+@keyframes ghz_fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.ghz_rank{padding:0 14px 14px;margin:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.ghz_rank-row{font-size:.68rem;color:#a9c6e8}
+.ghz_rank-row .ghz_rank-top{display:flex;justify-content:space-between;margin-bottom:4px}
+.ghz_rank-row .ghz_rank-name{max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ghz_rank-row .ghz_rank-val{color:var(--ghz_cyan);font-variant-numeric:tabular-nums}
+.ghz_rank-bar{height:5px;border-radius:3px;background:rgba(64,110,170,.24);overflow:hidden}
+.ghz_rank-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#3b82f6,#4fd6e4);transition:width .5s ease}
+.ghz_bottom{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;margin-top:14px;padding:10px 16px;border:1px solid var(--ghz_line);border-radius:8px;background:rgba(8,19,36,.8);font-size:.66rem;color:#6f8db8;letter-spacing:1px}
+.ghz_bottom span b{color:var(--ghz_cyan);font-weight:600;margin-left:4px}
+.ghz_error{display:flex;align-items:center;justify-content:center;height:100%;padding:18px;text-align:center;font-size:.75rem;line-height:1.8;color:#f0a9a9}
+@media (max-width:1180px){.ghz_main{grid-template-columns:250px minmax(0,1fr) 280px}.ghz_clock{min-width:150px}}
+@media (max-width:900px){.ghz_main{grid-template-columns:1fr}.ghz_col--center{order:-1}.ghz_clock{min-width:0}.ghz_title h1{letter-spacing:2px}}
+</style>
+</head>
+<body>
+<div class="ghz_screen">
+<header class="ghz_top">
+<div class="ghz_brand"><span class="ghz_brand-mark" aria-hidden="true"></span><span>SMART SERVICE</span></div>
+<div class="ghz_title">
+<h1>智能客服运营数据大屏</h1>
+<p>实时会话监控 · 全国咨询分布 · 服务质量分析</p>
+</div>
+<div class="ghz_clock"><b id="ghz_clock_time">--:--:--</b><span id="ghz_clock_date">----</span></div>
+</header>
+
+<main class="ghz_main">
+<aside class="ghz_col ghz_col--left">
+<div class="ghz_kpis">
+<div class="ghz_kpi"><i></i><span>今日总咨询</span><strong id="ghz_kpi_total">128.6<em>万</em></strong></div>
+<div class="ghz_kpi"><i></i><span>机器人解决率</span><strong id="ghz_kpi_bot">82.4<em>%</em></strong></div>
+<div class="ghz_kpi"><i></i><span>平均响应</span><strong id="ghz_kpi_resp">1.8<em>s</em></strong></div>
+<div class="ghz_kpi"><i></i><span>满意度评分</span><strong id="ghz_kpi_score">4.7<em>/5</em></strong></div>
+</div>
+
+<section class="ghz_panel">
+<div class="ghz_panel-head"><h2>渠道咨询量</h2><span class="ghz_panel-tag">单位：万次</span></div>
+<div class="ghz_chart" id="ghz_bar"></div>
+</section>
+
+<section class="ghz_panel" style="flex:1">
+<div class="ghz_panel-head"><h2>实时会话</h2><span class="ghz_panel-tag">LIVE</span></div>
+<ul class="ghz_live" id="ghz_live"></ul>
+</section>
+</aside>
+
+<section class="ghz_col ghz_col--center">
+<section class="ghz_panel">
+<div class="ghz_panel-head"><h2>全国咨询分布</h2><span class="ghz_panel-tag">按省份 · 今日累计</span></div>
+<div class="ghz_chart" id="ghz_map"></div>
+</section>
+
+<section class="ghz_panel">
+<div class="ghz_panel-head"><h2>24 小时咨询趋势</h2><span class="ghz_panel-tag">人工 / 机器人</span></div>
+<div class="ghz_chart" id="ghz_line"></div>
+</section>
+</section>
+
+<aside class="ghz_col ghz_col--right">
+<section class="ghz_panel">
+<div class="ghz_panel-head"><h2>用户意图分布</h2><span class="ghz_panel-tag">占比</span></div>
+<div class="ghz_chart" id="ghz_pie"></div>
+</section>
+
+<section class="ghz_panel">
+<div class="ghz_panel-head"><h2>服务满意度</h2><span class="ghz_panel-tag">综合评分</span></div>
+<div class="ghz_chart" id="ghz_gauge"></div>
+</section>
+
+<section class="ghz_panel" style="flex:1">
+<div class="ghz_panel-head"><h2>知识命中排行</h2><span class="ghz_panel-tag">TOP 5</span></div>
+<ul class="ghz_rank" id="ghz_rank"></ul>
+</section>
+</aside>
+</main>
+
+<footer class="ghz_bottom">
+<span>数据源：模拟数据</span>
+<span>在线坐席<b>128</b></span>
+<span>抽检合格率<b>96.3%</b></span>
+<span>平均会话时长<b>3m 42s</b></span>
+<span>最近更新 <b id="ghz_update_time">--:--:--</b></span>
+</footer>
+</div>
+
+<script src="./cdn/echarts.min.js"></script>
+<script src="./cdn/china.js"></script>
+<script>
+var ghz_charts = {};
+var ghz_palette = ['#4fd6e4', '#3b82f6', '#8b5cf6', '#f59e0b', '#10b981'];
+
+function ghz_initChart(ghz_id, ghz_option) {
+    var ghz_dom = document.getElementById(ghz_id);
+
+    if (!ghz_dom) return null;
+
+    var ghz_chart = echarts.init(ghz_dom);
+    ghz_chart.setOption(ghz_option);
+    ghz_charts[ghz_id] = ghz_chart;
+
+    return ghz_chart;
+}
+
+function ghz_showChartError(ghz_id, ghz_text) {
+    var ghz_dom = document.getElementById(ghz_id);
+
+    if (!ghz_dom) return;
+
+    ghz_dom.innerHTML = '<p class="ghz_error">' + ghz_text + '</p>';
+}
+
+// ---------------- 顶部时钟 ----------------
+function ghz_two(ghz_n) {
+    return ghz_n < 10 ? '0' + ghz_n : String(ghz_n);
+}
+
+function ghz_tickClock() {
+    var ghz_now = new Date();
+
+    document.getElementById('ghz_clock_time').textContent =
+        ghz_two(ghz_now.getHours()) + ':' + ghz_two(ghz_now.getMinutes()) + ':' + ghz_two(ghz_now.getSeconds());
+    document.getElementById('ghz_clock_date').textContent =
+        ghz_now.getFullYear() + ' 年 ' + (ghz_now.getMonth() + 1) + ' 月 ' + ghz_now.getDate() + ' 日';
+}
+
+ghz_tickClock();
+setInterval(ghz_tickClock, 1000);
+
+// ---------------- 中部地图：全国咨询分布 ----------------
+var ghz_provinceData = [
+    { name: '北京', value: 8420 }, { name: '天津', value: 3120 }, { name: '河北', value: 4230 },
+    { name: '山西', value: 2180 }, { name: '内蒙古', value: 1460 }, { name: '辽宁', value: 2870 },
+    { name: '吉林', value: 1520 }, { name: '黑龙江', value: 1680 }, { name: '上海', value: 9120 },
+    { name: '江苏', value: 7560 }, { name: '浙江', value: 6840 }, { name: '安徽', value: 3920 },
+    { name: '福建', value: 3260 }, { name: '江西', value: 2380 }, { name: '山东', value: 5980 },
+    { name: '河南', value: 4870 }, { name: '湖北', value: 4410 }, { name: '湖南', value: 3670 },
+    { name: '广东', value: 8890 }, { name: '广西', value: 2740 }, { name: '海南', value: 1120 },
+    { name: '重庆', value: 3350 }, { name: '四川', value: 4980 }, { name: '贵州', value: 1860 },
+    { name: '云南', value: 2140 }, { name: '西藏', value: 460 }, { name: '陕西', value: 3280 },
+    { name: '甘肃', value: 1240 }, { name: '青海', value: 520 }, { name: '宁夏', value: 680 },
+    { name: '新疆', value: 1360 }, { name: '台湾', value: 820 }, { name: '香港', value: 1420 },
+    { name: '澳门', value: 380 }
+];
+
+var ghz_cities = [
+    { name: '北京', value: [116.40, 39.90, 8420] },
+    { name: '上海', value: [121.47, 31.23, 9120] },
+    { name: '广州', value: [113.27, 23.13, 7650] },
+    { name: '成都', value: [104.07, 30.67, 5980] },
+    { name: '杭州', value: [120.15, 30.28, 6540] },
+    { name: '武汉', value: [114.31, 30.52, 5120] },
+    { name: '西安', value: [108.95, 34.27, 4380] }
+];
+
+function ghz_initMap() {
+    if (!echarts.getMap('china')) {
+        ghz_showChartError('ghz_map', '地图数据未加载，请确认 cdn/china.js 存在并成功注册 china 地图。');
+        return;
+    }
+
+    ghz_initChart('ghz_map', {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(8,20,38,.92)',
+            borderColor: 'rgba(79,214,228,.4)',
+            textStyle: { color: '#dce9ff', fontSize: 12 },
+            formatter: function (ghz_params) {
+                if (Array.isArray(ghz_params.value)) {
+                    return ghz_params.name + '<br/>重点城市咨询量：<b>' + ghz_params.value[2] + '</b> 次';
+                }
+
+                return ghz_params.name + '<br/>今日咨询量：<b>' + (ghz_params.value == null ? 0 : ghz_params.value) + '</b> 次';
+            }
+        },
+        visualMap: {
+            min: 0,
+            max: 9000,
+            left: 16,
+            bottom: 12,
+            itemWidth: 10,
+            itemHeight: 82,
+            calculable: false,
+            text: ['高', '低'],
+            textStyle: { color: '#8fb4e6', fontSize: 10 },
+            inRange: {
+                color: ['#0c2340', '#15497a', '#1f74b0', '#3fb6d8', '#6fe9d8']
+            }
+        },
+        geo: {
+            map: 'china',
+            roam: true,
+            zoom: 1.18,
+            layoutCenter: ['50%', '52%'],
+            layoutSize: '106%',
+            itemStyle: {
+                areaColor: '#0b1d35',
+                borderColor: '#2a6099',
+                borderWidth: 1
+            },
+            emphasis: {
+                itemStyle: { areaColor: '#1d4f84' },
+                label: { show: true, color: '#ffffff', fontSize: 11 }
+            }
+        },
+        series: [
+            {
+                type: 'map',
+                map: 'china',
+                geoIndex: 0,
+                data: ghz_provinceData,
+                emphasis: {
+                    label: { show: true, color: '#ffffff' }
+                }
+            },
+            {
+                name: '重点城市',
+                type: 'effectScatter',
+                coordinateSystem: 'geo',
+                zlevel: 3,
+                symbolSize: function (ghz_val) {
+                    return Math.max(8, ghz_val[2] / 900);
+                },
+                rippleEffect: { scale: 4, brushType: 'stroke' },
+                label: {
+                    show: true,
+                    position: 'right',
+                    formatter: '{b}',
+                    color: '#bfe9ff',
+                    fontSize: 10
+                },
+                itemStyle: { color: '#4fd6e4', shadowBlur: 10, shadowColor: '#4fd6e4' },
+                data: ghz_cities
+            }
+        ]
+    });
+}
+
+if (!window.echarts) {
+    ['ghz_bar', 'ghz_map', 'ghz_line', 'ghz_pie', 'ghz_gauge'].forEach(function (ghz_id) {
+        ghz_showChartError(ghz_id, '本地图表库未加载，请确认 cdn/echarts.min.js 存在。');
+    });
+}
+
+// ---------------- 左列：渠道条形图 ----------------
+var ghz_channelNames = ['Web 商城', '移动 App', '微信', '电话', '邮件'];
+var ghz_channelValues = [82, 65, 78, 52, 41];
+
+function ghz_initLeftCharts() {
+    ghz_initChart('ghz_bar', {
+        backgroundColor: 'transparent',
+        grid: { left: 62, right: 18, top: 16, bottom: 8 },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(8,20,38,.92)',
+            borderColor: 'rgba(79,214,228,.4)',
+            textStyle: { color: '#dce9ff', fontSize: 12 }
+        },
+        xAxis: {
+            type: 'value',
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { lineStyle: { color: 'rgba(74,120,190,.14)' } },
+            axisLabel: { show: false }
+        },
+        yAxis: {
+            type: 'category',
+            inverse: true,
+            data: ghz_channelNames,
+            axisLine: { lineStyle: { color: 'rgba(74,120,190,.35)' } },
+            axisTick: { show: false },
+            axisLabel: { color: '#9db9e0', fontSize: 11 }
+        },
+        series: [{
+            type: 'bar',
+            barWidth: 10,
+            data: ghz_channelValues,
+            itemStyle: {
+                borderRadius: [0, 5, 5, 0],
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                    { offset: 0, color: 'rgba(59,130,246,.25)' },
+                    { offset: 1, color: '#4fd6e4' }
+                ])
+            },
+            label: {
+                show: true,
+                position: 'right',
+                formatter: '{c}',
+                color: '#8fbfe8',
+                fontSize: 10
+            }
+        }]
+    });
+}
+
+// ---------------- 右列：意图环形图 + 满意度仪表 ----------------
+var ghz_intentData = [
+    { name: '售前咨询', value: 32 },
+    { name: '订单查询', value: 26 },
+    { name: '售后服务', value: 18 },
+    { name: '物流查询', value: 14 },
+    { name: '其他', value: 10 }
+];
+
+function ghz_initRightCharts() {
+    ghz_initChart('ghz_pie', {
+        backgroundColor: 'transparent',
+        color: ghz_palette,
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(8,20,38,.92)',
+            borderColor: 'rgba(79,214,228,.4)',
+            textStyle: { color: '#dce9ff', fontSize: 12 },
+            formatter: '{b}<br/>占比 {d}%'
+        },
+        legend: {
+            orient: 'vertical',
+            right: 8,
+            top: 'center',
+            itemWidth: 8,
+            itemHeight: 8,
+            itemGap: 10,
+            textStyle: { color: '#9db9e0', fontSize: 10 }
+        },
+        series: [{
+            type: 'pie',
+            radius: ['48%', '74%'],
+            center: ['34%', '52%'],
+            avoidLabelOverlap: true,
+            itemStyle: {
+                borderColor: '#071322',
+                borderWidth: 2
+            },
+            label: { show: false },
+            emphasis: {
+                label: { show: false },
+                scaleSize: 6
+            },
+            data: ghz_intentData
+        }]
+    });
+
+    ghz_initChart('ghz_gauge', {
+        backgroundColor: 'transparent',
+        series: [{
+            type: 'gauge',
+            startAngle: 210,
+            endAngle: -30,
+            radius: '92%',
+            center: ['50%', '58%'],
+            min: 60,
+            max: 100,
+            splitNumber: 4,
+            progress: {
+                show: true,
+                width: 12,
+                roundCap: true,
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                        { offset: 0, color: '#3b82f6' },
+                        { offset: 1, color: '#4fd6e4' }
+                    ])
+                }
+            },
+            axisLine: {
+                lineStyle: {
+                    width: 12,
+                    color: [[1, 'rgba(64,110,170,.22)']]
+                }
+            },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: {
+                distance: -22,
+                color: 'rgba(157,185,224,.55)',
+                fontSize: 9
+            },
+            pointer: {
+                length: '52%',
+                width: 3,
+                itemStyle: { color: '#bfe9ff' }
+            },
+            anchor: {
+                show: true,
+                size: 8,
+                itemStyle: { color: '#4fd6e4', borderColor: '#0a1526', borderWidth: 2 }
+            },
+            title: {
+                offsetCenter: [0, '72%'],
+                color: '#7f9bc4',
+                fontSize: 11
+            },
+            detail: {
+                offsetCenter: [0, '40%'],
+                formatter: '{value} 分',
+                color: '#ffffff',
+                fontSize: 20,
+                fontWeight: 600
+            },
+            data: [{ value: 92.6, name: '综合满意度' }]
+        }]
+    });
+}
+
+// ---------------- 24 小时趋势 ----------------
+var ghz_hours = [];
+var ghz_humanData = [12, 9, 6, 5, 8, 18, 32, 48, 56, 62, 68, 72, 66, 58, 64, 70, 76, 82, 74, 60, 42, 30, 22, 16];
+var ghz_botData = [20, 15, 11, 9, 14, 28, 46, 66, 78, 86, 92, 96, 90, 82, 88, 94, 100, 108, 98, 84, 62, 46, 34, 26];
+
+for (var ghz_h = 0; ghz_h < 24; ghz_h++) {
+    ghz_hours.push((ghz_h < 10 ? '0' + ghz_h : ghz_h) + ':00');
+}
+
+function ghz_buildLineOption() {
+    return {
+        backgroundColor: 'transparent',
+        grid: { left: 42, right: 18, top: 28, bottom: 24 },
+        tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'rgba(8,20,38,.92)',
+            borderColor: 'rgba(79,214,228,.4)',
+            textStyle: { color: '#dce9ff', fontSize: 12 }
+        },
+        legend: {
+            top: 4,
+            right: 12,
+            itemWidth: 10,
+            itemHeight: 6,
+            textStyle: { color: '#9db9e0', fontSize: 10 },
+            data: ['人工坐席', '机器人']
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ghz_hours,
+            axisLine: { lineStyle: { color: 'rgba(74,120,190,.3)' } },
+            axisTick: { show: false },
+            axisLabel: { color: '#728fb8', fontSize: 9, interval: 3 }
+        },
+        yAxis: {
+            type: 'value',
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { lineStyle: { color: 'rgba(74,120,190,.14)' } },
+            axisLabel: { color: '#728fb8', fontSize: 9 }
+        },
+        series: [
+            {
+                name: '人工坐席',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 2, color: '#3b82f6' },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(59,130,246,.35)' },
+                        { offset: 1, color: 'rgba(59,130,246,0)' }
+                    ])
+                },
+                data: ghz_humanData
+            },
+            {
+                name: '机器人',
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 2, color: '#4fd6e4' },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(79,214,228,.32)' },
+                        { offset: 1, color: 'rgba(79,214,228,0)' }
+                    ])
+                },
+                data: ghz_botData
+            }
+        ]
+    };
+}
+
+// ---------------- 实时会话列表 ----------------
+var ghz_livePool = [
+    { ch: '微信', msg: '这个尺码还有货吗？', human: false },
+    { ch: 'App', msg: '订单 20261105001 什么时候发货？', human: false },
+    { ch: 'Web', msg: '想申请七天无理由退货', human: true },
+    { ch: '电话', msg: '发票信息可以修改吗？', human: true },
+    { ch: 'App', msg: '优惠券为什么不能用？', human: false },
+    { ch: '微信', msg: '会员积分怎么兑换？', human: false },
+    { ch: 'Web', msg: '物流显示签收但没收到货', human: true },
+    { ch: 'App', msg: '如何修改收货地址？', human: false }
+];
+var ghz_liveIndex = 0;
+
+function ghz_padTime() {
+    var ghz_now = new Date();
+
+    return ghz_two(ghz_now.getHours()) + ':' + ghz_two(ghz_now.getMinutes()) + ':' + ghz_two(ghz_now.getSeconds());
+}
+
+function ghz_renderLive() {
+    var ghz_list = document.getElementById('ghz_live');
+    var ghz_rows = [];
+    var ghz_stamp = ghz_padTime();
+
+    for (var ghz_i = 0; ghz_i < 5; ghz_i++) {
+        var ghz_item = ghz_livePool[(ghz_liveIndex + ghz_i) % ghz_livePool.length];
+
+        ghz_rows.push(
+            '<li class="ghz_live-item' + (ghz_item.human ? ' is_human' : '') + '">' +
+            '<span class="ghz_time">' + ghz_stamp + '</span>' +
+            '<span class="ghz_ch">' + ghz_item.ch + '</span>' +
+            '<span class="ghz_msg">' + ghz_item.msg + '</span>' +
+            '<span class="ghz_state"></span>' +
+            '</li>'
+        );
+    }
+
+    ghz_list.innerHTML = ghz_rows.join('');
+    ghz_liveIndex = (ghz_liveIndex + 1) % ghz_livePool.length;
+}
+
+ghz_renderLive();
+setInterval(ghz_renderLive, 3200);
+
+// ---------------- 知识命中排行 ----------------
+var ghz_rankItems = [
+    { name: '退换货政策说明', pct: 92 },
+    { name: '物流进度查询', pct: 86 },
+    { name: '优惠券使用规则', pct: 78 },
+    { name: '会员积分兑换', pct: 71 },
+    { name: '发票开具流程', pct: 64 }
+];
+
+function ghz_renderRank() {
+    var ghz_rank = document.getElementById('ghz_rank');
+    var ghz_html = [];
+
+    ghz_rankItems.forEach(function (ghz_item) {
+        ghz_html.push(
+            '<li class="ghz_rank-row">' +
+            '<div class="ghz_rank-top"><span class="ghz_rank-name">' + ghz_item.name + '</span>' +
+            '<span class="ghz_rank-val">' + ghz_item.pct + '%</span></div>' +
+            '<div class="ghz_rank-bar"><div class="ghz_rank-fill" style="width:' + ghz_item.pct + '%"></div></div>' +
+            '</li>'
+        );
+    });
+
+    ghz_rank.innerHTML = ghz_html.join('');
+}
+
+ghz_renderRank();
+
+// ---------------- 定时刷新 ----------------
+function ghz_jitter(ghz_base, ghz_range) {
+    return ghz_base + (Math.random() - 0.5) * ghz_range;
+}
+
+function ghz_refresh() {
+    // 条形图
+    if (ghz_charts['ghz_bar']) {
+        ghz_channelValues = ghz_channelValues.map(function (ghz_val) {
+            return Math.round(Math.min(95, Math.max(30, ghz_jitter(ghz_val, 8))));
+        });
+
+        ghz_charts['ghz_bar'].setOption({
+            series: [{ data: ghz_channelValues }]
+        });
+    }
+
+    // 趋势图：整体平移一个数据点
+    if (ghz_charts['ghz_line']) {
+        ghz_humanData.shift();
+        ghz_humanData.push(Math.round(ghz_jitter(40, 40)));
+        ghz_botData.shift();
+        ghz_botData.push(Math.round(ghz_jitter(60, 40)));
+
+        ghz_charts['ghz_line'].setOption({
+            series: [{ data: ghz_humanData }, { data: ghz_botData }]
+        });
+    }
+
+    // 意图环形图轻微波动
+    if (ghz_charts['ghz_pie']) {
+        var ghz_pieTotal = 0;
+
+        ghz_intentData.forEach(function (ghz_item) {
+            ghz_item.value = Math.max(5, Math.round(ghz_jitter(ghz_item.value, 3)));
+            ghz_pieTotal += ghz_item.value;
+        });
+
+        ghz_charts['ghz_pie'].setOption({
+            series: [{
+                data: ghz_intentData.map(function (ghz_item) {
+                    return { name: ghz_item.name, value: Math.round(ghz_item.value / ghz_pieTotal * 100) };
+                })
+            }]
+        });
+    }
+
+    // 仪表
+    if (ghz_charts['ghz_gauge']) {
+        ghz_charts['ghz_gauge'].setOption({
+            series: [{ data: [{ value: Math.round(ghz_jitter(92, 4) * 10) / 10, name: '综合满意度' }] }]
+        });
+    }
+
+    // KPI 与排行
+    document.getElementById('ghz_kpi_bot').innerHTML = (Math.round(ghz_jitter(82, 2) * 10) / 10) + '<em>%</em>';
+    document.getElementById('ghz_kpi_resp').innerHTML = (Math.round(ghz_jitter(1.8, 0.4) * 10) / 10) + '<em>s</em>';
+    document.getElementById('ghz_update_time').textContent = ghz_padTime();
+
+    ghz_rankItems.forEach(function (ghz_item) {
+        ghz_item.pct = Math.round(Math.min(98, Math.max(45, ghz_jitter(ghz_item.pct, 6))));
+    });
+    ghz_renderRank();
+}
+
+function ghz_initRefresh() {
+    ghz_initChart('ghz_line', ghz_buildLineOption());
+    setInterval(ghz_refresh, 4000);
+}
+
+// 窗口缩放
+window.addEventListener('resize', function () {
+    Object.keys(ghz_charts).forEach(function (ghz_key) {
+        ghz_charts[ghz_key].resize();
+    });
+});
+
+// 所有数据与函数就绪后再初始化图表
+if (window.echarts) {
+    ghz_initMap();
+    ghz_initLeftCharts();
+    ghz_initRightCharts();
+    ghz_initRefresh();
+}
+</script>
+</body>
+</html>

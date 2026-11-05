@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-05，功能：18-6 使用本地 Mermaid 绘制智能客服系统流程图与 ER 图 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-6 Mermaid 智能客服流程图与 ER 图 · 高浩哲</title>
+<style>
+:root{--ghz_bg:#eef2f9;--ghz_ink:#16233c;--ghz-muted:#5f6c88;--ghz-line:#d7e0ef;--ghz-blue:#2563eb;--ghz-violet:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:26px 16px 40px;font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--ghz_ink);background:radial-gradient(circle at 12% 4%,rgba(37,99,235,.1),transparent 32%),radial-gradient(circle at 88% 96%,rgba(124,58,237,.1),transparent 30%),var(--ghz_bg)}
+.ghz_page{width:min(1100px,100%);margin:0 auto}
+.ghz_head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px;margin-bottom:16px}
+.ghz_tag{padding:4px 11px;border:1px solid rgba(37,99,235,.28);border-radius:999px;font-size:.7rem;letter-spacing:2px;color:#3f5f9e;background:#fff}
+.ghz_head h1{margin:0;font-size:clamp(1.35rem,2.8vw,1.9rem);letter-spacing:1px}
+.ghz_head p{margin:0;font-size:.8rem;line-height:1.7;color:var(--ghz-muted)}
+.ghz_card{margin-top:18px;border:1px solid #cfd9ea;border-radius:18px;background:#fff;box-shadow:0 16px 40px rgba(22,35,60,.08);overflow:hidden}
+.ghz_card-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:16px 22px;border-bottom:1px solid #eef2fa}
+.ghz_card-head h2{margin:0;font-size:1rem;letter-spacing:.4px}
+.ghz_badge{padding:3px 9px;border-radius:999px;background:rgba(37,99,235,.1);color:#1d4fa8;font-size:.68rem;letter-spacing:.5px}
+.ghz_card-head p{margin:0;flex:1;min-width:220px;font-size:.74rem;line-height:1.6;color:var(--ghz-muted)}
+.ghz_diagram{padding:22px 16px 26px;overflow-x:auto;background:linear-gradient(180deg,#fbfcff,#f5f8fd)}
+.ghz_diagram .mermaid{display:flex;justify-content:center;min-width:720px}
+.ghz_diagram svg{max-width:none}
+.ghz_err{margin:0;padding:18px;border:1px dashed #f0a9a9;border-radius:10px;background:#fff5f5;color:#b42318;font-size:.8rem;line-height:1.7}
+.ghz_code{margin:0;border-top:1px solid #eef2fa;background:#0f1528}
+.ghz_code summary{padding:12px 22px;cursor:pointer;list-style:none;font-size:.78rem;color:#b9c6f5}
+.ghz_code summary::-webkit-details-marker{display:none}
+.ghz_code summary::before{content:"▸";margin-right:8px;color:#4fd6e4}
+.ghz_code[open] summary::before{content:"▾"}
+.ghz_code pre{margin:0;padding:16px 22px;background:#080d1a;color:#cfd8f2;font-family:Consolas,"Courier New",monospace;font-size:.74rem;line-height:1.8;overflow-x:auto}
+.ghz_notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.ghz_note{padding:15px 17px;border:1px solid var(--ghz-line);border-radius:14px;background:#fff;box-shadow:0 8px 22px rgba(22,35,60,.05)}
+.ghz_note h2{margin:0 0 6px;font-size:.85rem;color:#24365c}
+.ghz_note p{margin:0;font-size:.75rem;line-height:1.8;color:var(--ghz-muted)}
+.ghz_footer{margin-top:22px;text-align:center;font-size:.74rem;letter-spacing:1px;color:#8492ad}
+@media (max-width:760px){.ghz_notes{grid-template-columns:1fr}.ghz_diagram .mermaid{min-width:620px}.ghz_card-head{padding:14px 16px}}
+</style>
+</head>
+<body>
+<div class="ghz_page">
+<header class="ghz_head">
+<span class="ghz_tag">LESSON 18 · MERMAID</span>
+<h1>智能客服系统的流程图与 ER 图</h1>
+<p>用文本描述图结构，由本地 mermaid 渲染为矢量图：上图是从咨询接入到工单沉淀的完整业务流程，下图是会话、消息、知识、工单等实体的关系模型。</p>
+</header>
+
+<section class="ghz_card">
+<div class="ghz_card-head">
+<span class="ghz_badge">图 1 · 流程图</span>
+<h2>智能客服业务流程图</h2>
+<p>从多渠道接入开始，经意图识别、知识检索、大模型生成与可信校验，未通过则转人工并沉淀工单。</p>
+</div>
+<div class="ghz_diagram">
+<pre class="mermaid ghz_mermaid">
+flowchart TD
+    A["用户咨询&lt;br/&gt;Web · App · 微信 · 电话"] --> B["统一接入网关&lt;br/&gt;鉴权 · 会话保持"]
+    B --> C{"会话是否已存在？"}
+    C -->|否| D["新建会话&lt;br/&gt;初始化上下文"]
+    C -->|是| E["读取多轮对话状态"]
+    D --> F["意图识别 + 槽位抽取"]
+    E --> F
+    F --> G{"是否需要业务查询？"}
+    G -->|是| H["调用订单 / 物流接口"]
+    G -->|否| I["知识库混合检索&lt;br/&gt;向量 + 关键词"]
+    H --> J["组装提示词上下文"]
+    I --> K{"召回结果是否充足？"}
+    K -->|否| L["澄清追问 / 兜底话术"]
+    L --> F
+    K -->|是| J
+    J --> M["LLM 生成答案&lt;br/&gt;附带引用来源"]
+    M --> N{"可信度校验通过？"}
+    N -->|是| O["返回答案并记录日志"]
+    N -->|否| P["转人工坐席"]
+    P --> Q["工单归档与知识沉淀"]
+    O --> R["用户评价与评测迭代"]
+    Q --> R
+    classDef start fill:#e8f1ff,stroke:#2563eb,color:#16233c,stroke-width:1.4
+    classDef decision fill:#fff7e6,stroke:#d97706,color:#7c4a12,stroke-width:1.4
+    classDef ai fill:#f3e8ff,stroke:#7c3aed,color:#4c1d95,stroke-width:1.4
+    classDef human fill:#e6fbf5,stroke:#0d9488,color:#115e59,stroke-width:1.4
+    class A,B,D,E start
+    class C,G,K,N decision
+    class F,H,I,J,M,O,R ai
+    class L,P,Q human
+</pre>
+</div>
+<details class="ghz_code">
+<summary>查看 Mermaid 源码</summary>
+<pre>flowchart TD
+    A["用户咨询&lt;br/&gt;Web · App · 微信 · 电话"] --&gt; B["统一接入网关&lt;br/&gt;鉴权 · 会话保持"]
+    B --&gt; C{"会话是否已存在？"}
+    C --&gt;|否| D["新建会话&lt;br/&gt;初始化上下文"]
+    C --&gt;|是| E["读取多轮对话状态"]
+    D --&gt; F["意图识别 + 槽位抽取"]
+    E --&gt; F
+    F --&gt; G{"是否需要业务查询？"}
+    G --&gt;|是| H["调用订单 / 物流接口"]
+    G --&gt;|否| I["知识库混合检索&lt;br/&gt;向量 + 关键词"]
+    H --&gt; J["组装提示词上下文"]
+    I --&gt; K{"召回结果是否充足？"}
+    K --&gt;|否| L["澄清追问 / 兜底话术"]
+    L --&gt; F
+    K --&gt;|是| J
+    J --&gt; M["LLM 生成答案&lt;br/&gt;附带引用来源"]
+    M --&gt; N{"可信度校验通过？"}
+    N --&gt;|是| O["返回答案并记录日志"]
+    N --&gt;|否| P["转人工坐席"]
+    P --&gt; Q["工单归档与知识沉淀"]
+    O --&gt; R["用户评价与评测迭代"]
+    Q --&gt; R</pre>
+</details>
+</section>
+
+<section class="ghz_card">
+<div class="ghz_card-head">
+<span class="ghz_badge">图 2 · ER 图</span>
+<h2>智能客服数据模型（实体关系图）</h2>
+<p>八个实体：用户、会话、消息、意图、知识、工单、坐席、反馈；用竖线与外键符号标注一对多、一对零或一关系。</p>
+</div>
+<div class="ghz_diagram">
+<pre class="mermaid ghz_mermaid">
+erDiagram
+    USER ||--o{ SESSION : "发起"
+    SESSION ||--o{ MESSAGE : "包含"
+    SESSION ||--o| TICKET : "转人工"
+    AGENT ||--o{ TICKET : "受理"
+    INTENT ||--o{ MESSAGE : "识别"
+    KNOWLEDGE ||--o{ MESSAGE : "检索命中"
+    MESSAGE ||--o{ FEEDBACK : "获得"
+
+    USER {
+        int user_id PK "用户主键"
+        string nickname "昵称"
+        string phone "手机号"
+        string channel "来源渠道"
+        datetime created_at "注册时间"
+    }
+    SESSION {
+        int session_id PK "会话主键"
+        int user_id FK "所属用户"
+        string channel "接入渠道"
+        string status "会话状态"
+        datetime started_at "开始时间"
+        datetime ended_at "结束时间"
+    }
+    MESSAGE {
+        int message_id PK "消息主键"
+        int session_id FK "所属会话"
+        int intent_id FK "命中意图"
+        string role "用户 / 机器人 / 坐席"
+        string content "消息内容"
+        datetime created_at "发送时间"
+    }
+    INTENT {
+        int intent_id PK "意图主键"
+        string name "意图名称"
+        float confidence "置信度"
+        bool is_fallback "是否兜底"
+    }
+    KNOWLEDGE {
+        int knowledge_id PK "知识主键"
+        string title "知识标题"
+        string category "知识分类"
+        string vector_id "向量索引 ID"
+        datetime updated_at "更新时间"
+    }
+    TICKET {
+        int ticket_id PK "工单主键"
+        int session_id FK "来源会话"
+        int agent_id FK "处理坐席"
+        string status "处理状态"
+        string priority "优先级"
+        datetime created_at "创建时间"
+    }
+    AGENT {
+        int agent_id PK "坐席主键"
+        string name "坐席姓名"
+        string skill_group "技能组"
+        string online_status "在线状态"
+    }
+    FEEDBACK {
+        int feedback_id PK "反馈主键"
+        int message_id FK "对应消息"
+        int rating "满意度评分"
+        string comment "用户留言"
+        datetime created_at "提交时间"
+    }
+</pre>
+</div>
+<details class="ghz_code">
+<summary>查看 Mermaid ER 源码</summary>
+<pre>erDiagram
+    USER ||--o{ SESSION : "发起"
+    SESSION ||--o{ MESSAGE : "包含"
+    SESSION ||--o| TICKET : "转人工"
+    AGENT ||--o{ TICKET : "受理"
+    INTENT ||--o{ MESSAGE : "识别"
+    KNOWLEDGE ||--o{ MESSAGE : "检索命中"
+    MESSAGE ||--o{ FEEDBACK : "获得"
+
+    USER {
+        int user_id PK "用户主键"
+        string nickname "昵称"
+        datetime created_at "注册时间"
+    }
+    SESSION {
+        int session_id PK "会话主键"
+        int user_id FK "所属用户"
+        string status "会话状态"
+    }
+    MESSAGE {
+        int message_id PK "消息主键"
+        int session_id FK "所属会话"
+        int intent_id FK "命中意图"
+        string content "消息内容"
+    }
+    TICKET {
+        int ticket_id PK "工单主键"
+        int session_id FK "来源会话"
+        int agent_id FK "处理坐席"
+        string status "处理状态"
+    }
+    FEEDBACK {
+        int feedback_id PK "反馈主键"
+        int message_id FK "对应消息"
+        int rating "满意度评分"
+    }</pre>
+</details>
+</section>
+
+<section class="ghz_notes">
+<div class="ghz_note"><h2>流程图读法</h2><p>圆角矩形是处理步骤，菱形是判断分支，箭头上的「是 / 否」表示条件走向；紫色为大模型与检索相关步骤，绿色为人工兜底与沉淀环节。</p></div>
+<div class="ghz_note"><h2>ER 图符号</h2><p><code>||--o{</code> 表示一对多，<code>||--o|</code> 表示一对零或一；实体框内依次列出字段名、主键 PK、外键 FK 与中文说明。</p></div>
+<div class="ghz_note"><h2>如何本地渲染</h2><p>页面通过 <code>./cdn/mermaid.min.js</code> 引入图表库，再用 <code>mermaid.run()</code> 解析 <code>.mermaid</code> 中的文本并生成 SVG，无需联网。</p></div>
+</section>
+
+<p class="ghz_footer">高浩哲 · 《高级网页设计》练习 18-6 · Mermaid 流程图与 ER 图</p>
+</div>
+
+<script src="./cdn/mermaid.min.js"></script>
+<script>
+if (!window.mermaid) {
+    Array.prototype.forEach.call(document.querySelectorAll('.ghz_diagram'), function (ghz_box) {
+        ghz_box.innerHTML = '<p class="ghz_err">本地图表库未加载，请确认 cdn/mermaid.min.js 存在。</p>';
+    });
+} else {
+    mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'loose',
+        theme: 'base',
+        fontFamily: '"Microsoft YaHei", "Segoe UI", Arial, sans-serif',
+        themeVariables: {
+            primaryColor: '#eef4ff',
+            primaryTextColor: '#16233c',
+            primaryBorderColor: '#93b4ef',
+            secondaryColor: '#f3e8ff',
+            tertiaryColor: '#e6fbf5',
+            lineColor: '#8494b4',
+            fontSize: '14px',
+            edgeLabelBackground: '#ffffff',
+            nodeBorder: '#93b4ef'
+        },
+        flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true,
+            curve: 'basis',
+            nodeSpacing: 34,
+            rankSpacing: 50,
+            padding: 16
+        },
+        er: {
+            useMaxWidth: false,
+            entityPadding: 16,
+            minEntityWidth: 150,
+            minEntityHeight: 60
+        }
+    });
+
+    var ghz_blocks = Array.prototype.slice.call(document.querySelectorAll('.ghz_mermaid'));
+
+    ghz_blocks.forEach(function (ghz_el) {
+        mermaid.run({ nodes: [ghz_el] }).catch(function (ghz_error) {
+            ghz_el.parentElement.innerHTML = '<p class="ghz_err">Mermaid 渲染失败：' + ghz_error.message + '</p>';
+        });
+    });
+}
+</script>
+</body>
+</html>

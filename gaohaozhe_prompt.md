@@ -212,3 +212,23 @@ logged
 ## 2026-11-05 14:17:02 +08 | model: DeepSeek-V4.1-Flash
 
 好的，上传到 GitHub
+
+
+## 2026-11-05 14:21:58 +08 | model: DeepSeek-V4.1-Flash
+
+实现18-6.html，实现基于mermaid的智能客服系统的流程图和er图，cdn文件下载到cdn目录下。
+
+
+## 2026-11-05 14:28:38 +08 | model: DeepSeek-V4.1-Flash
+
+实现18-7.html，实现基于three.js的两个图表，cdn文件下载到cdn目录下。
+
+
+## 2026-11-05 14:42:39 +08 | model: DeepSeek-V4.1-Flash
+
+实现18-8.html，实现基于three.js或echarts的数据大屏，大屏要求：三列，中间上面是某种地理信息的图，cdn文件下载到cdn目录下。
+
+
+## 2026-11-05 14:50:50 +08 | model: DeepSeek-V4.1-Flash
+
+上交github

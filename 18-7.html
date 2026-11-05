@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<!-- 姓名：高浩哲，日期：2026-11-05，功能：18-7 使用本地 Three.js 绘制三维柱状图与三维饼图 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18-7 Three.js 三维图表 · 高浩哲</title>
+<style>
+:root{--ghz_bg:#eef2f9;--ghz_ink:#16233c;--ghz-muted:#5f6c88;--ghz_line:#d7e0ef;--ghz_blue:#2563eb;--ghz_violet:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:26px 16px 40px;font-family:"Microsoft YaHei","Segoe UI",Arial,sans-serif;color:var(--ghz_ink);background:radial-gradient(circle at 12% 4%,rgba(37,99,235,.1),transparent 32%),radial-gradient(circle at 88% 96%,rgba(124,58,237,.1),transparent 30%),var(--ghz_bg)}
+.ghz_page{width:min(1100px,100%);margin:0 auto}
+.ghz_head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px;margin-bottom:16px}
+.ghz_tag{padding:4px 11px;border:1px solid rgba(37,99,235,.28);border-radius:999px;font-size:.7rem;letter-spacing:2px;color:#3f5f9e;background:#fff}
+.ghz_head h1{margin:0;font-size:clamp(1.35rem,2.8vw,1.9rem);letter-spacing:1px}
+.ghz_head p{margin:0;font-size:.8rem;line-height:1.7;color:var(--ghz-muted)}
+.ghz_grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.ghz_card{border:1px solid #cfd9ea;border-radius:18px;background:#fff;box-shadow:0 16px 40px rgba(22,35,60,.08);overflow:hidden;display:flex;flex-direction:column}
+.ghz_card--dark{background:radial-gradient(circle at 50% 10%,#1b2746,#0a0f1e 72%);border-color:#1c2a4d}
+.ghz_card-head{padding:16px 20px 12px;border-bottom:1px solid #eef2fa}
+.ghz_card--dark .ghz_card-head{border-bottom-color:rgba(140,170,255,.16)}
+.ghz_badge{display:inline-block;margin-bottom:6px;padding:3px 9px;border-radius:999px;background:rgba(37,99,235,.1);color:#1d4fa8;font-size:.68rem;letter-spacing:.5px}
+.ghz_card--dark .ghz_badge{background:rgba(120,150,255,.16);color:#b9c9ff}
+.ghz_card-head h2{margin:0 0 5px;font-size:.98rem;letter-spacing:.3px}
+.ghz_card--dark .ghz_card-head h2{color:#e6edff}
+.ghz_card-head p{margin:0;font-size:.74rem;line-height:1.65;color:var(--ghz-muted)}
+.ghz_card--dark .ghz_card-head p{color:#8b97bd}
+.ghz_chart{position:relative;height:430px;background:linear-gradient(180deg,#f9fbff,#eff4fb)}
+.ghz_card--dark .ghz_chart{background:transparent}
+.ghz_chart canvas{display:block;width:100%;height:100%;cursor:grab}
+.ghz_chart canvas:active{cursor:grabbing}
+.ghz_toolbar{display:flex;align-items:center;gap:10px;padding:10px 20px 14px;border-top:1px solid #eef2fa}
+.ghz_card--dark .ghz_toolbar{border-top-color:rgba(140,170,255,.16)}
+.ghz_btn{padding:6px 14px;border:1px solid rgba(37,99,235,.28);border-radius:999px;background:rgba(37,99,235,.06);color:#1d4fa8;font-family:inherit;font-size:.74rem;cursor:pointer;transition:background .16s,transform .16s}
+.ghz_btn:hover{background:rgba(37,99,235,.14);transform:translateY(-1px)}
+.ghz_card--dark .ghz_btn{border-color:rgba(120,150,255,.4);background:rgba(120,150,255,.08);color:#dbe4ff}
+.ghz_card--dark .ghz_btn:hover{background:rgba(120,150,255,.2)}
+.ghz_hint{margin-left:auto;font-size:.7rem;color:#8492ad}
+.ghz_card--dark .ghz_hint{color:#8b97bd}
+.ghz_legend{display:flex;flex-wrap:wrap;gap:8px 14px;padding:0 20px 16px}
+.ghz_legend-item{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;color:#8b97bd}
+.ghz_dot{width:9px;height:9px;border-radius:2px}
+.ghz_notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.ghz_note{padding:15px 17px;border:1px solid var(--ghz_line);border-radius:14px;background:#fff;box-shadow:0 8px 22px rgba(22,35,60,.05)}
+.ghz_note h2{margin:0 0 6px;font-size:.85rem;color:#24365c}
+.ghz_note p{margin:0;font-size:.75rem;line-height:1.8;color:var(--ghz-muted)}
+.ghz_footer{margin-top:22px;text-align:center;font-size:.74rem;letter-spacing:1px;color:#8492ad}
+.ghz_error{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font-size:.8rem;line-height:1.8;color:#b42318;background:rgba(255,245,245,.92)}
+@media (max-width:860px){.ghz_grid{grid-template-columns:1fr}.ghz_chart{height:380px}.ghz_notes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="ghz_page">
+<header class="ghz_head">
+<span class="ghz_tag">LESSON 18 · THREE.JS</span>
+<h1>Three.js 三维图表</h1>
+<p>不借助图表库，直接用 three.js 的几何体与光照手搭两张图：左图是各渠道咨询量的三维柱状图，右图是用扇形圆柱拼接的三维饼图，均可拖动旋转。</p>
+</header>
+
+<div class="ghz_grid">
+<section class="ghz_card">
+<div class="ghz_card-head">
+<span class="ghz_badge">图 1 · 3D BAR</span>
+<h2>各渠道咨询量</h2>
+<p>柱高按数值等比缩放，颜色随高度从蓝渐变到紫，底部铺网格与刻度，柱顶标注具体数值。</p>
+</div>
+<div class="ghz_chart" id="ghz_bar_chart"></div>
+<div class="ghz_toolbar">
+<button class="ghz_btn" type="button" id="ghz_bar_toggle">暂停旋转</button>
+<span class="ghz_hint">拖动旋转 · 滚轮缩放</span>
+</div>
+</section>
+
+<section class="ghz_card ghz_card--dark">
+<div class="ghz_card-head">
+<span class="ghz_badge">图 2 · 3D PIE</span>
+<h2>用户意图分布</h2>
+<p>每个扇区是一段带厚度的圆柱，用 thetaStart / thetaLength 拼接成圆，颜色区分业务类型。</p>
+</div>
+<div class="ghz_chart" id="ghz_pie_chart"></div>
+<div class="ghz_legend" id="ghz_pie_legend"></div>
+<div class="ghz_toolbar">
+<button class="ghz_btn" type="button" id="ghz_pie_toggle">暂停旋转</button>
+<span class="ghz_hint">拖动查看侧面厚度</span>
+</div>
+</section>
+</div>
+
+<section class="ghz_notes">
+<div class="ghz_note"><h2>柱状图怎么搭</h2><p>每根柱子是一个 BoxGeometry，高度 = 数值比例 × 最大高度；材质用 MeshStandardMaterial，颜色通过 Color.lerp 按数值插值。</p></div>
+<div class="ghz_note"><h2>饼图怎么搭</h2><p>圆饼由 5 段 CylinderGeometry 拼成，每段设置相同的上下半径与 thetaStart、thetaLength，厚度则是圆柱高度。</p></div>
+<div class="ghz_note"><h2>标签怎么来</h2><p>文字用 canvas 画好后转成 CanvasTexture，再贴到 Sprite 上；Sprite 始终面向相机，缩放时文字也不会变形。</p></div>
+</section>
+
+<p class="ghz_footer">高浩哲 · 《高级网页设计》练习 18-7 · Three.js 三维图表（本地 cdn 目录引用）</p>
+</div>
+
+<script src="./cdn/three.min.js"></script>
+<script src="./cdn/OrbitControls.js"></script>
+<script>
+var ghz_charts = [];
+
+// 文字精灵：把文字画到 canvas，再贴成始终面向相机的 Sprite
+function ghz_makeLabel(ghz_text, ghz_color, ghz_fontSize, ghz_worldWidth) {
+    var ghz_canvas = document.createElement('canvas');
+    ghz_canvas.width = 512;
+    ghz_canvas.height = 128;
+
+    var ghz_ctx = ghz_canvas.getContext('2d');
+    ghz_ctx.font = '600 ' + ghz_fontSize + 'px "Microsoft YaHei", "Segoe UI", sans-serif';
+    ghz_ctx.textAlign = 'center';
+    ghz_ctx.textBaseline = 'middle';
+    ghz_ctx.fillStyle = ghz_color;
+    ghz_ctx.fillText(ghz_text, 256, 66);
+
+    var ghz_texture = new THREE.CanvasTexture(ghz_canvas);
+    ghz_texture.minFilter = THREE.LinearFilter;
+
+    var ghz_material = new THREE.SpriteMaterial({
+        map: ghz_texture,
+        transparent: true,
+        depthTest: false
+    });
+
+    var ghz_sprite = new THREE.Sprite(ghz_material);
+    ghz_sprite.scale.set(ghz_worldWidth, ghz_worldWidth / 4, 1);
+
+    return ghz_sprite;
+}
+
+function ghz_showError(ghz_container, ghz_message) {
+    var ghz_tip = document.createElement('p');
+    ghz_tip.className = 'ghz_error';
+    ghz_tip.textContent = ghz_message;
+    ghz_container.appendChild(ghz_tip);
+}
+
+// 创建渲染器、场景、相机与轨道控制器
+function ghz_addChart(ghz_container, ghz_builder, ghz_cameraPos) {
+    if (!window.THREE || !THREE.OrbitControls) {
+        ghz_showError(ghz_container, '本地 Three.js 未加载，请确认 cdn/three.min.js 与 cdn/OrbitControls.js 存在。');
+        return;
+    }
+
+    var ghz_width = ghz_container.clientWidth;
+    var ghz_height = ghz_container.clientHeight;
+
+    if (!ghz_width || !ghz_height) return;
+
+    var ghz_renderer;
+
+    try {
+        ghz_renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (ghz_err) {
+        ghz_showError(ghz_container, '当前浏览器无法创建 WebGL 上下文：' + ghz_err.message);
+        return;
+    }
+
+    ghz_renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    ghz_renderer.setSize(ghz_width, ghz_height);
+    ghz_renderer.outputEncoding = THREE.sRGBEncoding;
+    ghz_container.appendChild(ghz_renderer.domElement);
+
+    var ghz_scene = new THREE.Scene();
+    var ghz_camera = new THREE.PerspectiveCamera(45, ghz_width / ghz_height, 0.1, 1000);
+    ghz_camera.position.set(ghz_cameraPos.x, ghz_cameraPos.y, ghz_cameraPos.z);
+
+    var ghz_controls = new THREE.OrbitControls(ghz_camera, ghz_renderer.domElement);
+    ghz_controls.enableDamping = true;
+    ghz_controls.dampingFactor = 0.08;
+    ghz_controls.enablePan = false;
+    ghz_controls.autoRotate = true;
+    ghz_controls.autoRotateSpeed = 1.5;
+    ghz_controls.minDistance = 10;
+    ghz_controls.maxDistance = 32;
+    ghz_controls.maxPolarAngle = Math.PI / 2.05;
+    ghz_controls.target.set(ghz_cameraPos.target.x, ghz_cameraPos.target.y, ghz_cameraPos.target.z);
+
+    ghz_builder(ghz_scene);
+
+    var ghz_item = {
+        id: ghz_container.id,
+        container: ghz_container,
+        renderer: ghz_renderer,
+        scene: ghz_scene,
+        camera: ghz_camera,
+        controls: ghz_controls
+    };
+
+    ghz_charts.push(ghz_item);
+
+    if (window.ResizeObserver) {
+        new ResizeObserver(function () {
+            var ghz_w = ghz_container.clientWidth;
+            var ghz_h = ghz_container.clientHeight;
+
+            if (!ghz_w || !ghz_h) return;
+
+            ghz_camera.aspect = ghz_w / ghz_h;
+            ghz_camera.updateProjectionMatrix();
+            ghz_renderer.setSize(ghz_w, ghz_h);
+        }).observe(ghz_container);
+    }
+}
+
+// ---------------- 图 1：三维柱状图 ----------------
+function ghz_buildBar(ghz_scene) {
+    var ghz_data = [
+        { ghz_name: 'Web 商城', ghz_value: 82 },
+        { ghz_name: '移动 App', ghz_value: 65 },
+        { ghz_name: '微信', ghz_value: 78 },
+        { ghz_name: '电话', ghz_value: 52 },
+        { ghz_name: '邮件', ghz_value: 41 }
+    ];
+
+    var ghz_maxValue = 82;
+    var ghz_maxHeight = 7;
+    var ghz_gap = 2.15;
+    var ghz_center = (ghz_data.length - 1) * ghz_gap / 2;
+    var ghz_axisX = -ghz_center - 1.25;
+
+    // 底座
+    var ghz_base = new THREE.Mesh(
+        new THREE.BoxGeometry(ghz_data.length * ghz_gap + 1.2, 0.3, 3.6),
+        new THREE.MeshStandardMaterial({ color: 0xeef3fb, roughness: 0.9 })
+    );
+    ghz_base.position.y = -0.16;
+    ghz_scene.add(ghz_base);
+
+    // 地面网格
+    var ghz_grid = new THREE.GridHelper(18, 18, 0xa8bcd9, 0xdde6f3);
+    ghz_grid.position.y = 0.02;
+    ghz_scene.add(ghz_grid);
+
+    // 纵轴
+    var ghz_axis = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(ghz_axisX, 0, 0),
+            new THREE.Vector3(ghz_axisX, ghz_maxHeight + 0.5, 0)
+        ]),
+        new THREE.LineBasicMaterial({ color: 0x93a7c4 })
+    );
+    ghz_scene.add(ghz_axis);
+
+    // 纵轴刻度
+    [0, 20, 40, 60, 80].forEach(function (ghz_tick) {
+        var ghz_tickLabel = ghz_makeLabel(String(ghz_tick), '#5f6c88', 52, 0.95);
+        ghz_tickLabel.position.set(ghz_axisX - 0.55, ghz_tick / ghz_maxValue * ghz_maxHeight + 0.05, 0);
+        ghz_scene.add(ghz_tickLabel);
+    });
+
+    // 柱体
+    ghz_data.forEach(function (ghz_item, ghz_index) {
+        var ghz_height = ghz_item.ghz_value / ghz_maxValue * ghz_maxHeight;
+        var ghz_color = new THREE.Color('#2563eb').lerp(new THREE.Color('#7c3aed'), ghz_item.ghz_value / ghz_maxValue);
+        var ghz_x = ghz_index * ghz_gap - ghz_center;
+
+        var ghz_bar = new THREE.Mesh(
+            new THREE.BoxGeometry(1.35, ghz_height, 1.35),
+            new THREE.MeshStandardMaterial({ color: ghz_color, roughness: 0.35, metalness: 0.12 })
+        );
+        ghz_bar.position.set(ghz_x, ghz_height / 2 + 0.02, 0);
+        ghz_scene.add(ghz_bar);
+
+        // 柱顶数值
+        var ghz_valueLabel = ghz_makeLabel(ghz_item.ghz_value + ' 万', '#3b4f7a', 52, 1.5);
+        ghz_valueLabel.position.set(ghz_x, ghz_height + 0.6, 0);
+        ghz_scene.add(ghz_valueLabel);
+
+        // 横轴分类
+        var ghz_nameLabel = ghz_makeLabel(ghz_item.ghz_name, '#1d3f8f', 46, 1.85);
+        ghz_nameLabel.position.set(ghz_x, 0.28, 2.05);
+        ghz_scene.add(ghz_nameLabel);
+    });
+
+    ghz_scene.add(new THREE.HemisphereLight(0xffffff, 0xdbe6f7, 0.95));
+
+    var ghz_dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    ghz_dirLight.position.set(8, 14, 9);
+    ghz_scene.add(ghz_dirLight);
+}
+
+// ---------------- 图 2：三维饼图 ----------------
+function ghz_buildPie(ghz_scene) {
+    var ghz_slices = [
+        { ghz_name: '售前咨询', ghz_pct: 32, ghz_color: 0x2563eb },
+        { ghz_name: '订单查询', ghz_pct: 26, ghz_color: 0x7c3aed },
+        { ghz_name: '售后服务', ghz_pct: 18, ghz_color: 0x0d9488 },
+        { ghz_name: '物流查询', ghz_pct: 14, ghz_color: 0xd97706 },
+        { ghz_name: '其他', ghz_pct: 10, ghz_color: 0x64748b }
+    ];
+
+    var ghz_radius = 5;
+    var ghz_thickness = 1.5;
+    var ghz_start = 0;
+
+    // 底盘
+    var ghz_plate = new THREE.Mesh(
+        new THREE.CylinderGeometry(ghz_radius + 0.28, ghz_radius + 0.28, 0.16, 64),
+        new THREE.MeshStandardMaterial({ color: 0x1e2b4b, roughness: 0.85 })
+    );
+    ghz_plate.position.y = 0.08;
+    ghz_scene.add(ghz_plate);
+
+    ghz_slices.forEach(function (ghz_slice) {
+        var ghz_angle = ghz_slice.ghz_pct / 100 * Math.PI * 2;
+
+        var ghz_wedge = new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                ghz_radius,
+                ghz_radius,
+                ghz_thickness,
+                64,
+                1,
+                false,
+                ghz_start,
+                Math.max(ghz_angle - 0.015, 0.01)
+            ),
+            new THREE.MeshStandardMaterial({
+                color: ghz_slice.ghz_color,
+                roughness: 0.45,
+                metalness: 0.15
+            })
+        );
+        ghz_wedge.position.y = 0.16 + ghz_thickness / 2;
+        ghz_scene.add(ghz_wedge);
+
+        // 扇区百分比标签
+        var ghz_mid = ghz_start + ghz_angle / 2;
+        var ghz_label = ghz_makeLabel(ghz_slice.ghz_pct + '%', '#ffffff', 54, 1.35);
+        ghz_label.position.set(
+            Math.cos(ghz_mid) * ghz_radius * 0.68,
+            ghz_thickness + 0.75,
+            Math.sin(ghz_mid) * ghz_radius * 0.68
+        );
+        ghz_scene.add(ghz_label);
+
+        ghz_start += ghz_angle;
+    });
+
+    ghz_scene.add(new THREE.HemisphereLight(0xcfe0ff, 0x1b2440, 0.95));
+
+    var ghz_dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    ghz_dirLight.position.set(6, 12, 8);
+    ghz_scene.add(ghz_dirLight);
+
+    // 图例
+    var ghz_legend = document.getElementById('ghz_pie_legend');
+
+    ghz_slices.forEach(function (ghz_slice) {
+        var ghz_item = document.createElement('span');
+        ghz_item.className = 'ghz_legend-item';
+
+        var ghz_dot = document.createElement('i');
+        ghz_dot.className = 'ghz_dot';
+        ghz_dot.style.background = '#' + ghz_slice.ghz_color.toString(16).padStart(6, '0');
+
+        ghz_item.appendChild(ghz_dot);
+        ghz_item.appendChild(document.createTextNode(ghz_slice.ghz_name + ' ' + ghz_slice.ghz_pct + '%'));
+        ghz_legend.appendChild(ghz_item);
+    });
+}
+
+// 初始化两张图
+ghz_addChart(
+    document.getElementById('ghz_bar_chart'),
+    ghz_buildBar,
+    { x: 10, y: 9, z: 14, target: { x: 0, y: 3.2, z: 0 } }
+);
+
+ghz_addChart(
+    document.getElementById('ghz_pie_chart'),
+    ghz_buildPie,
+    { x: 0, y: 9.5, z: 11.5, target: { x: 0, y: 1, z: 0 } }
+);
+
+// 旋转开关
+function ghz_bindToggle(ghz_buttonId, ghz_chartId) {
+    document.getElementById(ghz_buttonId).addEventListener('click', function () {
+        var ghz_chart = ghz_charts.filter(function (c) { return c.id === ghz_chartId; })[0];
+
+        if (!ghz_chart) return;
+
+        ghz_chart.controls.autoRotate = !ghz_chart.controls.autoRotate;
+        this.textContent = ghz_chart.controls.autoRotate ? '暂停旋转' : '开启旋转';
+    });
+}
+
+ghz_bindToggle('ghz_bar_toggle', 'ghz_bar_chart');
+ghz_bindToggle('ghz_pie_toggle', 'ghz_pie_chart');
+
+// 逐帧渲染
+function ghz_tick() {
+    requestAnimationFrame(ghz_tick);
+
+    for (var ghz_i = 0; ghz_i < ghz_charts.length; ghz_i++) {
+        var ghz_chart = ghz_charts[ghz_i];
+        ghz_chart.controls.update();
+        ghz_chart.renderer.render(ghz_chart.scene, ghz_chart.camera);
+    }
+}
+
+ghz_tick();
+</script>
+</body>
+</html>
